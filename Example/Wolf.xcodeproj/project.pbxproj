@@ -29,9 +29,9 @@
 
 /* Begin PBXFileReference section */
 		00B342F1F266498D7A1F438E /* Pods-Wolf_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example.release.xcconfig"; sourceTree = "<group>"; };
-		14767F229CC14379B889F6A2 /* Wolf.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Wolf.podspec; path = ../Wolf.podspec; sourceTree = "<group>"; };
+		14767F229CC14379B889F6A2 /* Wolf.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Wolf.podspec; path = ../../Wolf.podspec; sourceTree = "<group>"; };
 		2334DCC04DE638545457A460 /* Pods-Wolf_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Tests/Pods-Wolf_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		2E2C7AF7CE2C7AD3C0965B1D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		2E2C7AF7CE2C7AD3C0965B1D /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../../LICENSE; sourceTree = "<group>"; };
 		3BF878D1BF227C7853764C7D /* Pods_Wolf_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* Wolf_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wolf_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -46,7 +46,7 @@
 		6E2FC62A86FAA2CFB00AF37F /* Pods-Wolf_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Tests/Pods-Wolf_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		737A5E9CA901FFEBC8E01FD6 /* Pods-Wolf_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		7AA815289E8539402193062E /* Pods_Wolf_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D9564307F433F7CD42BB0A3B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		D9564307F433F7CD42BB0A3B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,12 +72,12 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for Wolf */,
-				607FACE81AFB9204008FA782 /* Tests */,
-				607FACD11AFB9204008FA782 /* Products */,
-				DA5BF3DAD769AC422BBE9BA4 /* Pods */,
 				DE00C9BF7C9C3C316A2125D7 /* Frameworks */,
+				DA5BF3DAD769AC422BBE9BA4 /* Pods */,
+				607FACF51AFB993E008FA782 /* Podspec Metadata */,
+				607FACD11AFB9204008FA782 /* Products */,
+				607FACE81AFB9204008FA782 /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -93,15 +93,14 @@
 		607FACD21AFB9204008FA782 /* Example for Wolf */ = {
 			isa = PBXGroup;
 			children = (
+				607FACD31AFB9204008FA782 /* Supporting Files */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
-				607FACD31AFB9204008FA782 /* Supporting Files */,
+				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				607FACD71AFB9204008FA782 /* ViewController.swift */,
 			);
-			name = "Example for Wolf";
-			path = Wolf;
+			path = "Example for Wolf";
 			sourceTree = "<group>";
 		};
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
@@ -109,14 +108,14 @@
 			children = (
 				607FACD41AFB9204008FA782 /* Info.plist */,
 			);
-			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				607FACEB1AFB9204008FA782 /* Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -126,17 +125,17 @@
 			children = (
 				607FACEA1AFB9204008FA782 /* Info.plist */,
 			);
-			name = "Supporting Files";
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				14767F229CC14379B889F6A2 /* Wolf.podspec */,
-				D9564307F433F7CD42BB0A3B /* README.md */,
 				2E2C7AF7CE2C7AD3C0965B1D /* LICENSE */,
+				D9564307F433F7CD42BB0A3B /* README.md */,
+				14767F229CC14379B889F6A2 /* Wolf.podspec */,
 			);
-			name = "Podspec Metadata";
+			path = "Podspec Metadata";
 			sourceTree = "<group>";
 		};
 		DA5BF3DAD769AC422BBE9BA4 /* Pods */ = {
@@ -166,12 +165,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Wolf_Example" */;
 			buildPhases = (
-				082B5AD4281B6F7B3B260A15 /* 📦 Check Pods Manifest.lock */,
+				082B5AD4281B6F7B3B260A15 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				2C9D2033AE85D50E49352C97 /* 📦 Embed Pods Frameworks */,
-				C007AC15776157CEE76FB96F /* 📦 Copy Pods Resources */,
+				2C9D2033AE85D50E49352C97 /* [CP] Embed Pods Frameworks */,
+				C007AC15776157CEE76FB96F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -186,12 +185,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Wolf_Tests" */;
 			buildPhases = (
-				B702A2A0411686031B4DEDBF /* 📦 Check Pods Manifest.lock */,
+				B702A2A0411686031B4DEDBF /* [CP] Check Pods Manifest.lock */,
 				607FACE11AFB9204008FA782 /* Sources */,
 				607FACE21AFB9204008FA782 /* Frameworks */,
 				607FACE31AFB9204008FA782 /* Resources */,
-				E65DEC59C0F5050566EF007D /* 📦 Embed Pods Frameworks */,
-				5BE937E184BF8E09B0781086 /* 📦 Copy Pods Resources */,
+				E65DEC59C0F5050566EF007D /* [CP] Embed Pods Frameworks */,
+				5BE937E184BF8E09B0781086 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,29 +261,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		082B5AD4281B6F7B3B260A15 /* 📦 Check Pods Manifest.lock */ = {
+		082B5AD4281B6F7B3B260A15 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		2C9D2033AE85D50E49352C97 /* 📦 Embed Pods Frameworks */ = {
+		2C9D2033AE85D50E49352C97 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,14 +291,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5BE937E184BF8E09B0781086 /* 📦 Copy Pods Resources */ = {
+		5BE937E184BF8E09B0781086 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,29 +306,29 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wolf_Tests/Pods-Wolf_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B702A2A0411686031B4DEDBF /* 📦 Check Pods Manifest.lock */ = {
+		B702A2A0411686031B4DEDBF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		C007AC15776157CEE76FB96F /* 📦 Copy Pods Resources */ = {
+		C007AC15776157CEE76FB96F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,14 +336,14 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E65DEC59C0F5050566EF007D /* 📦 Embed Pods Frameworks */ = {
+		E65DEC59C0F5050566EF007D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "📦 Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,6 +388,7 @@
 				607FACDA1AFB9204008FA782 /* Base */,
 			);
 			name = Main.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
@@ -397,6 +397,7 @@
 				607FACDF1AFB9204008FA782 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -489,7 +490,7 @@
 			baseConfigurationReference = 737A5E9CA901FFEBC8E01FD6 /* Pods-Wolf_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = Wolf/Info.plist;
+				INFOPLIST_FILE = "Example for Wolf/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -502,7 +503,7 @@
 			baseConfigurationReference = 00B342F1F266498D7A1F438E /* Pods-Wolf_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = Wolf/Info.plist;
+				INFOPLIST_FILE = "Example for Wolf/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -522,7 +523,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = "Tests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -537,7 +538,7 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = Tests/Info.plist;
+				INFOPLIST_FILE = "Tests/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
