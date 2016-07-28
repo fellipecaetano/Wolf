@@ -193,7 +193,7 @@ extension User {
             }
         }
 
-        var envelopeKey: String? {
+        var rootKey: String? {
             return "users"
         }
     }
