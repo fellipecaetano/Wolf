@@ -7,7 +7,7 @@ import Argo
 import Wolf
 
 class HTTPClientSpec: QuickSpec {
-    let client = ExampleClient()
+    private let client = ExampleClient()
 
     // swiftlint:disable function_body_length
     override func spec() {
@@ -17,9 +17,8 @@ class HTTPClientSpec: QuickSpec {
 
         describe("sending object requests") {
             describe("when the request is sucessful") {
-                stub(isHost("example.com") && isPath("/get/user")) { _ in
-                    return fixture(OHPathForFile("user.json", self.dynamicType)!,
-                                   headers: ["Content-Type": "application/json"])
+                stub(isPath("/get/user")) { _ in
+                    return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
                 }
 
                 var user: User?
@@ -33,9 +32,8 @@ class HTTPClientSpec: QuickSpec {
             }
 
             describe("when the JSON is schema-invalid") {
-                stub(isHost("example.com") && isPath("/get/invalid_user")) { _ in
-                    return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!,
-                                   headers: ["Content-Type": "application/json"])
+                stub(isPath("/get/invalid_user")) { _ in
+                    return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
                 }
 
                 var user: User?
@@ -61,9 +59,8 @@ class HTTPClientSpec: QuickSpec {
             }
 
             describe("when the JSON is format-invalid") {
-                stub(isHost("example.com") && isPath("/get/invalid_json")) { _ in
-                    return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!,
-                                   headers: ["Content-Type": "application/json"])
+                stub(isPath("/get/invalid_json")) { _ in
+                    return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
                 }
 
                 var user: User?
@@ -89,10 +86,9 @@ class HTTPClientSpec: QuickSpec {
         }
 
         describe("sending array requests") {
-            describe("when the request without envelope is sucessful") {
-                stub(isHost("example.com") && isPath("/get/users")) { _ in
-                    return fixture(OHPathForFile("users.json", self.dynamicType)!,
-                                   headers: ["Content-Type": "application/json"])
+            describe("when the flat request is sucessful") {
+                stub(isPath("/get/users")) { _ in
+                    return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
                 }
 
                 var users: [User]?
@@ -109,10 +105,9 @@ class HTTPClientSpec: QuickSpec {
                 }
             }
 
-            describe("when the request with envelope is sucessful") {
-                stub(isHost("example.com") && isPath("/get/enveloped_users")) { _ in
-                    return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!,
-                                   headers: ["Content-Type": "application/json"])
+            describe("when the enveloped request is sucessful") {
+                stub(isPath("/get/enveloped_users")) { _ in
+                    return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!, headers: nil)
                 }
 
                 var users: [User]?
@@ -132,7 +127,7 @@ class HTTPClientSpec: QuickSpec {
     }
 }
 
-class ExampleClient: HTTPClient {
+private class ExampleClient: HTTPClient {
     var baseURL: NSURL {
         return NSURL(string: "http://example.com")!
     }
@@ -144,7 +139,7 @@ class ExampleClient: HTTPClient {
     }
 }
 
-struct User {
+private struct User {
     let username: String
 }
 
