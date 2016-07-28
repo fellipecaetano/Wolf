@@ -7,7 +7,7 @@ public protocol HTTPClient {
     var manager: Manager { get }
 }
 
-extension HTTPClient {
+public extension HTTPClient {
     func sendRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
         (resource: R, completionHandler: Response<R.Value, JSONResponseError> -> Void)
     {
@@ -18,9 +18,9 @@ extension HTTPClient {
     }
 
     func sendArrayRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void)
+        (resource: R, rootKey: String? = nil, completionHandler: Response<[R.Value], JSONResponseError> -> Void)
     {
-        let serializer = JSONArrayResponseSerializer<R.Value>()
+        let serializer = JSONArrayResponseSerializer<R.Value>(rootKey: rootKey)
         self.request(resource)
             .validate()
             .response(responseSerializer: serializer, completionHandler: completionHandler)
@@ -32,7 +32,7 @@ extension HTTPClient {
     }
 }
 
-protocol HTTPResource {
+public protocol HTTPResource {
     associatedtype Value
     
     var path: String { get }
@@ -42,7 +42,7 @@ protocol HTTPResource {
     var parameterEncoding: ParameterEncoding { get }
 }
 
-extension HTTPResource {
+public extension HTTPResource {
     var method: Alamofire.Method {
         return .GET
     }

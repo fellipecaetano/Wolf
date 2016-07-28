@@ -4,8 +4,7 @@ target 'Wolf_Example' do
   pod 'Wolf', :path => '../'
 
   target 'Wolf_Tests' do
-    inherit! :search_paths
-
+    pod 'Wolf', :path => '../'
     pod 'Quick', '~> 0.8'
     pod 'Nimble', '~> 3.0'
     pod 'OHHTTPStubs', '~> 5.1'
