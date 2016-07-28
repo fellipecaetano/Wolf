@@ -9,8 +9,8 @@ public protocol HTTPClient {
 
 public extension HTTPClient {
     func sendRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<R.Value, JSONResponseError> -> Void)
-    {
+        (resource: R, completionHandler: Response<R.Value, JSONResponseError> -> Void) {
+
         let serializer = JSONResponseSerializer<R.Value>()
         self.request(resource)
             .validate()
@@ -18,8 +18,8 @@ public extension HTTPClient {
     }
 
     func sendArrayRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void)
-    {
+        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void) {
+
         let serializer = JSONArrayResponseSerializer<R.Value>()
         self.request(resource)
             .validate()
@@ -27,8 +27,8 @@ public extension HTTPClient {
     }
 
     func sendArrayRequest<R: protocol<HTTPResource, JSONEnvelope> where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void)
-    {
+        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void) {
+
         let serializer = JSONArrayResponseSerializer<R.Value>(rootKey: resource.rootKey)
         self.request(resource)
             .validate()
@@ -43,7 +43,7 @@ public extension HTTPClient {
 
 public protocol HTTPResource {
     associatedtype Value
-    
+
     var path: String { get }
     var method: Alamofire.Method { get }
     var parameters: [String: AnyObject]? { get }
@@ -55,15 +55,15 @@ public extension HTTPResource {
     var method: Alamofire.Method {
         return .GET
     }
-    
+
     var parameters: [String: AnyObject]? {
         return nil
     }
-    
+
     var headers: [String: String]? {
         return nil
     }
-    
+
     var parameterEncoding: ParameterEncoding {
         return .URL
     }
@@ -76,7 +76,7 @@ struct HTTPTarget<R: HTTPResource>: HTTPTargetProtocol {
 
 protocol HTTPTargetProtocol {
     associatedtype Resource: HTTPResource
-    
+
     var baseURL: NSURL { get }
     var resource: Resource { get }
 }
