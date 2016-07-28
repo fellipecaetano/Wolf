@@ -94,11 +94,11 @@
 			isa = PBXGroup;
 			children = (
 				607FACD21AFB9204008FA782 /* Example for Wolf */,
+				A479141BBE7EA82CDBBBE0D2 /* Frameworks */,
+				429FF94FCC9AF0CB6DA5A475 /* Pods */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD11AFB9204008FA782 /* Products */,
 				607FACE81AFB9204008FA782 /* Tests */,
-				429FF94FCC9AF0CB6DA5A475 /* Pods */,
-				A479141BBE7EA82CDBBBE0D2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -172,11 +172,11 @@
 		B370059A1D4AA95000844AC2 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
-				B370059B1D4AA97B00844AC2 /* user.json */,
-				B36A2B3B1D4AB3B20061425A /* invalid_user.json */,
-				B36A2B3E1D4AB63F0061425A /* invalid_json.json */,
-				B36A2B411D4AB73C0061425A /* users.json */,
 				B36A2B441D4AB9CA0061425A /* enveloped_users.json */,
+				B36A2B3E1D4AB63F0061425A /* invalid_json.json */,
+				B36A2B3B1D4AB3B20061425A /* invalid_user.json */,
+				B370059B1D4AA97B00844AC2 /* user.json */,
+				B36A2B411D4AB73C0061425A /* users.json */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
