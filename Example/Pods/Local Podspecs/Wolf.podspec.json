@@ -1,0 +1,22 @@
+{
+  "name": "Wolf",
+  "version": "0.1.0",
+  "summary": "A short description of Wolf.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/<GITHUB_USERNAME>/Wolf",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Fellipe Caetano": "fellipe.caetano@movile.com"
+  },
+  "source": {
+    "git": "https://github.com/<GITHUB_USERNAME>/Wolf.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "Wolf/Classes/**/*"
+}
