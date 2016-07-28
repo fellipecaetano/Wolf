@@ -1,7 +1,9 @@
 PODS:
+  - Alamofire (3.4.1)
   - Nimble (3.2.0)
   - Quick (0.9.2)
-  - Wolf (0.1.0)
+  - Wolf (0.1.0):
+    - Alamofire (~> 3.4)
 
 DEPENDENCIES:
   - Nimble (~> 3.0)
@@ -13,9 +15,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  Alamofire: 01a82e2f6c0f860ade35534c8dd88be61bdef40c
   Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
   Quick: 18d057bc66451eedd5d1c8dc99ba2a5db6e60226
-  Wolf: a9a2d6234d7693a89e884387332cc0566895a0bc
+  Wolf: 53d080906e26bee84ffab879dab647791fe2d570
 
 PODFILE CHECKSUM: 95f1cfc9b58f4f2a9d159c7cc8c76a5f03c6081d
 
