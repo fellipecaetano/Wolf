@@ -29,7 +29,7 @@ public extension HTTPClient {
     func sendArrayRequest<R: protocol<HTTPResource, JSONEnvelope> where R.Value: Decodable, R.Value.DecodedType == R.Value>
         (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void)
     {
-        let serializer = JSONArrayResponseSerializer<R.Value>(envelopeKey: resource.envelopeKey)
+        let serializer = JSONArrayResponseSerializer<R.Value>(rootKey: resource.rootKey)
         self.request(resource)
             .validate()
             .response(responseSerializer: serializer, completionHandler: completionHandler)

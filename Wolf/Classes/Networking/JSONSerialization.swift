@@ -21,10 +21,10 @@ struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSe
 }
 
 struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSerializerType {
-    private let envelopeKey: String?
+    private let rootKey: String?
 
-    init (envelopeKey: String? = nil) {
-        self.envelopeKey = envelopeKey
+    init (rootKey: String? = nil) {
+        self.rootKey = rootKey
     }
     
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<[T], JSONResponseError> {
@@ -36,8 +36,10 @@ struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: Respo
     private func serialize(data: NSData?, error: NSError?) -> Result<[T], JSONResponseError> {
         if let error = error {
             return .Failure(.Request(error))
+        } else if let data = data, rootKey = rootKey {
+            return decodeArray(data, rootKey: rootKey)
         } else if let data = data {
-            return decodeArray(data, rootKey: envelopeKey)
+            return decodeArray(data)
         } else {
             return .Failure(.DataAbsence)
         }
@@ -62,19 +64,21 @@ private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Resu
     }
 }
 
-private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, rootKey: String?) -> Result<[T], JSONResponseError> {
+private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<[T], JSONResponseError> {
     do {
-        let decodedArray: [T]
+        let array: [AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
+        return .Success(try decode(array).dematerialize())
+    } catch let error as DecodeError {
+        return .Failure(.ArgoDecode(error))
+    } catch let error as NSError {
+        return .Failure(.FoundationDecode(error))
+    }
+}
 
-        if let rootKey = rootKey {
-            let dictionary: [String: AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
-            decodedArray = try decode(dictionary, rootKey: rootKey).dematerialize()
-        } else {
-            let array: [AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
-            decodedArray = try decode(array).dematerialize()
-        }
-
-        return .Success(decodedArray)
+private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, rootKey: String) -> Result<[T], JSONResponseError> {
+    do {
+        let dictionary: [String: AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
+        return .Success(try decode(dictionary, rootKey: rootKey).dematerialize())
     } catch let error as DecodeError {
         return .Failure(.ArgoDecode(error))
     } catch let error as NSError {
@@ -94,5 +98,5 @@ private extension NSJSONSerialization {
 }
 
 public protocol JSONEnvelope {
-    var envelopeKey: String? { get }
+    var rootKey: String? { get }
 }
