@@ -18,10 +18,13 @@
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "Wolf/Classes/**/*",
   "dependencies": {
     "Alamofire": [
       "~> 3.4"
+    ],
+    "Argo": [
+      "~> 3.0"
     ]
-  }
+  },
+  "source_files": "Wolf/Classes/**/*"
 }
