@@ -116,7 +116,7 @@ class HTTPClientSpec: QuickSpec {
                 }
 
                 var users: [User]?
-                self.client.sendArrayRequest(User.Resource.getEnvelopedUsers, rootKey: "users") { response in
+                self.client.sendArrayRequest(User.ResourceCollection.getEnvelopedUsers) { response in
                     users = response.result.value
                 }
 
@@ -163,7 +163,6 @@ extension User {
         case getInvalidUser
         case getInvalidJSON
         case getUsers
-        case getEnvelopedUsers
 
         var path: String {
             switch self {
@@ -178,10 +177,24 @@ extension User {
 
             case .getUsers:
                 return "get/users"
+            }
+        }
+    }
 
+    enum ResourceCollection: HTTPResource, JSONEnvelope {
+        typealias Value = User
+
+        case getEnvelopedUsers
+
+        var path: String {
+            switch self {
             case .getEnvelopedUsers:
                 return "get/enveloped_users"
             }
+        }
+
+        var envelopeKey: String? {
+            return "users"
         }
     }
 }
