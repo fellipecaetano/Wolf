@@ -194,6 +194,7 @@
 				607FACCE1AFB9204008FA782 /* Resources */,
 				2C9D2033AE85D50E49352C97 /* [CP] Embed Pods Frameworks */,
 				C007AC15776157CEE76FB96F /* [CP] Copy Pods Resources */,
+				B36A2B471D4ABAAB0061425A /* Run SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -333,6 +334,20 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Wolf_Example-Wolf_Tests/Pods-Wolf_Example-Wolf_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B36A2B471D4ABAAB0061425A /* Run SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftLint";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
 		B702A2A0411686031B4DEDBF /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
