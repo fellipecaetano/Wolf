@@ -2,13 +2,6 @@ import Foundation
 import Alamofire
 import Argo
 
-public enum JSONResponseError: ErrorType {
-    case FoundationDecode(NSError)
-    case ArgoDecode(DecodeError)
-    case Request(NSError)
-    case DataAbsence
-}
-
 struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSerializerType {
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<T, JSONResponseError> {
         return { _, _, data, error in
@@ -28,10 +21,10 @@ struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSe
 }
 
 struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSerializerType {
-    private let rootKey: String?
+    private let envelopeKey: String?
 
-    init (rootKey: String? = nil) {
-        self.rootKey = rootKey
+    init (envelopeKey: String? = nil) {
+        self.envelopeKey = envelopeKey
     }
     
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<[T], JSONResponseError> {
@@ -44,11 +37,18 @@ struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: Respo
         if let error = error {
             return .Failure(.Request(error))
         } else if let data = data {
-            return decodeArray(data, rootKey: rootKey)
+            return decodeArray(data, rootKey: envelopeKey)
         } else {
             return .Failure(.DataAbsence)
         }
     }
+}
+
+public enum JSONResponseError: ErrorType {
+    case FoundationDecode(NSError)
+    case ArgoDecode(DecodeError)
+    case Request(NSError)
+    case DataAbsence
 }
 
 private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, JSONResponseError> {
@@ -65,6 +65,7 @@ private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Resu
 private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, rootKey: String?) -> Result<[T], JSONResponseError> {
     do {
         let decodedArray: [T]
+
         if let rootKey = rootKey {
             let dictionary: [String: AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
             decodedArray = try decode(dictionary, rootKey: rootKey).dematerialize()
@@ -72,6 +73,7 @@ private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, ro
             let array: [AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
             decodedArray = try decode(array).dematerialize()
         }
+
         return .Success(decodedArray)
     } catch let error as DecodeError {
         return .Failure(.ArgoDecode(error))
@@ -89,4 +91,8 @@ private extension NSJSONSerialization {
         }
         return typedObject
     }
+}
+
+public protocol JSONEnvelope {
+    var envelopeKey: String? { get }
 }
