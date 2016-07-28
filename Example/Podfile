@@ -9,5 +9,6 @@ target 'Wolf_Example' do
     pod 'Quick', '~> 0.8'
     pod 'Nimble', '~> 3.0'
     pod 'OHHTTPStubs', '~> 5.1'
+    pod 'OHHTTPStubs/Swift', '~> 5.1'
   end
 end

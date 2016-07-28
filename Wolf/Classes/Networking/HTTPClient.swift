@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 import Argo
 
-protocol HTTPClient {
+public protocol HTTPClient {
     var baseURL: NSURL { get }
     var manager: Manager { get }
 }
