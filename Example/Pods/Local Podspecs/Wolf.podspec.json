@@ -1,22 +1,27 @@
 {
   "name": "Wolf",
   "version": "0.1.0",
-  "summary": "A short description of Wolf.",
-  "description": "TODO: Add long description of the pod here.",
-  "homepage": "https://github.com/<GITHUB_USERNAME>/Wolf",
+  "summary": "Handy solutions to common app development problems.",
+  "description": "Handy solutions to common app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.",
+  "homepage": "https://github.com/fellipecaetano/Wolf",
   "license": {
     "type": "MIT",
     "file": "LICENSE"
   },
   "authors": {
-    "Fellipe Caetano": "fellipe.caetano@movile.com"
+    "Fellipe Caetano": "fellipe.caetano4@gmail.com"
   },
   "source": {
-    "git": "https://github.com/<GITHUB_USERNAME>/Wolf.git",
+    "git": "https://github.com/fellipecaetano/Wolf.git",
     "tag": "0.1.0"
   },
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "Wolf/Classes/**/*"
+  "source_files": "Wolf/Classes/**/*",
+  "dependencies": {
+    "Alamofire": [
+      "~> 3.4"
+    ]
+  }
 }
