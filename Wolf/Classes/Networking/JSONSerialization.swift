@@ -8,7 +8,7 @@ struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSe
             return self.serialize(data, error: error)
         }
     }
-    
+
     private func serialize(data: NSData?, error: NSError?) -> Result<T, JSONResponseError> {
         if let error = error {
             return .Failure(.Request(error))
@@ -26,13 +26,13 @@ struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: Respo
     init (rootKey: String? = nil) {
         self.rootKey = rootKey
     }
-    
+
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<[T], JSONResponseError> {
         return { _, _, data, error in
             return self.serialize(data, error: error)
         }
     }
-    
+
     private func serialize(data: NSData?, error: NSError?) -> Result<[T], JSONResponseError> {
         if let error = error {
             return .Failure(.Request(error))
