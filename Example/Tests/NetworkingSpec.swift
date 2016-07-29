@@ -6,7 +6,7 @@ import Alamofire
 import Argo
 import Wolf
 
-class HTTPClientSpec: QuickSpec {
+class NetworkingSpec: QuickSpec {
     private let client = ExampleClient()
 
     // swiftlint:disable function_body_length
@@ -15,7 +15,7 @@ class HTTPClientSpec: QuickSpec {
             OHHTTPStubs.removeAllStubs()
         }
 
-        describe("sending object requests") {
+        describe("a HTTPClient sending object requests") {
             describe("when the request is sucessful") {
                 stub(isPath("/get/user")) { _ in
                     return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
@@ -85,7 +85,7 @@ class HTTPClientSpec: QuickSpec {
             }
         }
 
-        describe("sending array requests") {
+        describe("a HTTPClient sending array requests") {
             describe("when the flat request is sucessful") {
                 stub(isPath("/get/users")) { _ in
                     return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
