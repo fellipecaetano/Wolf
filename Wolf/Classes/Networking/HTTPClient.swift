@@ -34,8 +34,9 @@ public protocol HTTPResource {
     var parameters: [String: AnyObject]? { get }
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
-    var responseSerializer: ResponseSerializer<Value, Error> { get }
-    var arrayResponseSerializer: ResponseSerializer<[Value], Error> { get }
+
+    func serialize(data: NSData?, error: NSError?) -> Result<Value, Error>
+    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error>
 }
 
 public extension HTTPResource {
@@ -53,6 +54,18 @@ public extension HTTPResource {
 
     var parameterEncoding: ParameterEncoding {
         return .URL
+    }
+
+    var responseSerializer: ResponseSerializer<Value, Error> {
+        return ResponseSerializer { _, _, data, error in
+            return self.serialize(data, error: error)
+        }
+    }
+
+    var arrayResponseSerializer: ResponseSerializer<[Value], Error> {
+        return ResponseSerializer { _, _, data, error in
+            return self.serializeArray(data, error: error)
+        }
     }
 }
 
