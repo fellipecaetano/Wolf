@@ -1,6 +1,5 @@
 import Foundation
 import Alamofire
-import Argo
 
 public protocol HTTPClient {
     var baseURL: NSURL { get }
@@ -8,33 +7,6 @@ public protocol HTTPClient {
 }
 
 public extension HTTPClient {
-    func sendRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<R.Value, JSONResponseError> -> Void) {
-
-        let serializer = JSONResponseSerializer<R.Value>()
-        self.request(resource)
-            .validate()
-            .response(responseSerializer: serializer, completionHandler: completionHandler)
-    }
-
-    func sendArrayRequest<R: HTTPResource where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void) {
-
-        let serializer = JSONArrayResponseSerializer<R.Value>()
-        self.request(resource)
-            .validate()
-            .response(responseSerializer: serializer, completionHandler: completionHandler)
-    }
-
-    func sendArrayRequest<R: protocol<HTTPResource, JSONEnvelope> where R.Value: Decodable, R.Value.DecodedType == R.Value>
-        (resource: R, completionHandler: Response<[R.Value], JSONResponseError> -> Void) {
-
-        let serializer = JSONArrayResponseSerializer<R.Value>(rootKey: resource.rootKey)
-        self.request(resource)
-            .validate()
-            .response(responseSerializer: serializer, completionHandler: completionHandler)
-    }
-
     func request<R: HTTPResource>(resource: R) -> Request {
         let target = HTTPTarget(baseURL: baseURL, resource: resource)
         return manager.request(target)
