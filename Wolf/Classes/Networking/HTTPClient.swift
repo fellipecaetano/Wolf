@@ -11,16 +11,31 @@ public extension HTTPClient {
         let target = HTTPTarget(baseURL: baseURL, resource: resource)
         return manager.request(target)
     }
+
+    func sendRequest<R: HTTPResource>(resource: R, completionHandler: Response<R.Value, R.Error> -> Void) {
+        request(resource)
+            .validate()
+            .response(responseSerializer: resource.responseSerializer, completionHandler: completionHandler)
+    }
+
+    func sendArrayRequest<R: HTTPResource>(resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) {
+        request(resource)
+            .validate()
+            .response(responseSerializer: resource.arrayResponseSerializer, completionHandler: completionHandler)
+    }
 }
 
 public protocol HTTPResource {
     associatedtype Value
+    associatedtype Error: ErrorType
 
     var path: String { get }
     var method: Alamofire.Method { get }
     var parameters: [String: AnyObject]? { get }
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
+    var responseSerializer: ResponseSerializer<Value, Error> { get }
+    var arrayResponseSerializer: ResponseSerializer<[Value], Error> { get }
 }
 
 public extension HTTPResource {
