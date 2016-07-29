@@ -12,14 +12,14 @@ public extension HTTPClient {
         return manager.request(target)
     }
 
-    func sendRequest<R: HTTPResource>(resource: R, completionHandler: Response<R.Value, R.Error> -> Void) {
-        request(resource)
+    func sendRequest<R: HTTPResource>(resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
+        return request(resource)
             .validate()
             .response(responseSerializer: resource.responseSerializer, completionHandler: completionHandler)
     }
 
-    func sendArrayRequest<R: HTTPResource>(resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) {
-        request(resource)
+    func sendArrayRequest<R: HTTPResource>(resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) -> Request {
+        return request(resource)
             .validate()
             .response(responseSerializer: resource.arrayResponseSerializer, completionHandler: completionHandler)
     }
