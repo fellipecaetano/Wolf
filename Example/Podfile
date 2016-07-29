@@ -5,7 +5,6 @@ target 'Wolf_Example' do
 
   target 'Wolf_Tests' do
     pod 'Wolf', :path => '../'
-    pod 'Quick', '~> 0.8'
     pod 'Nimble', '~> 3.0'
     pod 'OHHTTPStubs', '~> 5.1'
     pod 'OHHTTPStubs/Swift', '~> 5.1'

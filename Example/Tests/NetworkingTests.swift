@@ -1,5 +1,5 @@
 import Foundation
-import Quick
+import XCTest
 import Nimble
 import OHHTTPStubs
 import Alamofire

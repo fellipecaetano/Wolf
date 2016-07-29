@@ -1,6 +1,6 @@
 import Foundation
 import UIKit
-import Quick
+import XCTest
 import Nimble
 import Wolf
 
