@@ -20,6 +20,17 @@ struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSe
     }
 }
 
+private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, JSONResponseError> {
+    do {
+        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+        return .Success(try decode(JSONObject).dematerialize())
+    } catch let error as DecodeError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error as NSError {
+        return .Failure(.InvalidFormat(error))
+    }
+}
+
 struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSerializerType {
     private let rootKey: String?
 
@@ -43,24 +54,6 @@ struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: Respo
         } else {
             return .Failure(.AbsentData)
         }
-    }
-}
-
-public enum JSONResponseError: ErrorType {
-    case InvalidFormat(NSError)
-    case InvalidSchema(DecodeError)
-    case FailedRequest(NSError)
-    case AbsentData
-}
-
-private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, JSONResponseError> {
-    do {
-        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-        return .Success(try decode(JSONObject).dematerialize())
-    } catch let error as DecodeError {
-        return .Failure(.InvalidSchema(error))
-    } catch let error as NSError {
-        return .Failure(.InvalidFormat(error))
     }
 }
 
@@ -95,6 +88,13 @@ private extension NSJSONSerialization {
         }
         return typedObject
     }
+}
+
+public enum JSONResponseError: ErrorType {
+    case InvalidFormat(NSError)
+    case InvalidSchema(DecodeError)
+    case FailedRequest(NSError)
+    case AbsentData
 }
 
 public protocol JSONEnvelope {
