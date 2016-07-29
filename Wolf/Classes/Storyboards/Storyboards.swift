@@ -1,25 +1,25 @@
 import Foundation
 import UIKit
 
-protocol StoryboardConvertible {
+public protocol StoryboardConvertible {
     var name: String { get }
     var bundle: NSBundle? { get }
 }
 
-extension StoryboardConvertible {
+public extension StoryboardConvertible {
     var bundle: NSBundle? {
         return nil
     }
 }
 
-extension StoryboardConvertible where Self: RawRepresentable, Self.RawValue == String {
+public extension StoryboardConvertible where Self: RawRepresentable, Self.RawValue == String {
     var name: String {
         return rawValue
     }
 }
 
 extension StoryboardConvertible {
-    func instantiateViewController <V: UIViewController where V: Identifiable, V.Identifier == String> () -> V {
+    public func instantiateViewController <V: UIViewController where V: Identifiable, V.Identifier == String> () -> V {
         return storyboard.instantiateViewController()
     }
 
@@ -28,7 +28,7 @@ extension StoryboardConvertible {
     }
 }
 
-extension UIStoryboard {
+private extension UIStoryboard {
     func instantiateViewController <V: UIViewController where V: Identifiable, V.Identifier == String> () -> V {
         let viewController = instantiateViewControllerWithIdentifier(V.identifier)
         guard let typedViewController = viewController as? V else {

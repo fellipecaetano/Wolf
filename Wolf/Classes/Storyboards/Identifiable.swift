@@ -1,11 +1,11 @@
 import Foundation
 
-protocol Identifiable {
+public protocol Identifiable {
     associatedtype Identifier
     static var identifier: Identifier { get }
 }
 
-extension Identifiable where Self.Identifier == String {
+public extension Identifiable where Self.Identifier == String {
     static var identifier: String {
         return String(self)
     }
