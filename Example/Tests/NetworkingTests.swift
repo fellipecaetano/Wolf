@@ -128,6 +128,7 @@ extension User: Decodable {
 extension User {
     enum Resource: HTTPResource {
         typealias Value = User
+        typealias Error = ArgoResponseError
 
         case getUser
         case getInvalidUser
@@ -153,6 +154,7 @@ extension User {
 
     enum ResourceCollection: HTTPResource, JSONEnvelope {
         typealias Value = User
+        typealias Error = ArgoResponseError
 
         case getEnvelopedUsers
 
