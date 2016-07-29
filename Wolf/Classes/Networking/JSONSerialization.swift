@@ -11,11 +11,11 @@ struct JSONResponseSerializer<T: Decodable where T.DecodedType == T>: ResponseSe
 
     private func serialize(data: NSData?, error: NSError?) -> Result<T, JSONResponseError> {
         if let error = error {
-            return .Failure(.Request(error))
+            return .Failure(.FailedRequest(error))
         } else if let data = data {
             return decode(data)
         } else {
-            return .Failure(.DataAbsence)
+            return .Failure(.AbsentData)
         }
     }
 }
@@ -35,22 +35,22 @@ struct JSONArrayResponseSerializer<T: Decodable where T.DecodedType == T>: Respo
 
     private func serialize(data: NSData?, error: NSError?) -> Result<[T], JSONResponseError> {
         if let error = error {
-            return .Failure(.Request(error))
+            return .Failure(.FailedRequest(error))
         } else if let data = data, rootKey = rootKey {
             return decodeArray(data, rootKey: rootKey)
         } else if let data = data {
             return decodeArray(data)
         } else {
-            return .Failure(.DataAbsence)
+            return .Failure(.AbsentData)
         }
     }
 }
 
 public enum JSONResponseError: ErrorType {
-    case FoundationDecode(NSError)
-    case ArgoDecode(DecodeError)
-    case Request(NSError)
-    case DataAbsence
+    case InvalidFormat(NSError)
+    case InvalidSchema(DecodeError)
+    case FailedRequest(NSError)
+    case AbsentData
 }
 
 private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, JSONResponseError> {
@@ -58,9 +58,9 @@ private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Resu
         let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
         return .Success(try decode(JSONObject).dematerialize())
     } catch let error as DecodeError {
-        return .Failure(.ArgoDecode(error))
+        return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
-        return .Failure(.FoundationDecode(error))
+        return .Failure(.InvalidFormat(error))
     }
 }
 
@@ -69,9 +69,9 @@ private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData) ->
         let array: [AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
         return .Success(try decode(array).dematerialize())
     } catch let error as DecodeError {
-        return .Failure(.ArgoDecode(error))
+        return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
-        return .Failure(.FoundationDecode(error))
+        return .Failure(.InvalidFormat(error))
     }
 }
 
@@ -80,9 +80,9 @@ private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, ro
         let dictionary: [String: AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
         return .Success(try decode(dictionary, rootKey: rootKey).dematerialize())
     } catch let error as DecodeError {
-        return .Failure(.ArgoDecode(error))
+        return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
-        return .Failure(.FoundationDecode(error))
+        return .Failure(.InvalidFormat(error))
     }
 }
 

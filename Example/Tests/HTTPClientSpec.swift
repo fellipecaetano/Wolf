@@ -47,9 +47,9 @@ class HTTPClientSpec: QuickSpec {
                     expect(user).toEventually(beNil())
                 }
 
-                it("responds with a model decoding error") {
+                it("responds with a schema decoding error") {
                     switch error! {
-                    case .ArgoDecode(let error):
+                    case .InvalidSchema(let error):
                         let expectedError = DecodeError.TypeMismatch(expected: "String", actual: "Number(1)")
                         expect(error).toEventually(equal(expectedError))
                     default:
@@ -74,9 +74,9 @@ class HTTPClientSpec: QuickSpec {
                     expect(user).toEventually(beNil())
                 }
 
-                it("responds with a general decoding error") {
+                it("responds with a format decoding error") {
                     switch error! {
-                    case .FoundationDecode(let error):
+                    case .InvalidFormat(let error):
                         expect(error).toEventuallyNot(beNil())
                     default:
                         fail()
