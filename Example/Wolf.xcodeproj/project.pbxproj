@@ -14,6 +14,8 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B3164C251D4AB2CC000102B8 /* NetworkingSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37005971D4AA72400844AC2 /* NetworkingSpec.swift */; };
+		B33D0A361D4BA1C200F8FC29 /* StoryboardsSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33D0A341D4BA1B000F8FC29 /* StoryboardsSpec.swift */; };
+		B33D0A3B1D4BA1F200F8FC29 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */; };
 		B36A2B3D1D4AB4B30061425A /* invalid_user.json in Resources */ = {isa = PBXBuildFile; fileRef = B36A2B3B1D4AB3B20061425A /* invalid_user.json */; };
 		B36A2B401D4AB6600061425A /* invalid_json.json in Resources */ = {isa = PBXBuildFile; fileRef = B36A2B3E1D4AB63F0061425A /* invalid_json.json */; };
 		B36A2B431D4AB73F0061425A /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = B36A2B411D4AB73C0061425A /* users.json */; };
@@ -47,6 +49,8 @@
 		607FACE51AFB9204008FA782 /* Wolf_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Wolf_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example_Wolf_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B33D0A341D4BA1B000F8FC29 /* StoryboardsSpec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardsSpec.swift; sourceTree = "<group>"; };
+		B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		B36A2B3B1D4AB3B20061425A /* invalid_user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_user.json; sourceTree = "<group>"; };
 		B36A2B3E1D4AB63F0061425A /* invalid_json.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_json.json; sourceTree = "<group>"; };
 		B36A2B411D4AB73C0061425A /* users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				B370059A1D4AA95000844AC2 /* Fixtures */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				B37005971D4AA72400844AC2 /* NetworkingSpec.swift */,
+				B33D0A341D4BA1B000F8FC29 /* StoryboardsSpec.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -169,7 +174,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B370059A1D4AA95000844AC2 /* Fixtures */ = {
+		B33D0A371D4BA1DA00F8FC29 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
 				B36A2B441D4AB9CA0061425A /* enveloped_users.json */,
@@ -177,6 +182,23 @@
 				B36A2B3B1D4AB3B20061425A /* invalid_user.json */,
 				B370059B1D4AA97B00844AC2 /* user.json */,
 				B36A2B411D4AB73C0061425A /* users.json */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		B33D0A381D4BA1E400F8FC29 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		B370059A1D4AA95000844AC2 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				B33D0A371D4BA1DA00F8FC29 /* JSON */,
+				B33D0A381D4BA1E400F8FC29 /* Storyboards */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -285,6 +307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B33D0A3B1D4BA1F200F8FC29 /* Test.storyboard in Resources */,
 				B36A2B431D4AB73F0061425A /* users.json in Resources */,
 				B36A2B401D4AB6600061425A /* invalid_json.json in Resources */,
 				B36A2B3D1D4AB4B30061425A /* invalid_user.json in Resources */,
@@ -507,6 +530,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3164C251D4AB2CC000102B8 /* NetworkingSpec.swift in Sources */,
+				B33D0A361D4BA1C200F8FC29 /* StoryboardsSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
