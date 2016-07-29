@@ -88,7 +88,3 @@ public enum ArgoResponseError: ErrorType {
     case FailedRequest(NSError)
     case AbsentData
 }
-
-public protocol JSONEnvelope {
-    var rootKey: String? { get }
-}
