@@ -6,122 +6,97 @@ import Alamofire
 import Argo
 import Wolf
 
-class NetworkingSpec: QuickSpec {
+class NetworkingTests: XCTestCase {
     private let client = ExampleClient()
 
-    // swiftlint:disable function_body_length
-    override func spec() {
-        afterEach {
-            OHHTTPStubs.removeAllStubs()
+    override func tearDown() {
+        OHHTTPStubs.removeAllStubs()
+    }
+
+    func testSuccessfulRequestForObject() {
+        stub(isPath("/get/user")) { _ in
+            return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
         }
 
-        describe("a HTTPClient sending object requests") {
-            context("when a request is sucessful") {
-                stub(isPath("/get/user")) { _ in
-                    return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
-                }
-
-                var user: User?
-                self.client.sendRequest(User.Resource.getUser) { response in
-                    user = response.result.value
-                }
-
-                it("responds with a constructed object") {
-                    expect(user?.username).toEventually(equal("fellipecaetano"))
-                }
-            }
-
-            context("when the responded JSON is schema-invalid") {
-                stub(isPath("/get/invalid_user")) { _ in
-                    return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
-                }
-
-                var user: User?
-                var error: JSONResponseError?
-                self.client.sendRequest(User.Resource.getInvalidUser) { response in
-                    user = response.result.value
-                    error = response.result.error
-                }
-
-                it("responds with a nil object") {
-                    expect(user).toEventually(beNil())
-                }
-
-                it("responds with a schema decoding error") {
-                    switch error! {
-                    case .InvalidSchema(let error):
-                        let expectedError = DecodeError.TypeMismatch(expected: "String", actual: "Number(1)")
-                        expect(error).toEventually(equal(expectedError))
-                    default:
-                        fail()
-                    }
-                }
-            }
-
-            context("when the responded JSON is format-invalid") {
-                stub(isPath("/get/invalid_json")) { _ in
-                    return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
-                }
-
-                var user: User?
-                var error: JSONResponseError?
-                self.client.sendRequest(User.Resource.getInvalidJSON) { response in
-                    user = response.result.value
-                    error = response.result.error
-                }
-
-                it("responds with a nil object") {
-                    expect(user).toEventually(beNil())
-                }
-
-                it("responds with a format decoding error") {
-                    switch error! {
-                    case .InvalidFormat(let error):
-                        expect(error).toEventuallyNot(beNil())
-                    default:
-                        fail()
-                    }
-                }
+        waitUntil { done in
+            self.client.sendRequest(User.Resource.getUser) { response in
+                expect(response.result.value?.username).to(equal("fellipecaetano"))
+                done()
             }
         }
+    }
 
-        describe("a HTTPClient sending array requests") {
-            context("when a flat request is sucessful") {
-                stub(isPath("/get/users")) { _ in
-                    return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
+    func testRequestForJSONWithInvalidSchema() {
+        stub(isPath("/get/invalid_user")) { _ in
+            return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
+        }
+
+        waitUntil { done in
+            self.client.sendRequest(User.Resource.getInvalidUser) { response in
+                expect(response.result.value).to(beNil())
+                expect(response.result.error).toNot(beNil())
+
+                switch response.result.error! {
+                case .InvalidSchema(let error):
+                    let expectedError = DecodeError.TypeMismatch(expected: "String", actual: "Number(1)")
+                    expect(error).to(equal(expectedError))
+                default:
+                    fail()
                 }
 
-                var users: [User]?
-                self.client.sendArrayRequest(User.Resource.getUsers) { response in
-                    users = response.result.value
-                }
-
-                it("responds with the expected object count") {
-                    expect(users?.count).toEventually(equal(3))
-                }
-
-                it("responds with the expected objects") {
-                    expect(users?[1].username).toEventually(equal("fellipe.caetano"))
-                }
+                done()
             }
+        }
+    }
 
-            context("when an enveloped request is sucessful") {
-                stub(isPath("/get/enveloped_users")) { _ in
-                    return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!, headers: nil)
+    func testRequestForJSONWithInvalidFormat() {
+        stub(isPath("/get/invalid_json")) { _ in
+            return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
+        }
+
+        waitUntil { done in
+            self.client.sendRequest(User.Resource.getInvalidJSON) { response in
+                expect(response.result.value).to(beNil())
+                expect(response.result.error).toNot(beNil())
+
+                switch response.result.error! {
+                case .InvalidFormat(let error):
+                    expect(error).toNot(beNil())
+                default:
+                    fail()
                 }
 
-                var users: [User]?
-                self.client.sendArrayRequest(User.ResourceCollection.getEnvelopedUsers) { response in
-                    users = response.result.value
-                }
+                done()
+            }
+        }
+    }
 
-                it("responds with the expected object count") {
-                    expect(users?.count).toEventually(equal(3))
-                }
+    func testSuccessfulRequestForFlatArray() {
+        stub(isPath("/get/users")) { _ in
+            return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
+        }
 
-                it("responds with the expected objects") {
-                    expect(users?[1].username).toEventually(equal("fellipe.caetano"))
-                }
+        waitUntil { done in
+            self.client.sendArrayRequest(User.Resource.getUsers) { response in
+                expect(response.result.value?.count).to(equal(3))
+                expect(response.result.value?[1].username).to(equal("fellipe.caetano"))
+
+                done()
+            }
+        }
+    }
+
+    func testSuccessfulRequestForEnvelopedArray() {
+        stub(isPath("/get/enveloped_users")) { _ in
+            return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!, headers: nil)
+        }
+
+        waitUntil { done in
+            self.client.sendArrayRequest(User.ResourceCollection.getEnvelopedUsers) { response in
+                expect(response.result.value?.count).to(equal(3))
+                expect(response.result.value?[1].username).to(equal("fellipe.caetano"))
+
+                done()
             }
         }
     }
