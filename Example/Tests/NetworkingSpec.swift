@@ -16,7 +16,7 @@ class NetworkingSpec: QuickSpec {
         }
 
         describe("a HTTPClient sending object requests") {
-            describe("when the request is sucessful") {
+            context("when a request is sucessful") {
                 stub(isPath("/get/user")) { _ in
                     return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
                 }
@@ -31,7 +31,7 @@ class NetworkingSpec: QuickSpec {
                 }
             }
 
-            describe("when the JSON is schema-invalid") {
+            context("when the responded JSON is schema-invalid") {
                 stub(isPath("/get/invalid_user")) { _ in
                     return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
                 }
@@ -58,7 +58,7 @@ class NetworkingSpec: QuickSpec {
                 }
             }
 
-            describe("when the JSON is format-invalid") {
+            context("when the responded JSON is format-invalid") {
                 stub(isPath("/get/invalid_json")) { _ in
                     return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
                 }
@@ -86,7 +86,7 @@ class NetworkingSpec: QuickSpec {
         }
 
         describe("a HTTPClient sending array requests") {
-            describe("when the flat request is sucessful") {
+            context("when a flat request is sucessful") {
                 stub(isPath("/get/users")) { _ in
                     return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
                 }
@@ -105,7 +105,7 @@ class NetworkingSpec: QuickSpec {
                 }
             }
 
-            describe("when the enveloped request is sucessful") {
+            context("when an enveloped request is sucessful") {
                 stub(isPath("/get/enveloped_users")) { _ in
                     return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!, headers: nil)
                 }
