@@ -38,7 +38,7 @@ public extension HTTPResource where Value: Decodable, Value.DecodedType == Value
 private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, ArgoResponseError> {
     do {
         let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-        return .Success(try decode(JSONObject).dematerialize())
+        return try .Success(decode(JSONObject).dematerialize())
     } catch let error as DecodeError {
         return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
@@ -49,7 +49,7 @@ private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Resu
 private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<[T], ArgoResponseError> {
     do {
         let array: [AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
-        return .Success(try decode(array).dematerialize())
+        return try .Success(decode(array).dematerialize())
     } catch let error as DecodeError {
         return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
@@ -74,7 +74,7 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Decodable, Value.
 private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, rootKey: String) -> Result<[T], ArgoResponseError> {
     do {
         let dictionary: [String: AnyObject] = try NSJSONSerialization.JSONObject(data, options: [])
-        return .Success(try decode(dictionary, rootKey: rootKey).dematerialize())
+        return try .Success(decode(dictionary, rootKey: rootKey).dematerialize())
     } catch let error as DecodeError {
         return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
