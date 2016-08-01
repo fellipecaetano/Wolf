@@ -2,12 +2,6 @@ import UIKit
 import Wolf
 
 class PopularShowsViewController: UICollectionViewController, Identifiable {
-    override var collectionView: UICollectionView? {
-        didSet {
-            collectionView?.register(ShowCollectionViewCell)
-        }
-    }
-
     private var shows: [Show] = [] {
         didSet {
             collectionView?.reloadData()
@@ -22,6 +16,8 @@ class PopularShowsViewController: UICollectionViewController, Identifiable {
         client.sendArrayRequest(Show.getPopularShows) { [weak self] response in
             self?.shows = response.result.value ?? []
         }
+
+        collectionView?.register(ShowCollectionViewCell)
     }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

@@ -1,4 +1,5 @@
 import UIKit
+import OHHTTPStubs
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -6,7 +7,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        installNetworkStubs()
+        installKeyWindow()
         return true
+    }
+
+    private func installKeyWindow() {
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        window?.rootViewController = UINavigationController(
+            rootViewController: Storyboard.Main.instantiateViewController() as PopularShowsViewController
+        )
+        window?.makeKeyAndVisible()
+    }
+
+    private func installNetworkStubs() {
+        stub(isPath("/shows/popular")) { _ in
+            return fixture(OHPathForFile("popular_shows.json", self.dynamicType)!, headers: nil)
+        }
     }
 }
