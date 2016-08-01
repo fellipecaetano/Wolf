@@ -84,7 +84,7 @@ client.sendRequest(Resource.get) { (response: Alamofire.Response<Value, Error>) 
 //...
 ```
 
-If you [Argo](https://github.com/thoughtbot/Argo) is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value. If the described request may fail with an `ArgoResponseError`, the `ResponseSerializers` come for free:
+If [Argo](https://github.com/thoughtbot/Argo) is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value. If the described request may fail with an `ArgoResponseError`, the `ResponseSerializers` come for free:
 
 ```swift
 struct DecodableValue: Decodable {
