@@ -156,9 +156,46 @@ class ViewController: UITableViewController {
 }
 ```
 
+### Storyboard management
+
+A type conforming to `StoryboardConvertible` describes a `.storyboard` file with a `name` and a `bundle`, which is the main bundle by default. If your `StoryboardConvertible` is a `String`-based `RawRepresentable`, the default implementation for `name` is the `rawValue`:
+
+```swift
+enum Storyboard: String, StoryboardConvertible {
+    case Main
+}
+```
+
+`StoryboardConvertible` instances can instantiate view controllers that conform to `Identifiable` using type inference, which greatly reduces verbosity. If the `Identifier` type of the `Identifiable` view controller is a `String`, its default implementation is the type's name:
+
+```swift
+class ViewController: UIViewController, Identifiable {}
+
+// ...
+
+let viewController: ViewController = Storyboard.Main.instantiateViewController()
+
+```
+
 ## Example
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+Inside the `Example` directory you will find a sample application that presents a grid of popular TV shows, demonstrating how everything works together. To run it:
+
+1. Clone the repository
+2. Enter the `Example` directory
+3. Open the `Wolf.xcworkspace` file in Xcode 7.3
+4. Select the `Wolf-Example` target in the target selection dropdown near the `Stop` button
+5. Build and run the application
+
+## Testing
+
+Inside the `Example` directory you will find a project holding the tests for Wolf. To run them:
+
+1. Clone the repository
+2. Enter the `Example` directory
+3. Open the `Wolf.xcworkspace` file in Xcode 7.3
+4. Select the `Wolf-Example` target in the target selection dropdown near the `Stop` button
+5. Press `⌘U` or click `Test` from the `Product` menu
 
 ## Requirements
 
