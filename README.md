@@ -127,13 +127,32 @@ The `Reusable` protocol defines a reusable resource. The `reuseIdentifier` is op
 class TableViewCell: UITableViewCell, Reusable {}
 ```
 
-An extension to `UITableViews` and `UICollectionViews` allows type-safe cell dequeuing that's powered by inference:
+An extension to `UITableView` and `UICollectionView` allows type-safe cell dequeuing that's powered by inference:
 
 ```swift
 func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
     let cell: CollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
     // ...
     return cell
+}
+```
+
+Optionally, you may also provide conformance to a `NibLoadable` protocol that defines NIB-based resources. The name of the `UINib` that describes the resource is the conforming type's name by default:
+
+```swift
+class TableViewCell: UITableViewCell, Reusable, NibLoadable {}
+```
+
+`UITableViewCells` and `UICollectionViewCells` that conform to both `Reusable` and `NibLoadable` can be registered efforlessly with another extension to `UITableView` and `UICollectionView`:
+
+```swift
+class ViewController: UITableViewController {
+    // ...
+    override func viewDidLoad() {
+        // ...
+        tableView.register(TableViewCell)
+    }
+    // ...
 }
 ```
 
