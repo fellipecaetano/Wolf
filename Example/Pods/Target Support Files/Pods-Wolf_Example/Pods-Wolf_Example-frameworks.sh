@@ -87,11 +87,13 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/Alamofire/Alamofire.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Argo/Argo.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Curry/Curry.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Nuke/Nuke.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Wolf/Wolf.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/Alamofire/Alamofire.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Argo/Argo.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Curry/Curry.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Nuke/Nuke.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Wolf/Wolf.framework"
 fi

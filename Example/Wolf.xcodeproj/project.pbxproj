@@ -25,6 +25,7 @@
 		B3A9FA151D4FC3E000A0B871 /* ShowCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */; };
 		B3A9FA161D4FC3E000A0B871 /* ShowCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */; };
 		B3A9FA1A1D4FC5B900A0B871 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A9FA171D4FC5B200A0B871 /* Show.swift */; };
+		B3E4C8371D4FC81100420FA4 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4C8361D4FC81100420FA4 /* Networking.swift */; };
 		E0AB3F8B0E172C92A4054C1F /* Pods_Wolf_Example_Wolf_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +66,7 @@
 		B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowCollectionViewCell.swift; sourceTree = "<group>"; };
 		B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShowCollectionViewCell.xib; sourceTree = "<group>"; };
 		B3A9FA171D4FC5B200A0B871 /* Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
+		B3E4C8361D4FC81100420FA4 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		BED485AB7C90A23CCC793E36 /* Pods-Wolf_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example.release.xcconfig"; sourceTree = "<group>"; };
 		C7792AC60B4157FBC191470F /* Pods_Wolf_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9564307F433F7CD42BB0A3B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */,
 				B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */,
 				B3A9FA171D4FC5B200A0B871 /* Show.swift */,
+				B3E4C8361D4FC81100420FA4 /* Networking.swift */,
 			);
 			path = "Example for Wolf";
 			sourceTree = "<group>";
@@ -552,6 +555,7 @@
 				B36D89C71D4FC375007AE71D /* Storyboards.swift in Sources */,
 				B36D89C51D4FC31E007AE71D /* PopularShowsViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				B3E4C8371D4FC81100420FA4 /* Networking.swift in Sources */,
 				B3A9FA1A1D4FC5B900A0B871 /* Show.swift in Sources */,
 				B3A9FA151D4FC3E000A0B871 /* ShowCollectionViewCell.swift in Sources */,
 			);
