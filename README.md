@@ -170,7 +170,7 @@ class ViewController: UITableViewController {
 }
 ```
 
-### Storyboard management
+### Storyboards
 
 A type conforming to `StoryboardConvertible` describes a `.storyboard` file with a `name` and a `bundle`, which is the main bundle by default. If your `StoryboardConvertible` is a `String`-based `RawRepresentable`, the default implementation for `name` is the `rawValue`:
 
