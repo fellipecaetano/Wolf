@@ -7,6 +7,20 @@
 
 Wolf is a collection of solutions to common problems faced when developing iOS apps. Currently it features an opinionated networking layer and type-safe routines to ease management of reusable views and storyboards, and the list is likely to grow in the near future.
 
+## Contents
+
+- [Principles](#principles)
+- [Usage](#usage)
+    - [Networking](#networking)
+    - [Reusable views](#reusable-views)
+    - [Storyboards](#storyboards)
+- [Example](#example)
+- [Testing](#testing)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Author](#author)
+- [License](#license)
+
 ## Principles
 
 A good deal of effort and energy spent on app development is dedicated to common tasks that are observed across almost all kinds of projects. There are many ways to address this duplication, but for most teams they are not standard and sometimes the wheel is re-invented for various reasons. Wolf aims to provide at least a starting point and a healthy baseline for the average iOS developer's everyday boilerplate. Its features include:
