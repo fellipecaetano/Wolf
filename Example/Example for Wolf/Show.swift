@@ -1,11 +1,3 @@
-//
-//  Show.swift
-//  Wolf
-//
-//  Created by Fellipe Caetano on 8/1/16.
-//  Copyright © 2016 CocoaPods. All rights reserved.
-//
-
 import Foundation
 import Argo
 import Curry
