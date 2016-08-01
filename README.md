@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 [![Platform](https://img.shields.io/cocoapods/p/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 
-Wolf is a collection of solutions to common problems faced when developing iOS apps. Currently it features an opinionated networking layer and type-safe routines to ease management of reusable views and storyboards, but the list will hopefully grow in the near future.
+Wolf is a collection of solutions to common problems faced when developing iOS apps. Currently it features an opinionated networking layer and type-safe routines to ease management of reusable views and storyboards, and the list is likely to grow in the near future.
 
 ## Principles
 
@@ -84,7 +84,7 @@ client.sendRequest(Resource.get) { (response: Alamofire.Response<Value, Error>) 
 //...
 ```
 
-If you [Argo](https://github.com/thoughtbot/Argo) is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value that may fail with an `ArgoResponseError` and the `ResponseSerializers` come for free:
+If you [Argo](https://github.com/thoughtbot/Argo) is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value. If the described request may fail with an `ArgoResponseError`, the `ResponseSerializers` come for free:
 
 ```swift
 struct DecodableValue: Decodable {
