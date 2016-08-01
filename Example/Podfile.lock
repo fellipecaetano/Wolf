@@ -1,6 +1,7 @@
 PODS:
   - Alamofire (3.4.1)
   - Argo (3.1.0)
+  - Curry (2.3.3)
   - Nimble (3.2.0)
   - OHHTTPStubs (5.1.0):
     - OHHTTPStubs/Default (= 5.1.0)
@@ -24,6 +25,7 @@ PODS:
     - Argo (~> 3.1)
 
 DEPENDENCIES:
+  - Curry (~> 2.3)
   - Nimble (~> 3.0)
   - OHHTTPStubs (~> 5.1)
   - OHHTTPStubs/Swift (~> 5.1)
@@ -36,10 +38,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 01a82e2f6c0f860ade35534c8dd88be61bdef40c
   Argo: bb0e94e309d6ceb8fa58910205c8968be101e429
+  Curry: 37223f4467e4802a08b6a414b526dcd919a4a777
   Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
   Wolf: 9fdbaddadcb7a990996b448ec0f5858ce17fde6b
 
-PODFILE CHECKSUM: ab09f6b6c233c9e3e1ecebe992a172abe49de59d
+PODFILE CHECKSUM: a12f477dd86ea213cbdd31c0ec42ce192f0e7360
 
 COCOAPODS: 1.1.0.beta.1

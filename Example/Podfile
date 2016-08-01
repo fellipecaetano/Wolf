@@ -2,6 +2,7 @@ use_frameworks!
 
 target 'Wolf_Example' do
   pod 'Wolf', :path => '../'
+  pod 'Curry', '~> 2.3'
 
   target 'Wolf_Tests' do
     pod 'Wolf', :path => '../'
