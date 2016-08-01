@@ -2,7 +2,7 @@
   "name": "Wolf",
   "version": "0.1.0",
   "summary": "Handy solutions to common app development problems.",
-  "description": "Handy solutions to common app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.",
+  "description": "Wolf brings handy solutions to common app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.",
   "homepage": "https://github.com/fellipecaetano/Wolf",
   "license": {
     "type": "MIT",
@@ -18,13 +18,60 @@
   "platforms": {
     "ios": "8.0"
   },
-  "dependencies": {
-    "Alamofire": [
-      "~> 3.4"
-    ],
-    "Argo": [
-      "~> 3.0"
-    ]
-  },
-  "source_files": "Wolf/Classes/**/*"
+  "requires_arc": true,
+  "default_subspecs": "All",
+  "subspecs": [
+    {
+      "name": "All",
+      "source_files": [
+        "Wolf/Classes/**/*"
+      ],
+      "dependencies": {
+        "Alamofire": [
+          "~> 3.4"
+        ],
+        "Argo": [
+          "~> 3.1"
+        ]
+      }
+    },
+    {
+      "name": "Storyboards",
+      "source_files": [
+        "Wolf/Classes/Storyboards/**/*"
+      ]
+    },
+    {
+      "name": "Reuse",
+      "source_files": [
+        "Wolf/Classes/Reuse/**/*"
+      ]
+    },
+    {
+      "name": "Networking",
+      "source_files": [
+        "Wolf/Classes/Networking/**/*"
+      ],
+      "dependencies": {
+        "Alamofire": [
+          "~> 3.4"
+        ]
+      }
+    },
+    {
+      "name": "Argo",
+      "source_files": [
+        "Wolf/Classes/Networking/**/*",
+        "Wolf/Classes/Argo/**/*"
+      ],
+      "dependencies": {
+        "Alamofire": [
+          "~> 3.4"
+        ],
+        "Argo": [
+          "~> 3.1"
+        ]
+      }
+    }
+  ]
 }

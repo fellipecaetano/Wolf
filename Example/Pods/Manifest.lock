@@ -1,6 +1,6 @@
 PODS:
   - Alamofire (3.4.1)
-  - Argo (3.0.3)
+  - Argo (3.1.0)
   - Nimble (3.2.0)
   - OHHTTPStubs (5.1.0):
     - OHHTTPStubs/Default (= 5.1.0)
@@ -18,8 +18,10 @@ PODS:
   - OHHTTPStubs/Swift (5.1.0):
     - OHHTTPStubs/Core
   - Wolf (0.1.0):
+    - Wolf/All (= 0.1.0)
+  - Wolf/All (0.1.0):
     - Alamofire (~> 3.4)
-    - Argo (~> 3.0)
+    - Argo (~> 3.1)
 
 DEPENDENCIES:
   - Nimble (~> 3.0)
@@ -33,10 +35,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 01a82e2f6c0f860ade35534c8dd88be61bdef40c
-  Argo: dd46f5df9faf4bbc5f21ee1e470315cd921d2cfc
+  Argo: bb0e94e309d6ceb8fa58910205c8968be101e429
   Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
-  Wolf: 17cf7d61d7c94e66730a2228ce74ba826dbb4009
+  Wolf: 568babf4f2ecba5a15fef4679b4086814e26c98c
 
 PODFILE CHECKSUM: ab09f6b6c233c9e3e1ecebe992a172abe49de59d
 
