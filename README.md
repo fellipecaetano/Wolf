@@ -17,11 +17,11 @@ A good deal of effort and energy spent on app development is dedicated to common
 
 ## Usage
 
-All of Wolf's features can be used in the same project or they can be integrated individually. It's up to you.
+All of Wolf's features can be used in the same project or be integrated individually. It's up to you.
 
 ### Networking
 
-The `HTTPResource` protocol formally defines Alamofire requests:
+The `HTTPResource` protocol formally defines [Alamofire](https://github.com/Alamofire/Alamofire) requests:
 
 ```swift
 enum Resource: HTTPResource {
@@ -84,7 +84,7 @@ client.sendRequest(Resource.get) { (response: Alamofire.Response<Value, Error>) 
 //...
 ```
 
-If you Argo is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value that may fail with an `ArgoResponseError` and the `ResponseSerializers` come for free:
+If you [Argo](https://github.com/thoughtbot/Argo) is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value that may fail with an `ArgoResponseError` and the `ResponseSerializers` come for free:
 
 ```swift
 struct DecodableValue: Decodable {
