@@ -19,7 +19,7 @@ struct Show {
 extension Show: Decodable {
     static func decode(json: JSON) -> Decoded<Show> {
         return curry(self.init)
-            <^> json <| ["images", "poster", "full"]
+            <^> json <| ["images", "poster", "thumb"]
             <*> json <| "title"
     }
 }
