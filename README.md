@@ -21,7 +21,7 @@ All of Wolf's features can be used in the same project or they can be integrated
 
 ### Networking
 
-The `HTTPResource` protocol formally defines HTTP requests.
+The `HTTPResource` protocol formally defines Alamofire requests:
 
 ```swift
 enum Resource: HTTPResource {
@@ -31,7 +31,7 @@ enum Resource: HTTPResource {
     // ... 
     
     var path: String {
-        return "...";
+        return "..."
     }
 
     var method: Alamofire.Method {
@@ -51,11 +51,70 @@ enum Resource: HTTPResource {
     }
     
     func serialize(data: NSData?, error: NSError?) -> Result<Value, Error> {
-        return .Success(/*...*/);
+        return .Success(/*...*/)
     }
 
     func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        return .Success([/*...*/]);
+        return .Success([/*...*/])
+    }
+}
+```
+
+You would typically describe a `HTTPClient` responsible for performing requests:
+
+```swift
+class ExampleClient: HTTPClient {
+    var baseURL: NSURL {
+        return NSURL(string: "https://example.com")!
+    }
+    
+    let manager = Manager()
+}
+```
+
+A `HTTPResource` knows how to create an Alamofire `ResponseSerializer`, so responses are automatically decoded:
+
+```swift
+//...
+
+client.sendRequest(Resource.get) { (response: Alamofire.Response<Value, Error>) in
+    // ...
+}
+
+//...
+```
+
+If you Argo is your option for JSON decoding, you can define a `HTTPResource` for a `Decodable` value that may fail with an `ArgoResponseError` and the `ResponseSerializers` come for free:
+
+```swift
+struct DecodableValue: Decodable {
+    // ...
+}
+
+enum Resource: HTTPResource {
+    typealias Value = DecodableValue
+    typealias Error = ArgoResponseError
+
+    // ... 
+    
+    var path: String {
+        return "..."
+    }
+
+    var method: Alamofire.Method {
+        return .GET
+    }
+
+    var parameters: [String: AnyObject]? {
+        return nil
+    }
+
+    var headers: [String: String]? {
+        return nil
+    }
+
+    var parameterEncoding: ParameterEncoding {
+        return .URL
     }
 }
 ```
