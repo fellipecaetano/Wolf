@@ -119,6 +119,23 @@ enum Resource: HTTPResource {
 }
 ```
 
+### Reusable views
+
+The `Reusable` protocol defines a reusable resource. The `reuseIdentifier` is optional since its default implementation is the name of the resource's type:
+
+```swift
+class TableViewCell: UITableViewCell, Reusable {}
+```
+
+An extension to `UITableViews` and `UICollectionViews` allows type-safe cell dequeuing that's powered by inference:
+
+```swift
+func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    let cell: CollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+    // ...
+    return cell
+}
+```
 
 ## Example
 
