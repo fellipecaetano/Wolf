@@ -199,13 +199,29 @@ Inside the `Example` directory you will find a project holding the tests for Wol
 
 ## Requirements
 
+- iOS 8.0+
+- Xcode 7.3+
+
 ## Installation
 
-Wolf is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+Wolf is available through [CocoaPods](http://cocoapods.org), a dependency manager for Cocoa projects. CocoaPods can be downloaded as a stand-alone app and can also be installed through [RubyGems](https://rubygems.org/):
+
+```bash
+$ gem install cocoapods
+```
+
+To integrate Wolf into your Xcode project using CocoaPods, specify it in your `Podfile`:
 
 ```ruby
-pod "Wolf"
+target '<target_name>' do
+  pod 'Wolf'
+end
+```
+
+Then, install your dependencies through the CocoaPods app or by running the following command in the same directory as your `Podfile`:
+
+```bash
+$ pod install
 ```
 
 ## Author
