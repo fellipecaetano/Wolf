@@ -1,12 +1,12 @@
 import Foundation
 import UIKit
 
-protocol NibLoadable {
+public protocol NibLoadable {
     static var name: String { get }
     static var bundle: NSBundle? { get }
 }
 
-extension NibLoadable {
+public extension NibLoadable {
     static var name: String {
         return String(Self)
     }
