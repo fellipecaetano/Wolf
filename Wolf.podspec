@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name             = 'Wolf'
   s.version          = '0.1.0'
-  s.summary          = 'Handy solutions to common app development problems.'
+  s.summary          = 'Handy solutions to common iOS app development problems.'
 
   s.description      = <<-DESC
-Wolf brings handy solutions to common app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.
+Wolf brings handy solutions to common iOS app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.
                        DESC
 
   s.homepage = 'https://github.com/fellipecaetano/Wolf'
