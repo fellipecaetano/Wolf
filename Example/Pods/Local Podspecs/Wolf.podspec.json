@@ -1,8 +1,8 @@
 {
   "name": "Wolf",
   "version": "0.1.0",
-  "summary": "Handy solutions to common app development problems.",
-  "description": "Wolf brings handy solutions to common app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.",
+  "summary": "Handy solutions to common iOS app development problems.",
+  "description": "Wolf brings handy solutions to common iOS app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.",
   "homepage": "https://github.com/fellipecaetano/Wolf",
   "license": {
     "type": "MIT",
