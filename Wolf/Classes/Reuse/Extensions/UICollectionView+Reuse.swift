@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-extension UICollectionView {
+public extension UICollectionView {
     func register<C: protocol<Reusable, NibLoadable>>(type: C.Type) {
         registerNib(type.nib, forCellWithReuseIdentifier: type.reuseIdentifier)
     }
