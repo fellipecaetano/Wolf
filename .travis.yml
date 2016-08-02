@@ -1,9 +1,8 @@
 osx_image: xcode7.3
 language: objective-c
 before_install:
-  - bundle install
   - pod repo update
   - pod install --project-directory=Example
 script:
-  - set -o pipefail && xcodebuild test -workspace Example/Wolf.xcworkspace -scheme Wolf-Example -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO | bundle exec xcpretty
+  - set -o pipefail && xcodebuild test -workspace Example/Wolf.xcworkspace -scheme Wolf-Example -sdk iphonesimulator9.3 ONLY_ACTIVE_ARCH=NO | xcpretty
   - pod lib lint
