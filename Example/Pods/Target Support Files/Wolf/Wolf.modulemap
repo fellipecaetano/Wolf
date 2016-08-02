@@ -1,6 +1,0 @@
-framework module Wolf {
-  umbrella header "Wolf-umbrella.h"
-
-  export *
-  module * { export * }
-}
