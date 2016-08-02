@@ -1,6 +1,6 @@
 # Wolf
 
-[![CI Status](http://img.shields.io/travis/fellipecaetano/Wolf.svg?style=flat)](https://travis-ci.org/Fellipe Caetano/Wolf)
+[![CI Status](http://img.shields.io/travis/fellipecaetano/Wolf.svg?style=flat)](https://travis-ci.org/fellipecaetano/Wolf)
 [![Version](https://img.shields.io/cocoapods/v/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 [![License](https://img.shields.io/cocoapods/l/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 [![Platform](https://img.shields.io/cocoapods/p/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
