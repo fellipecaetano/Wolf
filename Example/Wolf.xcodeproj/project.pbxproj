@@ -13,6 +13,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B3164C251D4AB2CC000102B8 /* ArgoNetworkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37005971D4AA72400844AC2 /* ArgoNetworkingTests.swift */; };
+		B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D511D52894100A9ADBF /* CachedResponseTests.swift */; };
 		B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */; };
 		B33D0A3B1D4BA1F200F8FC29 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */; };
 		B36A2B3D1D4AB4B30061425A /* invalid_user.json in Resources */ = {isa = PBXBuildFile; fileRef = B36A2B3B1D4AB3B20061425A /* invalid_user.json */; };
@@ -54,6 +55,7 @@
 		607FACE51AFB9204008FA782 /* Wolf_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Wolf_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example_Wolf_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3367D511D52894100A9ADBF /* CachedResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponseTests.swift; sourceTree = "<group>"; };
 		B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardsTests.swift; sourceTree = "<group>"; };
 		B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		B36A2B3B1D4AB3B20061425A /* invalid_user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_user.json; sourceTree = "<group>"; };
@@ -135,12 +137,12 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				B3E4C8361D4FC81100420FA4 /* Networking.swift */,
 				B36D89C41D4FC31E007AE71D /* PopularShowsViewController.swift */,
-				B36D89C61D4FC375007AE71D /* Storyboards.swift */,
+				B3A9FA171D4FC5B200A0B871 /* Show.swift */,
 				B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */,
 				B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */,
-				B3A9FA171D4FC5B200A0B871 /* Show.swift */,
-				B3E4C8361D4FC81100420FA4 /* Networking.swift */,
+				B36D89C61D4FC375007AE71D /* Storyboards.swift */,
 				B3E4C8381D4FCE9900420FA4 /* popular_shows.json */,
 			);
 			path = "Example for Wolf";
@@ -157,6 +159,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				B3367D501D52892100A9ADBF /* Cache */,
 				B36D89BE1D4F8749007AE71D /* Argo */,
 				B370059A1D4AA95000844AC2 /* Fixtures */,
 				B36D89BF1D4F8766007AE71D /* Storyboards */,
@@ -190,6 +193,14 @@
 				62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3367D501D52892100A9ADBF /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				B3367D511D52894100A9ADBF /* CachedResponseTests.swift */,
+			);
+			name = Cache;
 			sourceTree = "<group>";
 		};
 		B33D0A371D4BA1DA00F8FC29 /* JSON */ = {
@@ -571,6 +582,7 @@
 			files = (
 				B3164C251D4AB2CC000102B8 /* ArgoNetworkingTests.swift in Sources */,
 				B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */,
+				B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
