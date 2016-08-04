@@ -5,22 +5,14 @@ public extension HTTPClient {
         (resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
 
         let requestToSend = request(resource)
-        if let urlRequest = requestToSend.request,
-            underlyingCachedResponse = resource.cache.cachedResponseForRequest(urlRequest) {
+        let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
 
-            let cachedResponse = CachedResponse(cachedResponse: underlyingCachedResponse, duration: resource.cacheDuration)
-            guard !cachedResponse.isExpired else {
-                return requestToSend
-                    .validate()
-                    .response(responseSerializer: resource.responseSerializer,
-                              completionHandler: cache(resource, completionHandler))
-            }
-
-            let result = resource.responseSerializer.serializeResponse(urlRequest,
+        if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
+            let result = resource.responseSerializer.serializeResponse(requestToSend.request,
                                                                        cachedResponse.response as? NSHTTPURLResponse,
                                                                        cachedResponse.data,
                                                                        nil)
-            let response = Response(request: urlRequest,
+            let response = Response(request: requestToSend.request,
                                     response: cachedResponse.response as? NSHTTPURLResponse,
                                     data: cachedResponse.data,
                                     result: result)
@@ -38,22 +30,14 @@ public extension HTTPClient {
         (resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) -> Request {
 
         let requestToSend = request(resource)
-        if let urlRequest = requestToSend.request,
-            underlyingCachedResponse = resource.cache.cachedResponseForRequest(urlRequest) {
+        let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
 
-            let cachedResponse = CachedResponse(cachedResponse: underlyingCachedResponse, duration: resource.cacheDuration)
-            guard !cachedResponse.isExpired else {
-                return requestToSend
-                    .validate()
-                    .response(responseSerializer: resource.arrayResponseSerializer,
-                              completionHandler: cache(resource, completionHandler))
-            }
-
-            let result = resource.arrayResponseSerializer.serializeResponse(urlRequest,
+        if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
+            let result = resource.arrayResponseSerializer.serializeResponse(requestToSend.request,
                                                                             cachedResponse.response as? NSHTTPURLResponse,
                                                                             cachedResponse.data,
                                                                             nil)
-            let response = Response(request: urlRequest,
+            let response = Response(request: requestToSend.request,
                                     response: cachedResponse.response as? NSHTTPURLResponse,
                                     data: cachedResponse.data,
                                     result: result)
@@ -64,6 +48,16 @@ public extension HTTPClient {
                 .validate()
                 .response(responseSerializer: resource.arrayResponseSerializer,
                           completionHandler: cache(resource, completionHandler))
+        }
+    }
+}
+
+private extension CachedResponse {
+    init? <R: protocol<HTTPResource, CacheableResource>> (request: Request, resource: R) {
+        if let request = request.request, response = resource.cache.cachedResponseForRequest(request) {
+            self.init(cachedResponse: response, duration: resource.cacheDuration)
+        } else {
+            return nil
         }
     }
 }
