@@ -1,6 +1,6 @@
 public struct CachedResponse {
-    let cachedResponse: NSCachedURLResponse
-    let duration: NSTimeInterval
+    private let cachedResponse: NSCachedURLResponse
+    private let duration: NSTimeInterval
 
     public init (response: NSURLResponse,
                  data: NSData,
@@ -27,7 +27,7 @@ public struct CachedResponse {
         return creationDate.timeIntervalSinceNow > duration
     }
 
-    var creationDate: NSDate? {
+    private var creationDate: NSDate? {
         return cachedResponse.userInfo?["creation_date"] as? NSDate
     }
 
