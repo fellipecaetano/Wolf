@@ -31,8 +31,22 @@ public struct CachedResponse {
         return cachedResponse.userInfo?["creation_date"] as? NSDate
     }
 
-    public func store(for request: NSURLRequest,
-                          cache: NSURLCache = NSURLCache.sharedURLCache()) {
+    public var response: NSURLResponse {
+        return cachedResponse.response
+    }
+
+    public var data: NSData {
+        return cachedResponse.data
+    }
+
+    public func store(for request: NSURLRequest, cache: URLCache) {
         cache.storeCachedResponse(cachedResponse, forRequest: request)
     }
 }
+
+public protocol URLCache {
+    func cachedResponseForRequest(request: NSURLRequest) -> NSCachedURLResponse?
+    func storeCachedResponse(cachedResponse: NSCachedURLResponse, forRequest request: NSURLRequest)
+}
+
+extension NSURLCache: URLCache {}
