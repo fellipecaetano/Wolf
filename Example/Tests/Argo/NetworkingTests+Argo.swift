@@ -1,12 +1,10 @@
-import Foundation
 import XCTest
 import Nimble
 import OHHTTPStubs
-import Alamofire
 import Argo
 import Wolf
 
-class NetworkingTests: XCTestCase {
+class ArgoNetworkingTests: XCTestCase {
     private let client = ExampleClient()
 
     override func tearDown() {

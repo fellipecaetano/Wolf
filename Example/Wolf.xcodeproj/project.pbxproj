@@ -12,10 +12,10 @@
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
-		B3164C251D4AB2CC000102B8 /* ArgoNetworkingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37005971D4AA72400844AC2 /* ArgoNetworkingTests.swift */; };
+		B3164C251D4AB2CC000102B8 /* NetworkingTests+Argo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37005971D4AA72400844AC2 /* NetworkingTests+Argo.swift */; };
 		B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D511D52894100A9ADBF /* CachedResponseTests.swift */; };
 		B3367D5A1D537EC400A9ADBF /* TestNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D581D537EB500A9ADBF /* TestNetworking.swift */; };
-		B3367D5B1D537EE400A9ADBF /* NetworkingCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D561D537E6800A9ADBF /* NetworkingCacheTests.swift */; };
+		B3367D5B1D537EE400A9ADBF /* NetworkingTests+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D561D537E6800A9ADBF /* NetworkingTests+Cache.swift */; };
 		B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */; };
 		B33D0A3B1D4BA1F200F8FC29 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */; };
 		B36A2B3D1D4AB4B30061425A /* invalid_user.json in Resources */ = {isa = PBXBuildFile; fileRef = B36A2B3B1D4AB3B20061425A /* invalid_user.json */; };
@@ -58,7 +58,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example_Wolf_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3367D511D52894100A9ADBF /* CachedResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponseTests.swift; sourceTree = "<group>"; };
-		B3367D561D537E6800A9ADBF /* NetworkingCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkingCacheTests.swift; sourceTree = "<group>"; };
+		B3367D561D537E6800A9ADBF /* NetworkingTests+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Cache.swift"; sourceTree = "<group>"; };
 		B3367D581D537EB500A9ADBF /* TestNetworking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestNetworking.swift; sourceTree = "<group>"; };
 		B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardsTests.swift; sourceTree = "<group>"; };
 		B33D0A391D4BA1EE00F8FC29 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
@@ -68,7 +68,7 @@
 		B36A2B441D4AB9CA0061425A /* enveloped_users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enveloped_users.json; sourceTree = "<group>"; };
 		B36D89C41D4FC31E007AE71D /* PopularShowsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopularShowsViewController.swift; sourceTree = "<group>"; };
 		B36D89C61D4FC375007AE71D /* Storyboards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storyboards.swift; sourceTree = "<group>"; };
-		B37005971D4AA72400844AC2 /* ArgoNetworkingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArgoNetworkingTests.swift; sourceTree = "<group>"; };
+		B37005971D4AA72400844AC2 /* NetworkingTests+Argo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Argo.swift"; sourceTree = "<group>"; };
 		B370059B1D4AA97B00844AC2 /* user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user.json; sourceTree = "<group>"; };
 		B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowCollectionViewCell.swift; sourceTree = "<group>"; };
 		B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShowCollectionViewCell.xib; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				B3367D511D52894100A9ADBF /* CachedResponseTests.swift */,
-				B3367D561D537E6800A9ADBF /* NetworkingCacheTests.swift */,
+				B3367D561D537E6800A9ADBF /* NetworkingTests+Cache.swift */,
 			);
 			name = Cache;
 			sourceTree = "<group>";
@@ -231,7 +231,7 @@
 		B36D89BE1D4F8749007AE71D /* Argo */ = {
 			isa = PBXGroup;
 			children = (
-				B37005971D4AA72400844AC2 /* ArgoNetworkingTests.swift */,
+				B37005971D4AA72400844AC2 /* NetworkingTests+Argo.swift */,
 			);
 			path = Argo;
 			sourceTree = "<group>";
@@ -586,10 +586,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3164C251D4AB2CC000102B8 /* ArgoNetworkingTests.swift in Sources */,
+				B3164C251D4AB2CC000102B8 /* NetworkingTests+Argo.swift in Sources */,
 				B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */,
 				B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */,
-				B3367D5B1D537EE400A9ADBF /* NetworkingCacheTests.swift in Sources */,
+				B3367D5B1D537EE400A9ADBF /* NetworkingTests+Cache.swift in Sources */,
 				B3367D5A1D537EC400A9ADBF /* TestNetworking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
