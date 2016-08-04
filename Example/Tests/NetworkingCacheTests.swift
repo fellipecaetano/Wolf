@@ -81,12 +81,12 @@ class CacheNetworkingTests: XCTestCase {
             return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
         }
 
+        let validJSON = NSData(contentsOfFile: OHPathForFile("user.json", self.dynamicType)!)!
+        let cachedResponse = CachedResponse(response: NSURLResponse(), data: validJSON, duration: 30)
         let cache = TestURLCache()
         let resource = User.CacheableResource.getCachedUser(cache: cache)
 
-        let validJSON = NSData(contentsOfFile: OHPathForFile("user.json", self.dynamicType)!)!
-        let cachedResponse = NSCachedURLResponse(response: NSURLResponse(), data: validJSON, userInfo: nil, storagePolicy: .AllowedInMemoryOnly)
-        cache.storeCachedResponse(cachedResponse, forRequest: client.request(resource).request!)
+        cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
@@ -101,16 +101,64 @@ class CacheNetworkingTests: XCTestCase {
             return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
         }
 
+        let validJSON = NSData(contentsOfFile: OHPathForFile("users.json", self.dynamicType)!)!
+        let cachedResponse = CachedResponse(response: NSURLResponse(), data: validJSON, duration: 30)
         let cache = TestURLCache()
         let resource = User.CacheableResource.getCachedUsers(cache: cache)
 
-        let validJSON = NSData(contentsOfFile: OHPathForFile("users.json", self.dynamicType)!)!
-        let cachedResponse = NSCachedURLResponse(response: NSURLResponse(), data: validJSON, userInfo: nil, storagePolicy: .AllowedInMemoryOnly)
-        cache.storeCachedResponse(cachedResponse, forRequest: client.request(resource).request!)
+        cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
             self.client.sendArrayRequest(resource) { response in
                 expect(response.result.value?.count).to(equal(3))
+                done()
+            }
+        }
+    }
+
+    func testThatExpiredCachedObjectRequestsAreSkipped() {
+        stub(isPath("/get/user")) { _ in
+            return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
+        }
+
+        let cache = TestURLCache()
+        let resource = User.CacheableResource.getCachedUser(cache: cache)
+        let validJSON = NSData(contentsOfFile: OHPathForFile("user.json", self.dynamicType)!)!
+        let cachedResponse = CachedResponse(response: NSURLResponse(),
+                                            data: validJSON,
+                                            duration: resource.cacheDuration,
+                                            creationDate: NSDate(timeIntervalSinceNow: resource.cacheDuration + 1))
+
+        cachedResponse.store(for: client.request(resource).request!, cache: cache)
+
+        waitUntil { done in
+            self.client.sendRequest(resource) { response in
+                expect(response.result.value).to(beNil())
+                expect(response.result.error).toNot(beNil())
+                done()
+            }
+        }
+    }
+
+    func testThatExpiredCachedArrayRequestsAreSkipped() {
+        stub(isPath("/get/users")) { _ in
+            return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
+        }
+
+        let cache = TestURLCache()
+        let resource = User.CacheableResource.getCachedUsers(cache: cache)
+        let validJSON = NSData(contentsOfFile: OHPathForFile("users.json", self.dynamicType)!)!
+        let cachedResponse = CachedResponse(response: NSURLResponse(),
+                                            data: validJSON,
+                                            duration: resource.cacheDuration,
+                                            creationDate: NSDate(timeIntervalSinceNow: resource.cacheDuration + 1))
+
+        cachedResponse.store(for: client.request(resource).request!, cache: cache)
+
+        waitUntil { done in
+            self.client.sendArrayRequest(resource) { response in
+                expect(response.result.value).to(beNil())
+                expect(response.result.error).toNot(beNil())
                 done()
             }
         }
@@ -145,6 +193,10 @@ private extension User {
 
         var cacheStoragePolicy: NSURLCacheStoragePolicy {
             return .AllowedInMemoryOnly
+        }
+
+        var cacheDuration: NSTimeInterval {
+            return 15
         }
     }
 }
