@@ -8,14 +8,10 @@ public extension HTTPClient {
         let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
 
         if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
-            let result = resource.responseSerializer.serializeResponse(requestToSend.request,
-                                                                       cachedResponse.response as? NSHTTPURLResponse,
-                                                                       cachedResponse.data,
-                                                                       nil)
-            let response = Response(request: requestToSend.request,
-                                    response: cachedResponse.response as? NSHTTPURLResponse,
-                                    data: cachedResponse.data,
-                                    result: result)
+            let response: Response = resource.responseSerializer.serializeResponse(requestToSend.request,
+                                                                                   cachedResponse.response as? NSHTTPURLResponse,
+                                                                                   cachedResponse.data,
+                                                                                   nil)
             completionHandler(response)
             return requestToSend
         } else {
@@ -33,18 +29,14 @@ public extension HTTPClient {
         let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
 
         if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
-            let result = resource.arrayResponseSerializer.serializeResponse(requestToSend.request,
-                                                                            cachedResponse.response as? NSHTTPURLResponse,
-                                                                            cachedResponse.data,
-                                                                            nil)
-            let response = Response(request: requestToSend.request,
-                                    response: cachedResponse.response as? NSHTTPURLResponse,
-                                    data: cachedResponse.data,
-                                    result: result)
+            let response: Response = resource.arrayResponseSerializer.serializeResponse(requestToSend.request,
+                                                                                        cachedResponse.response as? NSHTTPURLResponse,
+                                                                                        cachedResponse.data,
+                                                                                        nil)
             completionHandler(response)
             return requestToSend
         } else {
-            return request(resource)
+            return requestToSend
                 .validate()
                 .response(responseSerializer: resource.arrayResponseSerializer,
                           completionHandler: cache(resource, completionHandler))
@@ -59,6 +51,16 @@ private extension CachedResponse {
         } else {
             return nil
         }
+    }
+}
+
+private extension ResponseSerializerType {
+    func serializeResponse(request: NSURLRequest?,
+                           _ response: NSHTTPURLResponse?,
+                             _ data: NSData?,
+                               _ error: NSError?) -> Response<SerializedObject, ErrorObject> {
+        let result = serializeResponse(request, response, data, error)
+        return Response(request: request, response: response, data: data, result: result)
     }
 }
 
