@@ -39,5 +39,10 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     argo.dependency 'Argo', '~> 3.1'
   end
 
+  s.subspec 'Cache' do |argo|
+    argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
+    argo.dependency 'Alamofire', '~> 3.4'
+  end
+
   s.default_subspec = 'All'
 end
