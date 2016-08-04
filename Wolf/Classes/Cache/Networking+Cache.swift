@@ -4,48 +4,44 @@ public extension HTTPClient {
     func sendRequest<R: protocol<HTTPResource, CacheableResource>>
         (resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
 
-        let requestToSend = request(resource)
-        let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
-
-        if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
-            let response: Response = resource.responseSerializer.serializeResponse(requestToSend.request,
-                                                                                   cachedResponse.response as? NSHTTPURLResponse,
-                                                                                   cachedResponse.data,
-                                                                                   nil)
-            completionHandler(response)
-            return requestToSend
-        } else {
-            return requestToSend
-                .validate()
-                .response(responseSerializer: resource.responseSerializer,
-                          completionHandler: cache(resource, completionHandler))
-        }
+        return request(resource)
+            .validate()
+            .cachedResponse(resource,
+                            responseSerializer: resource.responseSerializer,
+                            completionHandler: cache(resource, completionHandler))
     }
 
     func sendArrayRequest<R: protocol<HTTPResource, CacheableResource>>
         (resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) -> Request {
 
-        let requestToSend = request(resource)
-        let cachedResponse = CachedResponse(request: requestToSend, resource: resource)
+        return request(resource)
+            .validate()
+            .cachedResponse(resource,
+                            responseSerializer: resource.arrayResponseSerializer,
+                            completionHandler: cache(resource, completionHandler))
+    }
+}
 
-        if let cachedResponse = cachedResponse where !cachedResponse.isExpired {
-            let response: Response = resource.arrayResponseSerializer.serializeResponse(requestToSend.request,
-                                                                                        cachedResponse.response as? NSHTTPURLResponse,
-                                                                                        cachedResponse.data,
-                                                                                        nil)
+private extension Request {
+    func cachedResponse<C: CacheableResource, S: ResponseSerializerType>
+        (resource: C, responseSerializer: S, completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Self {
+
+        if let cachedResponse = CachedResponse(request: self, resource: resource) where !cachedResponse.isExpired {
+            let response: Response = responseSerializer.serializeResponse(request,
+                                                                          cachedResponse.response as? NSHTTPURLResponse,
+                                                                          cachedResponse.data,
+                                                                          nil)
             completionHandler(response)
-            return requestToSend
+            return self
         } else {
-            return requestToSend
-                .validate()
-                .response(responseSerializer: resource.arrayResponseSerializer,
-                          completionHandler: cache(resource, completionHandler))
+            return validate().response(responseSerializer: responseSerializer,
+                                       completionHandler: completionHandler)
         }
     }
 }
 
 private extension CachedResponse {
-    init? <R: protocol<HTTPResource, CacheableResource>> (request: Request, resource: R) {
+    init? <R: CacheableResource> (request: Request, resource: R) {
         if let request = request.request, response = resource.cache.cachedResponseForRequest(request) {
             self.init(cachedResponse: response, duration: resource.cacheDuration)
         } else {
@@ -64,7 +60,7 @@ private extension ResponseSerializerType {
     }
 }
 
-private func cache<R: protocol<HTTPResource, CacheableResource>, V, E: ErrorType>
+private func cache<R: CacheableResource, V, E: ErrorType>
     (resource: R, _ completionHandler: Response<V, E> -> Void) -> Response<V, E> -> Void {
 
     return { response in
