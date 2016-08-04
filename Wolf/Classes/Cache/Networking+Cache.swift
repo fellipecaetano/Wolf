@@ -22,6 +22,22 @@ public extension HTTPClient {
     }
 }
 
+public protocol CacheableResource {
+    var cache: URLCache { get }
+    var cacheDuration: NSTimeInterval { get }
+    var cacheStoragePolicy: NSURLCacheStoragePolicy { get }
+}
+
+public extension CacheableResource {
+    var cache: URLCache {
+        return NSURLCache.sharedURLCache()
+    }
+
+    var cacheStoragePolicy: NSURLCacheStoragePolicy {
+        return .Allowed
+    }
+}
+
 private extension Request {
     func cachedResponse<C: CacheableResource, S: ResponseSerializerType>
         (resource: C, responseSerializer: S, completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Self {
@@ -50,16 +66,6 @@ private extension CachedResponse {
     }
 }
 
-private extension ResponseSerializerType {
-    func serializeResponse(request: NSURLRequest?,
-                           _ response: NSHTTPURLResponse?,
-                             _ data: NSData?,
-                               _ error: NSError?) -> Response<SerializedObject, ErrorObject> {
-        let result = serializeResponse(request, response, data, error)
-        return Response(request: request, response: response, data: data, result: result)
-    }
-}
-
 private func cache<R: CacheableResource, V, E: ErrorType>
     (resource: R, _ completionHandler: Response<V, E> -> Void) -> Response<V, E> -> Void {
 
@@ -75,18 +81,12 @@ private func cache<R: CacheableResource, V, E: ErrorType>
     }
 }
 
-public protocol CacheableResource {
-    var cache: URLCache { get }
-    var cacheDuration: NSTimeInterval { get }
-    var cacheStoragePolicy: NSURLCacheStoragePolicy { get }
-}
-
-public extension CacheableResource {
-    var cache: URLCache {
-        return NSURLCache.sharedURLCache()
-    }
-
-    var cacheStoragePolicy: NSURLCacheStoragePolicy {
-        return .Allowed
+private extension ResponseSerializerType {
+    func serializeResponse(request: NSURLRequest?,
+                           _ response: NSHTTPURLResponse?,
+                             _ data: NSData?,
+                               _ error: NSError?) -> Response<SerializedObject, ErrorObject> {
+        let result = serializeResponse(request, response, data, error)
+        return Response(request: request, response: response, data: data, result: result)
     }
 }
