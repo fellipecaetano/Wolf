@@ -81,10 +81,10 @@ class CacheNetworkingTests: XCTestCase {
             return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
         }
 
-        let validJSON = NSData(contentsOfFile: OHPathForFile("user.json", self.dynamicType)!)!
-        let cachedResponse = CachedResponse(response: NSURLResponse(), data: validJSON, duration: 30)
         let cache = TestURLCache()
         let resource = User.CacheableResource.getCachedUser(cache: cache)
+        let validJSON = NSData(contentsOfFile: OHPathForFile("user.json", self.dynamicType)!)!
+        let cachedResponse = CachedResponse(response: NSURLResponse(), data: validJSON, duration: 30)
 
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
@@ -202,13 +202,13 @@ private extension User {
 }
 
 private class TestURLCache: URLCache {
-    var cachedResponses: [NSURLRequest: NSCachedURLResponse] = [:]
+    var cachedResponses: [NSURL: NSCachedURLResponse] = [:]
 
     func storeCachedResponse(cachedResponse: NSCachedURLResponse, forRequest request: NSURLRequest) {
-        cachedResponses[request] = cachedResponse
+        cachedResponses[request.URL!] = cachedResponse
     }
 
     private func cachedResponseForRequest(request: NSURLRequest) -> NSCachedURLResponse? {
-        return cachedResponses[request]
+        return cachedResponses[request.URL!]
     }
 }
