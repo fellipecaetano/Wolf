@@ -80,3 +80,13 @@ public protocol CacheableResource {
     var cacheDuration: NSTimeInterval { get }
     var cacheStoragePolicy: NSURLCacheStoragePolicy { get }
 }
+
+public extension CacheableResource {
+    var cache: URLCache {
+        return NSURLCache.sharedURLCache()
+    }
+
+    var cacheStoragePolicy: NSURLCacheStoragePolicy {
+        return .Allowed
+    }
+}
