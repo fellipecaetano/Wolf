@@ -90,7 +90,7 @@ class ArgoNetworkingTests: XCTestCase {
         }
 
         waitUntil { done in
-            self.client.sendArrayRequest(User.ResourceCollection.getEnvelopedUsers) { response in
+            self.client.sendArrayRequest(User.EnvelopedResource.getEnvelopedUsers) { response in
                 expect(response.result.value?.count) == 3
                 expect(response.result.value?[1].username) == "fellipe.caetano"
 

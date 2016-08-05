@@ -15,7 +15,7 @@ extension Song: Unboxable {
 extension Song {
     enum Resource: HTTPResource {
         typealias Value = Song
-        typealias Error = NSError
+        typealias Error = UnboxResponseError
 
         case getSong
         case getSongs
@@ -32,7 +32,7 @@ extension Song {
 
     enum EnvelopedResource: HTTPResource, JSONEnvelope {
         typealias Value = Song
-        typealias Error = NSError
+        typealias Error = UnboxResponseError
 
         case getEnvelopedSongs
 
