@@ -18,6 +18,7 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     all.source_files = ['Wolf/Classes/**/*']
     all.dependency 'Alamofire', '~> 3.4'
     all.dependency 'Argo', '~> 3.1'
+    all.dependency 'Unbox', '~> 1.9'
   end
 
   s.subspec 'Storyboards' do |all|
