@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Wolf'
-  s.version          = '0.2.0'
+  s.version          = '0.3.0'
   s.summary          = 'Handy solutions to common iOS app development problems.'
 
   s.description      = <<-DESC
