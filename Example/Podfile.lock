@@ -19,11 +19,13 @@ PODS:
   - OHHTTPStubs/OHPathHelpers (5.1.0)
   - OHHTTPStubs/Swift (5.1.0):
     - OHHTTPStubs/Core
-  - Wolf (0.1.0):
-    - Wolf/All (= 0.1.0)
-  - Wolf/All (0.1.0):
+  - Unbox (1.9)
+  - Wolf (0.2.0):
+    - Wolf/All (= 0.2.0)
+  - Wolf/All (0.2.0):
     - Alamofire (~> 3.4)
     - Argo (~> 3.1)
+    - Unbox (~> 1.9)
 
 DEPENDENCIES:
   - Curry (~> 2.3)
@@ -44,7 +46,8 @@ SPEC CHECKSUMS:
   Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
   Nuke: d951142c7499e18f242e59ae7fb95a021a2a4974
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
-  Wolf: 9fdbaddadcb7a990996b448ec0f5858ce17fde6b
+  Unbox: a6f56a1682b5fd2ba6aea96d7b1ec17599db4f05
+  Wolf: d250fcb1ba97da1ebad707f8160bfc6f9f90ab5f
 
 PODFILE CHECKSUM: c659f2eefc04e7b171440cda6a04fbcac8193610
 
