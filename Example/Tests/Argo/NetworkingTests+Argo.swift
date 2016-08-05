@@ -12,7 +12,7 @@ class ArgoNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForObject() {
-        stub(isPath("/get/user")) { _ in
+        stub(isPath("/user")) { _ in
             return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
         }
 
@@ -25,12 +25,12 @@ class ArgoNetworkingTests: XCTestCase {
     }
 
     func testInvalidSchemaObjectRequest() {
-        stub(isPath("/get/invalid_user")) { _ in
+        stub(isPath("/user/invalid_schema")) { _ in
             return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
         }
 
         waitUntil { done in
-            self.client.sendRequest(User.Resource.getInvalidUser) { response in
+            self.client.sendRequest(User.Resource.getInvalidSchemaUser) { response in
                 expect(response.result.value).to(beNil())
                 expect(response.result.error).toNot(beNil())
 
@@ -48,12 +48,12 @@ class ArgoNetworkingTests: XCTestCase {
     }
 
     func testInvalidFormatObjectRequest() {
-        stub(isPath("/get/invalid_json")) { _ in
+        stub(isPath("/user/invalid_format")) { _ in
             return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
         }
 
         waitUntil { done in
-            self.client.sendRequest(User.Resource.getInvalidJSON) { response in
+            self.client.sendRequest(User.Resource.getInvalidFormatUser) { response in
                 expect(response.result.value).to(beNil())
                 expect(response.result.error).toNot(beNil())
 
@@ -70,7 +70,7 @@ class ArgoNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForFlatArray() {
-        stub(isPath("/get/users")) { _ in
+        stub(isPath("/users")) { _ in
             return fixture(OHPathForFile("users.json", self.dynamicType)!, headers: nil)
         }
 
@@ -85,7 +85,7 @@ class ArgoNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForEnvelopedArray() {
-        stub(isPath("/get/enveloped_users")) { _ in
+        stub(isPath("/users/enveloped")) { _ in
             return fixture(OHPathForFile("enveloped_users.json", self.dynamicType)!, headers: nil)
         }
 

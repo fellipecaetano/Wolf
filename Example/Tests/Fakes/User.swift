@@ -18,23 +18,23 @@ extension User {
         typealias Error = ArgoResponseError
 
         case getUser
-        case getInvalidUser
-        case getInvalidJSON
         case getUsers
+        case getInvalidSchemaUser
+        case getInvalidFormatUser
 
         var path: String {
             switch self {
             case .getUser:
-                return "get/user"
-
-            case .getInvalidUser:
-                return "get/invalid_user"
-
-            case .getInvalidJSON:
-                return "get/invalid_json"
+                return "user"
 
             case .getUsers:
-                return "get/users"
+                return "users"
+
+            case .getInvalidSchemaUser:
+                return "user/invalid_schema"
+
+            case .getInvalidFormatUser:
+                return "user/invalid_format"
             }
         }
     }
@@ -48,7 +48,7 @@ extension User {
         var path: String {
             switch self {
             case .getEnvelopedUsers:
-                return "get/enveloped_users"
+                return "users/enveloped"
             }
         }
 
