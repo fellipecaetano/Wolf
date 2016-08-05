@@ -30,6 +30,7 @@
 		B3DFA57B1D5501A30083AEE7 /* TestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFA5751D5501900083AEE7 /* TestClient.swift */; };
 		B3DFA57C1D5501FF0083AEE7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFA5771D5501960083AEE7 /* User.swift */; };
 		B3DFA57D1D5502020083AEE7 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFA5791D55019A0083AEE7 /* Song.swift */; };
+		B3DFA5801D5503C10083AEE7 /* NetworkingTests+Unbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DFA57E1D5503BC0083AEE7 /* NetworkingTests+Unbox.swift */; };
 		B3E4C8371D4FC81100420FA4 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4C8361D4FC81100420FA4 /* Networking.swift */; };
 		B3E4C8391D4FCE9900420FA4 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = B3E4C8381D4FCE9900420FA4 /* popular_shows.json */; };
 		E0AB3F8B0E172C92A4054C1F /* Pods_Wolf_Example_Wolf_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */; };
@@ -77,6 +78,7 @@
 		B3DFA5751D5501900083AEE7 /* TestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestClient.swift; sourceTree = "<group>"; };
 		B3DFA5771D5501960083AEE7 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B3DFA5791D55019A0083AEE7 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		B3DFA57E1D5503BC0083AEE7 /* NetworkingTests+Unbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Unbox.swift"; sourceTree = "<group>"; };
 		B3E4C8361D4FC81100420FA4 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		B3E4C8381D4FCE9900420FA4 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
 		BED485AB7C90A23CCC793E36 /* Pods-Wolf_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -167,12 +169,13 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				B3DFA5741D55017D0083AEE7 /* Fakes */,
 				B36D89BE1D4F8749007AE71D /* Argo */,
 				B3367D501D52892100A9ADBF /* Cache */,
+				B3DFA5741D55017D0083AEE7 /* Fakes */,
 				B370059A1D4AA95000844AC2 /* Fixtures */,
 				B36D89BF1D4F8766007AE71D /* Storyboards */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
+				B3DFA5811D5503D10083AEE7 /* Unbox */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -261,11 +264,19 @@
 		B3DFA5741D55017D0083AEE7 /* Fakes */ = {
 			isa = PBXGroup;
 			children = (
+				B3DFA5791D55019A0083AEE7 /* Song.swift */,
 				B3DFA5751D5501900083AEE7 /* TestClient.swift */,
 				B3DFA5771D5501960083AEE7 /* User.swift */,
-				B3DFA5791D55019A0083AEE7 /* Song.swift */,
 			);
-			name = Fakes;
+			path = Fakes;
+			sourceTree = "<group>";
+		};
+		B3DFA5811D5503D10083AEE7 /* Unbox */ = {
+			isa = PBXGroup;
+			children = (
+				B3DFA57E1D5503BC0083AEE7 /* NetworkingTests+Unbox.swift */,
+			);
+			path = Unbox;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -600,6 +611,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3DFA5801D5503C10083AEE7 /* NetworkingTests+Unbox.swift in Sources */,
 				B3164C251D4AB2CC000102B8 /* NetworkingTests+Argo.swift in Sources */,
 				B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */,
 				B3DFA57B1D5501A30083AEE7 /* TestClient.swift in Sources */,
