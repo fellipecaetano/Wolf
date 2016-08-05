@@ -18,7 +18,7 @@ class ArgoNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(User.Resource.getUser) { response in
-                expect(response.result.value?.username).to(equal("fellipecaetano"))
+                expect(response.result.value?.username) == "fellipecaetano"
                 done()
             }
         }
@@ -76,8 +76,8 @@ class ArgoNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendArrayRequest(User.Resource.getUsers) { response in
-                expect(response.result.value?.count).to(equal(3))
-                expect(response.result.value?[1].username).to(equal("fellipe.caetano"))
+                expect(response.result.value?.count) == 3
+                expect(response.result.value?[1].username) == "fellipe.caetano"
 
                 done()
             }
@@ -91,8 +91,8 @@ class ArgoNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendArrayRequest(User.ResourceCollection.getEnvelopedUsers) { response in
-                expect(response.result.value?.count).to(equal(3))
-                expect(response.result.value?[1].username).to(equal("fellipe.caetano"))
+                expect(response.result.value?.count) == 3
+                expect(response.result.value?[1].username) == "fellipe.caetano"
 
                 done()
             }

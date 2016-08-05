@@ -7,7 +7,7 @@ import Wolf
 class StoryboardsTests: XCTestCase {
     func testViewControllerInstantiation() {
         let viewController: TestViewController = Storyboard.Test.instantiateViewController()
-        expect(String(viewController.dynamicType)).to(equal("TestViewController"))
+        expect(String(viewController.dynamicType)) == "TestViewController"
     }
 }
 

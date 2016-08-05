@@ -17,8 +17,7 @@ class CacheNetworkingTests: XCTestCase {
         waitUntil { done in
             self.client.sendRequest(resource) { response in
                 let cachedResponse = cache.cachedResponseForRequest(response.request!)
-                expect(cachedResponse).toNot(beNil())
-                expect(cachedResponse?.storagePolicy).to(equal(NSURLCacheStoragePolicy.AllowedInMemoryOnly))
+                expect(cachedResponse?.storagePolicy) == .AllowedInMemoryOnly
                 done()
             }
         }
@@ -35,8 +34,7 @@ class CacheNetworkingTests: XCTestCase {
         waitUntil { done in
             self.client.sendArrayRequest(resource) { response in
                 let cachedResponse = cache.cachedResponseForRequest(response.request!)
-                expect(cachedResponse).toNot(beNil())
-                expect(cachedResponse?.storagePolicy).to(equal(NSURLCacheStoragePolicy.AllowedInMemoryOnly))
+                expect(cachedResponse?.storagePolicy) == .AllowedInMemoryOnly
                 done()
             }
         }
@@ -90,7 +88,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                expect(response.result.value?.username).to(equal("fellipecaetano"))
+                expect(response.result.value?.username) == "fellipecaetano"
                 done()
             }
         }
@@ -110,7 +108,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendArrayRequest(resource) { response in
-                expect(response.result.value?.count).to(equal(3))
+                expect(response.result.value?.count) == 3
                 done()
             }
         }

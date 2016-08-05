@@ -10,11 +10,15 @@ class UnboxNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForObject() {
-        stub(isPath("/get/user")) { _ in
-            return fixture(OHPathForFile("user.json", self.dynamicType)!, headers: nil)
+        stub(isPath("/song")) { _ in
+            return fixture(OHPathForFile("song.json", self.dynamicType)!, headers: nil)
         }
 
         waitUntil { done in
+//            self.client.sendRequest(Song.Resource.getSong) { response in
+//                expect(response.result.value?.title) == "Northern Lites"
+//            }
+
             done()
         }
     }
