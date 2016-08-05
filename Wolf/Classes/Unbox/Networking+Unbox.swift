@@ -11,8 +11,8 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
                 return .Success(song)
             } catch let error as UnboxError {
                 return .Failure(.InvalidSchema(error))
-            } catch let error as NSError {
-                return .Failure(.InvalidFormat(error))
+            } catch let error {
+                return .Failure(.UnknownFailure(error))
             }
         } else {
             return .Failure(.AbsentData)
@@ -28,8 +28,8 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
                 return .Success(song)
             } catch let error as UnboxError {
                 return .Failure(.InvalidSchema(error))
-            } catch let error as NSError {
-                return .Failure(.InvalidFormat(error))
+            } catch let error {
+                return .Failure(.UnknownFailure(error))
             }
         } else {
             return .Failure(.AbsentData)
@@ -62,4 +62,5 @@ public enum UnboxResponseError: ErrorType {
     case InvalidSchema(UnboxError)
     case FailedRequest(NSError)
     case AbsentData
+    case UnknownFailure(ErrorType)
 }

@@ -1,6 +1,8 @@
 import XCTest
 import OHHTTPStubs
 import Nimble
+import Unbox
+import Wolf
 
 class UnboxNetworkingTests: XCTestCase {
     private let client = TestClient()
@@ -45,6 +47,26 @@ class UnboxNetworkingTests: XCTestCase {
             self.client.sendArrayRequest(Song.EnvelopedResource.getEnvelopedSongs) { response in
                 expect(response.result.value?.count) == 4
                 expect(response.result.value?[3].title) == "Juxtapozed With U"
+                done()
+            }
+        }
+    }
+
+    func testInvalidSchemaObjectRequest() {
+        stub(isPath("/songs/invalid_schema")) { _ in
+            return fixture(OHPathForFile("invalid_song.json", self.dynamicType)!, headers: nil)
+        }
+
+        waitUntil { done in
+            self.client.sendRequest(Song.Resource.getInvalidSchemaSong) { response in
+                expect(response.result.value).to(beNil())
+
+                switch response.result.error! {
+                case .InvalidSchema:
+                    break
+                default:
+                    fail("Expected \(UnboxResponseError.InvalidSchema) but got \(response.result.error!)")
+                }
                 done()
             }
         }

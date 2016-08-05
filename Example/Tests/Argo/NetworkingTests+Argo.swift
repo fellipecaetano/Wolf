@@ -24,7 +24,7 @@ class ArgoNetworkingTests: XCTestCase {
         }
     }
 
-    func testRequestForJSONWithInvalidSchema() {
+    func testInvalidSchemaObjectRequest() {
         stub(isPath("/get/invalid_user")) { _ in
             return fixture(OHPathForFile("invalid_user.json", self.dynamicType)!, headers: nil)
         }
@@ -47,7 +47,7 @@ class ArgoNetworkingTests: XCTestCase {
         }
     }
 
-    func testRequestForJSONWithInvalidFormat() {
+    func testInvalidFormatObjectRequest() {
         stub(isPath("/get/invalid_json")) { _ in
             return fixture(OHPathForFile("invalid_json.json", self.dynamicType)!, headers: nil)
         }
