@@ -6,14 +6,7 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
         if let error = error {
             return .Failure(.FailedRequest(error))
         } else if let data = data {
-            do {
-                let song: Value = try Unbox(data)
-                return .Success(song)
-            } catch let error as UnboxError {
-                return .Failure(.InvalidSchema(error))
-            } catch let error {
-                return .Failure(.UnknownFailure(error))
-            }
+            return decode(data)
         } else {
             return .Failure(.AbsentData)
         }
@@ -23,17 +16,32 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
         if let error = error {
             return .Failure(.FailedRequest(error))
         } else if let data = data {
-            do {
-                let song: [Value] = try Unbox(data)
-                return .Success(song)
-            } catch let error as UnboxError {
-                return .Failure(.InvalidSchema(error))
-            } catch let error {
-                return .Failure(.UnknownFailure(error))
-            }
+            return decodeArray(data)
         } else {
             return .Failure(.AbsentData)
         }
+    }
+}
+
+private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError> {
+    do {
+        let value: T = try Unbox(data)
+        return .Success(value)
+    } catch let error as UnboxError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error {
+        return .Failure(.UnknownFailure(error))
+    }
+}
+
+private func decodeArray<T: Unboxable>(data: NSData) -> Result<[T], UnboxResponseError> {
+    do {
+        let valueArray: [T] = try Unbox(data)
+        return .Success(valueArray)
+    } catch let error as UnboxError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error {
+        return .Failure(.UnknownFailure(error))
     }
 }
 
@@ -41,26 +49,42 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Unboxable, Error 
     func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))
+        } else if let data = data, rootKey = rootKey {
+            return decodeArray(data, rootKey: rootKey)
         } else if let data = data {
-            do {
-                let dictionary = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? UnboxableDictionary ?? [:]
-                let song: [Value] = try Unbox(dictionary, at: "songs")
-                return .Success(song)
-            } catch let error as UnboxError {
-                return .Failure(.InvalidSchema(error))
-            } catch let error as NSError {
-                return .Failure(.InvalidFormat(error))
-            }
+            return decodeArray(data)
         } else {
             return .Failure(.AbsentData)
         }
     }
 }
 
+private func decodeArray<T: Unboxable>(data: NSData, rootKey: String) -> Result<[T], UnboxResponseError> {
+    do {
+        let dictionary: UnboxableDictionary = try NSJSONSerialization.JSONObject(data, options: [])
+        let valueArray: [T] = try Unbox(dictionary, at: rootKey)
+        return .Success(valueArray)
+    } catch let error as UnboxError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error as NSError {
+        return .Failure(.InvalidFormat(error))
+    }
+}
+
+private extension NSJSONSerialization {
+    static func JSONObject<T>(data: NSData, options: NSJSONReadingOptions) throws -> T {
+        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: options)
+        guard let typedObject = JSONObject as? T else {
+            throw UnboxError.InvalidData
+        }
+        return typedObject
+    }
+}
+
 public enum UnboxResponseError: ErrorType {
-    case InvalidFormat(NSError)
-    case InvalidSchema(UnboxError)
     case FailedRequest(NSError)
+    case InvalidSchema(UnboxError)
+    case InvalidFormat(NSError)
     case AbsentData
     case UnknownFailure(ErrorType)
 }

@@ -1,17 +1,5 @@
-import Foundation
-import Alamofire
 import Argo
-
-private extension NSJSONSerialization {
-    static func JSONObject<T>(data: NSData, options: NSJSONReadingOptions) throws -> T {
-        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: options)
-        guard let typedObject = JSONObject as? T else {
-            throw DecodeError.TypeMismatch(expected: "\(T.self)",
-                                           actual: "\(JSONObject.dynamicType)")
-        }
-        return typedObject
-    }
-}
+import Alamofire
 
 public extension HTTPResource where Value: Decodable, Value.DecodedType == Value, Error == ArgoResponseError {
     func serialize(data: NSData?, error: NSError?) -> Result<Value, Error> {
@@ -79,6 +67,17 @@ private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData, ro
         return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
         return .Failure(.InvalidFormat(error))
+    }
+}
+
+private extension NSJSONSerialization {
+    static func JSONObject<T>(data: NSData, options: NSJSONReadingOptions) throws -> T {
+        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: options)
+        guard let typedObject = JSONObject as? T else {
+            throw DecodeError.TypeMismatch(expected: "\(T.self)",
+                                           actual: "\(JSONObject.dynamicType)")
+        }
+        return typedObject
     }
 }
 
