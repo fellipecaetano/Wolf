@@ -30,8 +30,8 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     std.dependency 'Unbox', '~> 1.9'
   end
 
-  s.subspec 'Storyboards' do |all|
-    all.source_files = ['Wolf/Classes/Storyboards/**/*']
+  s.subspec 'Storyboards' do |storyboards|
+    storyboards.source_files = ['Wolf/Classes/Storyboards/**/*']
   end
 
   s.subspec 'Reuse' do |reuse|
@@ -55,8 +55,8 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     unbox.dependency 'Unbox', '~> 1.9'
   end
 
-  s.subspec 'Cache' do |argo|
-    argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
-    argo.dependency 'Alamofire', '~> 3.4'
+  s.subspec 'Cache' do |cache|
+    cache.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
+    cache.dependency 'Alamofire', '~> 3.4'
   end
 end
