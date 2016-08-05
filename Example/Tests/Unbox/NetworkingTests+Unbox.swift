@@ -3,7 +3,7 @@ import OHHTTPStubs
 import Nimble
 
 class UnboxNetworkingTests: XCTestCase {
-    private let client = ExampleClient()
+    private let client = TestClient()
 
     override func tearDown() {
         OHHTTPStubs.removeAllStubs()
