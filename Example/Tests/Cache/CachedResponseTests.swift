@@ -7,7 +7,7 @@ class CachedResponseTests: XCTestCase {
         let cachedResponse = CachedResponse(response: NSURLResponse(),
                                             data: NSData(),
                                             duration: 30)
-        expect(cachedResponse.isExpired).to(beFalse())
+        expect(cachedResponse.isExpired) == false
     }
 
     func testExpirationWhenExpired() {
@@ -15,7 +15,7 @@ class CachedResponseTests: XCTestCase {
                                             data: NSData(),
                                             duration: 30,
                                             creationDate: NSDate(timeIntervalSinceNow: 31))
-        expect(cachedResponse.isExpired).to(beTrue())
+        expect(cachedResponse.isExpired) == true
     }
 
     func testStorage() {
@@ -31,7 +31,6 @@ class CachedResponseTests: XCTestCase {
         cachedResponse.store(for: request, cache: cache)
 
         let storedResponse = cache.cachedResponseForRequest(request)
-        expect(storedResponse).toNot(beNil())
-        expect(storedResponse?.response.URL).to(equal(response.URL))
+        expect(storedResponse?.response.URL) == response.URL
     }
 }
