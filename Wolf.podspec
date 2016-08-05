@@ -50,9 +50,9 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
   end
 
   s.subspec 'Unbox' do |unbox|
-    argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Unbox/**/*']
-    argo.dependency 'Alamofire', '~> 3.4'
-    argo.dependency 'Unbox', '~> 1.9'
+    unbox.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Unbox/**/*']
+    unbox.dependency 'Alamofire', '~> 3.4'
+    unbox.dependency 'Unbox', '~> 1.9'
   end
 
   s.subspec 'Cache' do |argo|
