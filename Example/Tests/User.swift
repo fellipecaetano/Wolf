@@ -1,19 +1,5 @@
-import Foundation
-import Wolf
-import Alamofire
 import Argo
-
-class ExampleClient: HTTPClient {
-    var baseURL: NSURL {
-        return NSURL(string: "http://example.com")!
-    }
-
-    let manager: Manager
-
-    init() {
-        manager = Manager()
-    }
-}
+import Wolf
 
 struct User {
     let username: String

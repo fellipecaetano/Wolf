@@ -4,7 +4,7 @@ import OHHTTPStubs
 import Wolf
 
 class CacheNetworkingTests: XCTestCase {
-    private let client = ExampleClient()
+    private let client = TestClient()
 
     func testThatObjectRequestsAreCached() {
         stub(isPath("/get/user")) { _ in
