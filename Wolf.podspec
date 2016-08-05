@@ -14,11 +14,20 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
 
+  s.default_subspec = 'All'
+
   s.subspec 'All' do |all|
     all.source_files = ['Wolf/Classes/**/*']
     all.dependency 'Alamofire', '~> 3.4'
     all.dependency 'Argo', '~> 3.1'
     all.dependency 'Unbox', '~> 1.9'
+  end
+
+  s.subspec 'Standard' do |std|
+    std.source_files = ['Wolf/Classes/**/*']
+    std.exclude_files = ['Wolf/Classes/Argo/**/*']
+    std.dependency 'Alamofire', '~> 3.4'
+    std.dependency 'Unbox', '~> 1.9'
   end
 
   s.subspec 'Storyboards' do |all|
@@ -40,10 +49,14 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     argo.dependency 'Argo', '~> 3.1'
   end
 
+  s.subspec 'Unbox' do |unbox|
+    argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Unbox/**/*']
+    argo.dependency 'Alamofire', '~> 3.4'
+    argo.dependency 'Unbox', '~> 1.9'
+  end
+
   s.subspec 'Cache' do |argo|
     argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
     argo.dependency 'Alamofire', '~> 3.4'
   end
-
-  s.default_subspec = 'All'
 end
