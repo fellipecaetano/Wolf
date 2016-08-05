@@ -34,6 +34,7 @@
 		B3DFA5841D5504650083AEE7 /* song.json in Resources */ = {isa = PBXBuildFile; fileRef = B3DFA5821D5504600083AEE7 /* song.json */; };
 		B3DFA5871D55098C0083AEE7 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = B3DFA5851D5507F70083AEE7 /* songs.json */; };
 		B3DFA58A1D550CA10083AEE7 /* enveloped_songs.json in Resources */ = {isa = PBXBuildFile; fileRef = B3DFA5881D550C9E0083AEE7 /* enveloped_songs.json */; };
+		B3DFA58E1D550FF80083AEE7 /* invalid_song.json in Resources */ = {isa = PBXBuildFile; fileRef = B3DFA58B1D550FF20083AEE7 /* invalid_song.json */; };
 		B3E4C8371D4FC81100420FA4 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4C8361D4FC81100420FA4 /* Networking.swift */; };
 		B3E4C8391D4FCE9900420FA4 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = B3E4C8381D4FCE9900420FA4 /* popular_shows.json */; };
 		E0AB3F8B0E172C92A4054C1F /* Pods_Wolf_Example_Wolf_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */; };
@@ -85,6 +86,7 @@
 		B3DFA5821D5504600083AEE7 /* song.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = song.json; sourceTree = "<group>"; };
 		B3DFA5851D5507F70083AEE7 /* songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = songs.json; sourceTree = "<group>"; };
 		B3DFA5881D550C9E0083AEE7 /* enveloped_songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enveloped_songs.json; sourceTree = "<group>"; };
+		B3DFA58B1D550FF20083AEE7 /* invalid_song.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_song.json; sourceTree = "<group>"; };
 		B3E4C8361D4FC81100420FA4 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		B3E4C8381D4FCE9900420FA4 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
 		BED485AB7C90A23CCC793E36 /* Pods-Wolf_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wolf_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wolf_Example/Pods-Wolf_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 		B33D0A371D4BA1DA00F8FC29 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
+				B3DFA58B1D550FF20083AEE7 /* invalid_song.json */,
 				B3DFA5881D550C9E0083AEE7 /* enveloped_songs.json */,
 				B3DFA5851D5507F70083AEE7 /* songs.json */,
 				B3DFA5821D5504600083AEE7 /* song.json */,
@@ -398,6 +401,7 @@
 				B36A2B431D4AB73F0061425A /* users.json in Resources */,
 				B36A2B401D4AB6600061425A /* invalid_json.json in Resources */,
 				B3DFA5841D5504650083AEE7 /* song.json in Resources */,
+				B3DFA58E1D550FF80083AEE7 /* invalid_song.json in Resources */,
 				B3DFA5871D55098C0083AEE7 /* songs.json in Resources */,
 				B36A2B3D1D4AB4B30061425A /* invalid_user.json in Resources */,
 				B370059D1D4AA98A00844AC2 /* user.json in Resources */,

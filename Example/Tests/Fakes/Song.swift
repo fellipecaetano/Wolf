@@ -19,6 +19,8 @@ extension Song {
 
         case getSong
         case getSongs
+        case getInvalidSchemaSong
+        case getInvalidFormatSong
 
         var path: String {
             switch self {
@@ -26,6 +28,10 @@ extension Song {
                 return "song"
             case .getSongs:
                 return "songs"
+            case .getInvalidSchemaSong:
+                return "songs/invalid_schema"
+            case .getInvalidFormatSong:
+                return "songs/invalid_format"
             }
         }
     }
