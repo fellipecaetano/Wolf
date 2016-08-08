@@ -2,7 +2,7 @@ import XCTest
 import Wolf
 import Nimble
 
-class ArchivePersistenceTests: XCTestCase {
+class ArchivingTests: XCTestCase {
     func testSuccessfulArchiving() {
         testSuccessfulArchiving(token: "main_queue")
     }
@@ -13,8 +13,8 @@ class ArchivePersistenceTests: XCTestCase {
     }
 
     private func testSuccessfulArchiving(token token: String, queue: dispatch_queue_t = dispatch_get_main_queue()) {
-        let archiving = MockArchiving<TestPersistable>(queue: queue)
-        let persistable = TestPersistable(token: token)
+        let archiving = MockArchiving<TestArchive>(queue: queue)
+        let persistable = TestArchive(token: token)
 
         waitUntil { done in
             archiving.archive(persistable).onSuccess { _ in
@@ -26,11 +26,11 @@ class ArchivePersistenceTests: XCTestCase {
     }
 
     func testErrorHandlingWhenArchivingFails() {
-        let archiving = FailableArchiving<TestPersistable>(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
+        let archiving = FailableArchiving<TestArchive>(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
 
         waitUntil { done in
-            archiving.archive(TestPersistable(token: "")).onFailure { error in
-                expect(error) == ArchivingError.FailedArchiving
+            archiving.archive(TestArchive(token: "")).onFailure { error in
+                expect(error) == ArchivingError.FailedWriting
                 done()
             }
         }
@@ -55,6 +55,10 @@ private class MockArchiving<T>: Archiving, Asynchronous {
         archivedObjects[path] = rootObject
         return true
     }
+
+    private func unarchive(fromFile path: String) -> T? {
+        return archivedObjects[path]
+    }
 }
 
 private struct FailableArchiving<T>: Archiving, Asynchronous {
@@ -65,7 +69,7 @@ private struct FailableArchiving<T>: Archiving, Asynchronous {
     }
 }
 
-private struct TestPersistable: Persistable, File {
+private struct TestArchive: URLConvertible {
     let token: String
 
     private var baseURL: NSURL {
