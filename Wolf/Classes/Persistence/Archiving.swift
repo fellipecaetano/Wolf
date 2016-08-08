@@ -31,7 +31,7 @@ public extension Archiving where Self: Asynchronous {
 private extension Archiving {
     func tryToArchive(rootObject: Object, toFile path: String) throws {
         if !archive(rootObject, toFile: path) {
-            throw ArchivingError.FailedArchiving
+            throw ArchivingError.FailedWriting
         }
     }
 }
@@ -49,6 +49,17 @@ public extension Archiving where Object: URLConvertible, Self: Asynchronous {
 }
 
 public enum ArchivingError: ErrorType {
-    case FailedArchiving
+    case FailedWriting
     case Unknown
+}
+
+public protocol URLConvertible {
+    var baseURL: NSURL { get }
+    var path: String { get }
+}
+
+public extension URLConvertible {
+    var URL: NSURL {
+        return baseURL.URLByAppendingPathComponent(path)
+    }
 }
