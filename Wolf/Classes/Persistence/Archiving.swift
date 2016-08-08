@@ -2,7 +2,7 @@ import BrightFutures
 
 public protocol Archiving {
     associatedtype Object
-    func archive(rootObject: Object, toFile path: String) -> Bool
+    func archive(rootObject: Object) -> Bool
 }
 
 public protocol Asynchronous {
@@ -10,12 +10,12 @@ public protocol Asynchronous {
 }
 
 public extension Archiving where Self: Asynchronous {
-    func archive(rootObject: Object, toFile path: String) -> Future<Object, ArchivingError> {
+    func archive(rootObject: Object) -> Future<Object, ArchivingError> {
         let promise = Promise<Object, ArchivingError>()
 
         dispatch_async(queue) {
             do {
-                try self.tryToArchive(rootObject, toFile: path)
+                try self.tryToArchive(rootObject)
                 promise.success(rootObject)
             } catch let error as ArchivingError {
                 promise.failure(error)
@@ -29,22 +29,10 @@ public extension Archiving where Self: Asynchronous {
 }
 
 private extension Archiving {
-    func tryToArchive(rootObject: Object, toFile path: String) throws {
-        if !archive(rootObject, toFile: path) {
+    func tryToArchive(rootObject: Object) throws {
+        if !archive(rootObject) {
             throw ArchivingError.FailedWriting
         }
-    }
-}
-
-public extension Archiving where Object: URLConvertible {
-    func archive(rootObject: Object) -> Bool {
-        return archive(rootObject, toFile: rootObject.URL.absoluteString)
-    }
-}
-
-public extension Archiving where Object: URLConvertible, Self: Asynchronous {
-    func archive(rootObject: Object) -> Future<Object, ArchivingError> {
-        return archive(rootObject, toFile: rootObject.URL.absoluteString)
     }
 }
 

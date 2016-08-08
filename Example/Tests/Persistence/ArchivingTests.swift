@@ -18,7 +18,7 @@ class ArchivingTests: XCTestCase {
 
         waitUntil { done in
             archiving.archive(persistable).onSuccess { _ in
-                let archived = archiving.archivedObjects["file:///test"]
+                let archived = archiving.archivedObjects[persistable.URL.absoluteString]
                 expect(archived?.token) == persistable.token
                 done()
             }
@@ -43,7 +43,7 @@ class ArchivingTests: XCTestCase {
     }
 }
 
-private class MockArchiving<T>: Archiving, Asynchronous {
+private class MockArchiving<T: URLConvertible>: Archiving, Asynchronous {
     var archivedObjects: [String: T] = [:]
     let queue: dispatch_queue_t
 
@@ -51,20 +51,16 @@ private class MockArchiving<T>: Archiving, Asynchronous {
         self.queue = queue
     }
 
-    func archive(rootObject: T, toFile path: String) -> Bool {
-        archivedObjects[path] = rootObject
+    func archive(rootObject: T) -> Bool {
+        archivedObjects[rootObject.URL.absoluteString] = rootObject
         return true
-    }
-
-    private func unarchive(fromFile path: String) -> T? {
-        return archivedObjects[path]
     }
 }
 
 private struct FailableArchiving<T>: Archiving, Asynchronous {
     let queue: dispatch_queue_t
 
-    private func archive(rootObject: T, toFile path: String) -> Bool {
+    private func archive(rootObject: T) -> Bool {
         return false
     }
 }
