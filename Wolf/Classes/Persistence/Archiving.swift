@@ -9,11 +9,17 @@ public protocol Asynchronous {
     var queue: dispatch_queue_t { get }
 }
 
+public extension Asynchronous {
+    func dispatch(block: Void -> Void) {
+        dispatch_async(queue, block)
+    }
+}
+
 public extension Archiving where Self: Asynchronous {
     func archive(rootObject: Object) -> Future<Object, ArchivingError> {
         let promise = Promise<Object, ArchivingError>()
 
-        dispatch_async(queue) {
+        dispatch {
             do {
                 try self.tryToArchive(rootObject)
                 promise.success(rootObject)
