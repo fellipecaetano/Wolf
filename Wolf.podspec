@@ -31,34 +31,4 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     std.dependency 'BrightFutures', '~> 4.1'
     std.dependency 'Unbox', '~> 1.9'
   end
-
-  s.subspec 'Storyboards' do |storyboards|
-    storyboards.source_files = ['Wolf/Classes/Storyboards/**/*']
-  end
-
-  s.subspec 'Reuse' do |reuse|
-    reuse.source_files = ['Wolf/Classes/Reuse/**/*']
-  end
-
-  s.subspec 'Networking' do |networking|
-    networking.source_files = ['Wolf/Classes/Networking/**/*']
-    networking.dependency 'Alamofire', '~> 3.4'
-  end
-
-  s.subspec 'Argo' do |argo|
-    argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Argo/**/*']
-    argo.dependency 'Alamofire', '~> 3.4'
-    argo.dependency 'Argo', '~> 3.1'
-  end
-
-  s.subspec 'Unbox' do |unbox|
-    unbox.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Unbox/**/*']
-    unbox.dependency 'Alamofire', '~> 3.4'
-    unbox.dependency 'Unbox', '~> 1.9'
-  end
-
-  s.subspec 'Cache' do |cache|
-    cache.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
-    cache.dependency 'Alamofire', '~> 3.4'
-  end
 end
