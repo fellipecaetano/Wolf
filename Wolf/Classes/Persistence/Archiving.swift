@@ -1,16 +1,21 @@
 import BrightFutures
 
 public protocol Archiving {
-    func archive(rootObject: AnyObject, toFile path: String) -> Bool
+    associatedtype Object
+    func archive(rootObject: Object, toFile path: String) -> Bool
 }
 
-public extension Archiving {
-    func archive<T: protocol<NSDictionaryConvertible, URLConvertible>>(rootObject: T, inQueue queue: dispatch_queue_t? = nil) -> Future<T, ArchivingError> {
-        let promise = Promise<T, ArchivingError>()
+public protocol Asynchronous {
+    var queue: dispatch_queue_t { get }
+}
 
-        dispatch_async(queue ?? dispatch_get_main_queue()) {
+public extension Archiving where Self: Asynchronous {
+    func archive(rootObject: Object, toFile path: String) -> Future<Object, ArchivingError> {
+        let promise = Promise<Object, ArchivingError>()
+
+        dispatch_async(queue) {
             do {
-                try self.tryToArchive(rootObject.asDictionary(), toFile: rootObject.URL.absoluteString)
+                try self.tryToArchive(rootObject, toFile: path)
                 promise.success(rootObject)
             } catch let error as ArchivingError {
                 promise.failure(error)
@@ -21,43 +26,29 @@ public extension Archiving {
 
         return promise.future
     }
+}
 
-    func tryToArchive(rootObject: AnyObject, toFile path: String) throws {
+private extension Archiving {
+    func tryToArchive(rootObject: Object, toFile path: String) throws {
         if !archive(rootObject, toFile: path) {
             throw ArchivingError.FailedArchiving
         }
     }
 }
 
+public extension Archiving where Object: URLConvertible {
+    func archive(rootObject: Object) -> Bool {
+        return archive(rootObject, toFile: rootObject.URL.absoluteString)
+    }
+}
+
+public extension Archiving where Object: URLConvertible, Self: Asynchronous {
+    func archive(rootObject: Object) -> Future<Object, ArchivingError> {
+        return archive(rootObject, toFile: rootObject.URL.absoluteString)
+    }
+}
+
 public enum ArchivingError: ErrorType {
     case FailedArchiving
     case Unknown
-}
-
-public protocol Archivable {
-    var archiving: Archiving { get }
-}
-
-public protocol NSDictionaryConvertible {
-    init? (dictionary: NSDictionary)
-    func asDictionary() -> NSDictionary
-}
-
-public extension Persistable where Self: protocol<Archivable, NSDictionaryConvertible, URLConvertible> {
-    func archive(inQueue queue: dispatch_queue_t? = nil) -> Future<Self, ArchivingError> {
-        let promise: Promise<Self, ArchivingError> = Promise()
-
-        dispatch_async(queue ?? dispatch_get_main_queue()) {
-            do {
-                try self.archiving.tryToArchive(self.asDictionary(), toFile: self.URL.absoluteString)
-                promise.success(self)
-            } catch let error as ArchivingError {
-                promise.failure(error)
-            } catch {
-                promise.failure(.Unknown)
-            }
-        }
-
-        return promise.future
-    }
 }

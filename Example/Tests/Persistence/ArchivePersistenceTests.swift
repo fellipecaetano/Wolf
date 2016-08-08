@@ -4,37 +4,32 @@ import Nimble
 
 class ArchivePersistenceTests: XCTestCase {
     func testSuccessfulArchiving() {
-        testSuccessfulArchiving(inQueue: dispatch_get_main_queue())
+        testSuccessfulArchiving(token: "main_queue")
     }
 
     func testSuccessfulArchivingInAnotherQueue() {
-        let queue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)
-        testSuccessfulArchiving(inQueue: queue)
+        testSuccessfulArchiving(token: "background_queue",
+                                queue: dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0))
     }
 
-    func testSuccessfulArchiving(inQueue queue: dispatch_queue_t) {
-        let archiving = MockArchiving()
-        var persistable = TestPersistable()!
+    private func testSuccessfulArchiving(token token: String, queue: dispatch_queue_t = dispatch_get_main_queue()) {
+        let archiving = MockArchiving<TestPersistable>(queue: queue)
+        let persistable = TestPersistable(token: token)
 
         waitUntil { done in
-            persistable.willArchive()
-
-            archiving.archive(persistable, inQueue: queue).onSuccess { _ in
-                let archived = archiving.archivedObjects["file:///Documents/Example/test"] as? NSDictionary
-                expect(archived?["token"] as? String) == "token"
+            archiving.archive(persistable).onSuccess { _ in
+                let archived = archiving.archivedObjects["file:///test"]
+                expect(archived?.token) == persistable.token
                 done()
             }
         }
     }
 
     func testErrorHandlingWhenArchivingFails() {
-        let archiving = FailableArchiving()
-        var persistable = TestPersistable()!
+        let archiving = FailableArchiving<TestPersistable>(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
 
         waitUntil { done in
-            persistable.willArchive()
-
-            archiving.archive(persistable).onFailure { error in
+            archiving.archive(TestPersistable(token: "")).onFailure { error in
                 expect(error) == ArchivingError.FailedArchiving
                 done()
             }
@@ -48,38 +43,33 @@ class ArchivePersistenceTests: XCTestCase {
     }
 }
 
-private class MockArchiving: Archiving {
-    var archivedObjects: [String: AnyObject] = [:]
+private class MockArchiving<T>: Archiving, Asynchronous {
+    var archivedObjects: [String: T] = [:]
+    let queue: dispatch_queue_t
 
-    func archive(rootObject: AnyObject, toFile path: String) -> Bool {
+    init (queue: dispatch_queue_t = dispatch_get_main_queue()) {
+        self.queue = queue
+    }
+
+    func archive(rootObject: T, toFile path: String) -> Bool {
         archivedObjects[path] = rootObject
         return true
     }
 }
 
-private class FailableArchiving: Archiving {
-    private func archive(rootObject: AnyObject, toFile path: String) -> Bool {
+private struct FailableArchiving<T>: Archiving, Asynchronous {
+    let queue: dispatch_queue_t
+
+    private func archive(rootObject: T, toFile path: String) -> Bool {
         return false
     }
 }
 
-private struct TestPersistable: Persistable, NSDictionaryConvertible, File {
-    var dictionary: [String: String]
-
-    init?(dictionary: NSDictionary = [:]) {
-        self.dictionary = dictionary as? [String: String] ?? [:]
-    }
-
-    mutating func willArchive() {
-        dictionary["token"] = "token"
-    }
-
-    private func asDictionary() -> NSDictionary {
-        return dictionary
-    }
+private struct TestPersistable: Persistable, File {
+    let token: String
 
     private var baseURL: NSURL {
-        return NSURL(string: "file:///Documents/Example")!
+        return NSURL(string: "file:///")!
     }
 
     private var path: String {
