@@ -1,5 +1,6 @@
 import Foundation
 import Alamofire
+import BrightFutures
 
 public protocol HTTPClient {
     var baseURL: NSURL { get }
