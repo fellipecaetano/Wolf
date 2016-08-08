@@ -19,6 +19,7 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
   s.subspec 'All' do |all|
     all.source_files = ['Wolf/Classes/**/*']
     all.dependency 'Alamofire', '~> 3.4'
+    all.dependency 'BrightFutures', '~> 4.1'
     all.dependency 'Argo', '~> 3.1'
     all.dependency 'Unbox', '~> 1.9'
   end
@@ -27,6 +28,7 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
     std.source_files = ['Wolf/Classes/**/*']
     std.exclude_files = ['Wolf/Classes/Argo/**/*']
     std.dependency 'Alamofire', '~> 3.4'
+    std.dependency 'BrightFutures', '~> 4.1'
     std.dependency 'Unbox', '~> 1.9'
   end
 
@@ -41,22 +43,26 @@ Wolf brings handy solutions to common iOS app development problems. It includes 
   s.subspec 'Networking' do |networking|
     networking.source_files = ['Wolf/Classes/Networking/**/*']
     networking.dependency 'Alamofire', '~> 3.4'
+    networking.dependency 'BrightFutures', '~> 4.1'
   end
 
   s.subspec 'Argo' do |argo|
     argo.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Argo/**/*']
     argo.dependency 'Alamofire', '~> 3.4'
     argo.dependency 'Argo', '~> 3.1'
+    argo.dependency 'BrightFutures', '~> 4.1'
   end
 
   s.subspec 'Unbox' do |unbox|
     unbox.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Unbox/**/*']
     unbox.dependency 'Alamofire', '~> 3.4'
     unbox.dependency 'Unbox', '~> 1.9'
+    unbox.dependency 'BrightFutures', '~> 4.1'
   end
 
   s.subspec 'Cache' do |cache|
     cache.source_files = ['Wolf/Classes/Networking/**/*', 'Wolf/Classes/Cache/**/*']
     cache.dependency 'Alamofire', '~> 3.4'
+    cache.dependency 'BrightFutures', '~> 4.1'
   end
 end
