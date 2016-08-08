@@ -13,8 +13,8 @@ class ArchivingTests: XCTestCase {
     }
 
     private func testSuccessfulArchiving(token token: String, queue: dispatch_queue_t = dispatch_get_main_queue()) {
-        let archiving = MockArchiving<TestArchive>(queue: queue)
-        let persistable = TestArchive(token: token)
+        let archiving = MockArchiving<TestFile>(queue: queue)
+        let persistable = TestFile(token: token)
 
         waitUntil { done in
             archiving.archive(persistable).onSuccess { _ in
@@ -26,10 +26,10 @@ class ArchivingTests: XCTestCase {
     }
 
     func testErrorHandlingWhenArchivingFails() {
-        let archiving = FailableArchiving<TestArchive>(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
+        let archiving = FailableArchiving<TestFile>(queue: dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0))
 
         waitUntil { done in
-            archiving.archive(TestArchive(token: "")).onFailure { error in
+            archiving.archive(TestFile(token: "")).onFailure { error in
                 expect(error) == ArchivingError.FailedWriting
                 done()
             }
@@ -65,7 +65,7 @@ private struct FailableArchiving<T>: Archiving, Asynchronous {
     }
 }
 
-private struct TestArchive: URLConvertible {
+private struct TestFile: URLConvertible {
     let token: String
 
     private var baseURL: NSURL {
