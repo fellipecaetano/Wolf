@@ -14,6 +14,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		B3164C251D4AB2CC000102B8 /* NetworkingTests+Argo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37005971D4AA72400844AC2 /* NetworkingTests+Argo.swift */; };
 		B3315BD31D594A1300F818F6 /* ArchivingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B322EDC31D592A8A0059E48B /* ArchivingTests.swift */; };
+		B3315BDC1D594E5A00F818F6 /* UnarchivingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3315BDA1D594D5A00F818F6 /* UnarchivingTests.swift */; };
 		B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D511D52894100A9ADBF /* CachedResponseTests.swift */; };
 		B3367D5B1D537EE400A9ADBF /* NetworkingTests+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3367D561D537E6800A9ADBF /* NetworkingTests+Cache.swift */; };
 		B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */; };
@@ -66,6 +67,7 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		62440AF54ACFCF654BC5D6D1 /* Pods_Wolf_Example_Wolf_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Wolf_Example_Wolf_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B322EDC31D592A8A0059E48B /* ArchivingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArchivingTests.swift; sourceTree = "<group>"; };
+		B3315BDA1D594D5A00F818F6 /* UnarchivingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnarchivingTests.swift; sourceTree = "<group>"; };
 		B3367D511D52894100A9ADBF /* CachedResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponseTests.swift; sourceTree = "<group>"; };
 		B3367D561D537E6800A9ADBF /* NetworkingTests+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Cache.swift"; sourceTree = "<group>"; };
 		B33D0A341D4BA1B000F8FC29 /* StoryboardsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StoryboardsTests.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				B322EDC31D592A8A0059E48B /* ArchivingTests.swift */,
+				B3315BDA1D594D5A00F818F6 /* UnarchivingTests.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -642,6 +645,7 @@
 				B3164C251D4AB2CC000102B8 /* NetworkingTests+Argo.swift in Sources */,
 				B3315BD31D594A1300F818F6 /* ArchivingTests.swift in Sources */,
 				B33D0A361D4BA1C200F8FC29 /* StoryboardsTests.swift in Sources */,
+				B3315BDC1D594E5A00F818F6 /* UnarchivingTests.swift in Sources */,
 				B3DFA57B1D5501A30083AEE7 /* TestClient.swift in Sources */,
 				B3367D531D52894A00A9ADBF /* CachedResponseTests.swift in Sources */,
 				B3DFA57D1D5502020083AEE7 /* Song.swift in Sources */,
