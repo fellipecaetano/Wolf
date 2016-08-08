@@ -87,8 +87,11 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource) { response in
-                expect(response.result.value?.username) == "fellipecaetano"
+            self.client.sendRequest(resource).onSuccess { value in
+                expect(value.username) == "fellipecaetano"
+                done()
+            }.onFailure { _ in
+                fail("This request should not fail")
                 done()
             }
         }
@@ -107,8 +110,11 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource) { response in
-                expect(response.result.value?.count) == 3
+            self.client.sendArrayRequest(resource).onSuccess { value in
+                expect(value.count) == 3
+                done()
+            }.onFailure { _ in
+                fail("This request should not fail")
                 done()
             }
         }
@@ -130,9 +136,10 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource) { response in
-                expect(response.result.value).to(beNil())
-                expect(response.result.error).toNot(beNil())
+            self.client.sendRequest(resource).onSuccess { _ in
+                fail("This request should not succeed")
+                done()
+            }.onFailure { _ in
                 done()
             }
         }
@@ -154,9 +161,10 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource) { response in
-                expect(response.result.value).to(beNil())
-                expect(response.result.error).toNot(beNil())
+            self.client.sendArrayRequest(resource).onSuccess { _ in
+                fail("This request should not succeed")
+                done()
+            }.onFailure { _ in
                 done()
             }
         }
