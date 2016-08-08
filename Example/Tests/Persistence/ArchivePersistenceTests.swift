@@ -14,12 +14,12 @@ class ArchivePersistenceTests: XCTestCase {
 
     func testSuccessfulArchiving(inQueue queue: dispatch_queue_t) {
         let archiving = MockArchiving()
-        var persistable = TestPersistable(archiving: archiving)
+        var persistable = TestPersistable()!
 
         waitUntil { done in
             persistable.willArchive()
 
-            persistable.archive(inQueue: queue).onSuccess { _ in
+            archiving.archive(persistable, inQueue: queue).onSuccess { _ in
                 let archived = archiving.archivedObjects["file:///Documents/Example/test"] as? NSDictionary
                 expect(archived?["token"] as? String) == "token"
                 done()
@@ -29,15 +29,21 @@ class ArchivePersistenceTests: XCTestCase {
 
     func testErrorHandlingWhenArchivingFails() {
         let archiving = FailableArchiving()
-        var persistable = TestPersistable(archiving: archiving)
+        var persistable = TestPersistable()!
 
         waitUntil { done in
             persistable.willArchive()
 
-            persistable.archive().onFailure { error in
+            archiving.archive(persistable).onFailure { error in
                 expect(error) == ArchivingError.FailedArchiving
                 done()
             }
+        }
+    }
+
+    func testSuccessfulUnarchiving() {
+        waitUntil { done in
+            done()
         }
     }
 }
@@ -57,17 +63,10 @@ private class FailableArchiving: Archiving {
     }
 }
 
-private struct TestPersistable: Persistable, Archivable, NSDictionaryConvertible, File {
-    let archiving: Archiving
+private struct TestPersistable: Persistable, NSDictionaryConvertible, File {
     var dictionary: [String: String]
 
-    init(archiving: Archiving) {
-        self.archiving = archiving
-        self.dictionary = [:]
-    }
-
-    init?(dictionary: NSDictionary) {
-        self.archiving = MockArchiving()
+    init?(dictionary: NSDictionary = [:]) {
         self.dictionary = dictionary as? [String: String] ?? [:]
     }
 

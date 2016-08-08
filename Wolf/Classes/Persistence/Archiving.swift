@@ -5,6 +5,23 @@ public protocol Archiving {
 }
 
 public extension Archiving {
+    func archive<T: protocol<NSDictionaryConvertible, URLConvertible>>(rootObject: T, inQueue queue: dispatch_queue_t? = nil) -> Future<T, ArchivingError> {
+        let promise = Promise<T, ArchivingError>()
+
+        dispatch_async(queue ?? dispatch_get_main_queue()) {
+            do {
+                try self.tryToArchive(rootObject.asDictionary(), toFile: rootObject.URL.absoluteString)
+                promise.success(rootObject)
+            } catch let error as ArchivingError {
+                promise.failure(error)
+            } catch {
+                promise.failure(.Unknown)
+            }
+        }
+
+        return promise.future
+    }
+
     func tryToArchive(rootObject: AnyObject, toFile path: String) throws {
         if !archive(rootObject, toFile: path) {
             throw ArchivingError.FailedArchiving
