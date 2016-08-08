@@ -179,11 +179,11 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				B322EDC21D592A490059E48B /* Persistence */,
 				B36D89BE1D4F8749007AE71D /* Argo */,
 				B3367D501D52892100A9ADBF /* Cache */,
 				B3DFA5741D55017D0083AEE7 /* Fakes */,
 				B370059A1D4AA95000844AC2 /* Fixtures */,
+				B322EDC21D592A490059E48B /* Persistence */,
 				B36D89BF1D4F8766007AE71D /* Storyboards */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 				B3DFA5811D5503D10083AEE7 /* Unbox */,
@@ -223,7 +223,7 @@
 			children = (
 				B322EDC31D592A8A0059E48B /* ArchivePersistenceTests.swift */,
 			);
-			name = Persistence;
+			path = Persistence;
 			sourceTree = "<group>";
 		};
 		B3367D501D52892100A9ADBF /* Cache */ = {
