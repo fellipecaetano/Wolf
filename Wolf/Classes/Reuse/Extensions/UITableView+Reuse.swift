@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-extension UITableView {
+public extension UITableView {
     func register<C: protocol<Reusable, NibLoadable>>(type: C.Type) {
         registerNib(type.nib, forCellReuseIdentifier: type.reuseIdentifier)
     }
