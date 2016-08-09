@@ -1,12 +1,8 @@
 import Foundation
 
-public protocol NSDictionaryConvertible {
-    init?(dictionary: NSDictionary)
-    func asDictionary() -> NSDictionary
-}
-
-public struct KeyedArchive<T: protocol<NSDictionaryConvertible, URLConvertible>>: Archiving, Unarchiving {
+public struct KeyedArchive<T: protocol<NSDictionaryConvertible, URLConvertible>>: Archiving, Unarchiving, Asynchronous {
     public typealias Object = T
+    public let queue: dispatch_queue_t
 
     public func archive(rootObject: T) -> Bool {
         return NSKeyedArchiver.archiveRootObject(rootObject.asDictionary(),
@@ -22,4 +18,9 @@ public struct KeyedArchive<T: protocol<NSDictionaryConvertible, URLConvertible>>
         }
         return object
     }
+}
+
+public protocol NSDictionaryConvertible {
+    init?(dictionary: NSDictionary)
+    func asDictionary() -> NSDictionary
 }

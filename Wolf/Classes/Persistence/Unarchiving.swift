@@ -5,12 +5,6 @@ public protocol Unarchiving {
     func unarchive() throws -> Object
 }
 
-public enum UnarchivingError: ErrorType {
-    case FailedReading
-    case WrongType
-    case Unknown
-}
-
 public extension Unarchiving where Self: Asynchronous {
     func unarchive() -> Future<Object, UnarchivingError> {
         let promise = Promise<Object, UnarchivingError>()
@@ -28,4 +22,10 @@ public extension Unarchiving where Self: Asynchronous {
 
         return promise.future
     }
+}
+
+public enum UnarchivingError: ErrorType {
+    case FailedReading
+    case WrongType
+    case Unknown
 }
