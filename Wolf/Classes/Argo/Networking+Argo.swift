@@ -23,6 +23,26 @@ public extension HTTPResource where Value: Decodable, Value.DecodedType == Value
     }
 }
 
+public extension HTTPResource
+where Value: CollectionType,
+Value.Generator.Element: Decodable,
+Value.Generator.Element.DecodedType == Value.Generator.Element,
+Error == ArgoResponseError {
+    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+        if let error = error {
+            return .Failure(.FailedRequest(error))
+        } else if let data = data {
+            return decodeArray(data)
+        } else {
+            return .Failure(.AbsentData)
+        }
+    }
+
+    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
+        return .Success([])
+    }
+}
+
 private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, ArgoResponseError> {
     do {
         let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
@@ -56,6 +76,29 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Decodable, Value.
         } else {
             return .Failure(.AbsentData)
         }
+    }
+}
+
+public extension HTTPResource
+where Self: JSONEnvelope,
+Value: CollectionType,
+Value.Generator.Element: Decodable,
+Value.Generator.Element.DecodedType == Value.Generator.Element,
+Error == ArgoResponseError {
+    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+        if let error = error {
+            return .Failure(.FailedRequest(error))
+        } else if let data = data, rootKey = rootKey {
+            return decodeArray(data, rootKey: rootKey)
+        } else if let data = data {
+            return decodeArray(data)
+        } else {
+            return .Failure(.AbsentData)
+        }
+    }
+
+    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
+        return .Success([])
     }
 }
 

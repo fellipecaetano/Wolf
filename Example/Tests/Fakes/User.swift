@@ -39,8 +39,22 @@ extension User {
         }
     }
 
+    enum ArrayResource: HTTPResource {
+        typealias Value = [User]
+        typealias Error = ArgoResponseError
+
+        case getUsers
+
+        var path: String {
+            switch self {
+            case .getUsers:
+                return "users"
+            }
+        }
+    }
+
     enum EnvelopedResource: HTTPResource, JSONEnvelope {
-        typealias Value = User
+        typealias Value = [User]
         typealias Error = ArgoResponseError
 
         case getEnvelopedUsers
