@@ -24,10 +24,11 @@ public extension HTTPResource where Value: Decodable, Value.DecodedType == Value
 }
 
 public extension HTTPResource
-where Value: CollectionType,
-Value.Generator.Element: Decodable,
-Value.Generator.Element.DecodedType == Value.Generator.Element,
-Error == ArgoResponseError {
+    where Value: CollectionType,
+    Value.Generator.Element: Decodable,
+    Value.Generator.Element.DecodedType == Value.Generator.Element,
+    Error == ArgoResponseError {
+
     func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))
@@ -80,11 +81,12 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Decodable, Value.
 }
 
 public extension HTTPResource
-where Self: JSONEnvelope,
-Value: CollectionType,
-Value.Generator.Element: Decodable,
-Value.Generator.Element.DecodedType == Value.Generator.Element,
-Error == ArgoResponseError {
+    where Self: JSONEnvelope,
+    Value: CollectionType,
+    Value.Generator.Element: Decodable,
+    Value.Generator.Element.DecodedType == Value.Generator.Element,
+    Error == ArgoResponseError {
+
     func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))

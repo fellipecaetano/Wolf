@@ -75,7 +75,7 @@ class ArgoNetworkingTests: XCTestCase {
         }
 
         waitUntil { done in
-            self.client.sendRequest(User.ArrayResource.getUsers) { response in
+            self.client.sendRequest(User.FlatArrayResource.getUsers) { response in
                 expect(response.result.value?.count) == 3
                 expect(response.result.value?[1].username) == "fellipe.caetano"
 
@@ -90,7 +90,7 @@ class ArgoNetworkingTests: XCTestCase {
         }
 
         waitUntil { done in
-            self.client.sendRequest(User.EnvelopedResource.getEnvelopedUsers) { response in
+            self.client.sendRequest(User.EnvelopedArrayResource.getEnvelopedUsers) { response in
                 expect(response.result.error).to(beNil())
                 expect(response.result.value?.count) == 3
                 expect(response.result.value?[1].username) == "fellipe.caetano"

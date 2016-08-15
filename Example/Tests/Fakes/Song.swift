@@ -36,8 +36,22 @@ extension Song {
         }
     }
 
-    enum EnvelopedResource: HTTPResource, JSONEnvelope {
-        typealias Value = Song
+    enum FlatArrayResource: HTTPResource {
+        typealias Value = [Song]
+        typealias Error = UnboxResponseError
+
+        case getSongs
+
+        var path: String {
+            switch self {
+            case .getSongs:
+                return "songs"
+            }
+        }
+    }
+
+    enum EnvelopedArrayResource: HTTPResource, JSONEnvelope {
+        typealias Value = [Song]
         typealias Error = UnboxResponseError
 
         case getEnvelopedSongs

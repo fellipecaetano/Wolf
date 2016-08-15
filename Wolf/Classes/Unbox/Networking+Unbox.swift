@@ -23,6 +23,26 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
     }
 }
 
+public extension HTTPResource
+    where Value: CollectionType,
+    Value.Generator.Element: Unboxable,
+    Error == UnboxResponseError {
+
+    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+        if let error = error {
+            return .Failure(.FailedRequest(error))
+        } else if let data = data {
+            return decodeArray(data)
+        } else {
+            return .Failure(.AbsentData)
+        }
+    }
+
+    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
+        return .Success([])
+    }
+}
+
 private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError> {
     do {
         let value: T = try Unbox(data)
@@ -56,6 +76,29 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Unboxable, Error 
         } else {
             return .Failure(.AbsentData)
         }
+    }
+}
+
+public extension HTTPResource
+    where Self: JSONEnvelope,
+    Value: CollectionType,
+    Value.Generator.Element: Unboxable,
+    Error == UnboxResponseError {
+
+    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+        if let error = error {
+            return .Failure(.FailedRequest(error))
+        } else if let data = data, rootKey = rootKey {
+            return decodeArray(data, rootKey: rootKey)
+        } else if let data = data {
+            return decodeArray(data)
+        } else {
+            return .Failure(.AbsentData)
+        }
+    }
+
+    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
+        return .Success([])
     }
 }
 

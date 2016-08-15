@@ -39,7 +39,7 @@ extension User {
         }
     }
 
-    enum ArrayResource: HTTPResource {
+    enum FlatArrayResource: HTTPResource {
         typealias Value = [User]
         typealias Error = ArgoResponseError
 
@@ -53,7 +53,7 @@ extension User {
         }
     }
 
-    enum EnvelopedResource: HTTPResource, JSONEnvelope {
+    enum EnvelopedArrayResource: HTTPResource, JSONEnvelope {
         typealias Value = [User]
         typealias Error = ArgoResponseError
 
