@@ -29,10 +29,10 @@ class CacheNetworkingTests: XCTestCase {
         }
 
         let cache = TestURLCache()
-        let resource = User.CacheableResource.getCachedUsers(cache: cache)
+        let resource = User.CacheableArrayResource.getCachedUsers(cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource) { response in
+            self.client.sendRequest(resource) { response in
                 let cachedResponse = cache.cachedResponseForRequest(response.request!)
                 expect(cachedResponse?.storagePolicy) == .AllowedInMemoryOnly
                 done()
@@ -63,10 +63,10 @@ class CacheNetworkingTests: XCTestCase {
         }
 
         let cache = TestURLCache()
-        let resource = User.CacheableResource.getCachedUsers(cache: cache)
+        let resource = User.CacheableArrayResource.getCachedUsers(cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource) { response in
+            self.client.sendRequest(resource) { response in
                 let cachedResponse = cache.cachedResponseForRequest(response.request!)
                 expect(cachedResponse).to(beNil())
                 done()
@@ -105,12 +105,12 @@ class CacheNetworkingTests: XCTestCase {
         let validJSON = NSData(contentsOfFile: OHPathForFile("users.json", self.dynamicType)!)!
         let cachedResponse = CachedResponse(response: NSURLResponse(), data: validJSON, duration: 30)
         let cache = TestURLCache()
-        let resource = User.CacheableResource.getCachedUsers(cache: cache)
+        let resource = User.CacheableArrayResource.getCachedUsers(cache: cache)
 
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource).onSuccess { value in
+            self.client.sendRequest(resource).onSuccess { value in
                 expect(value.count) == 3
                 done()
             }.onFailure { _ in
@@ -151,7 +151,7 @@ class CacheNetworkingTests: XCTestCase {
         }
 
         let cache = TestURLCache()
-        let resource = User.CacheableResource.getCachedUsers(cache: cache)
+        let resource = User.CacheableArrayResource.getCachedUsers(cache: cache)
         let validJSON = NSData(contentsOfFile: OHPathForFile("users.json", self.dynamicType)!)!
         let cachedResponse = CachedResponse(response: NSURLResponse(),
                                             data: validJSON,
@@ -161,7 +161,7 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendArrayRequest(resource).onSuccess { _ in
+            self.client.sendRequest(resource).onSuccess { _ in
                 fail("This request should not succeed")
                 done()
             }.onFailure { _ in
@@ -172,19 +172,26 @@ class CacheNetworkingTests: XCTestCase {
 }
 
 private extension User {
+    struct CacheConfiguration {
+        var cacheStoragePolicy: NSURLCacheStoragePolicy {
+            return .AllowedInMemoryOnly
+        }
+
+        var cacheDuration: NSTimeInterval {
+            return 15
+        }
+    }
+
     enum CacheableResource: HTTPResource, Wolf.CacheableResource {
         typealias Value = User
         typealias Error = ArgoResponseError
 
         case getCachedUser(cache: URLCache)
-        case getCachedUsers(cache: URLCache)
 
         var path: String {
             switch self {
             case .getCachedUser:
                 return "get/user"
-            case .getCachedUsers:
-                return "get/users"
             }
         }
 
@@ -192,17 +199,44 @@ private extension User {
             switch self {
             case .getCachedUser(let cache):
                 return cache
+            }
+        }
+
+        var cacheStoragePolicy: NSURLCacheStoragePolicy {
+            return CacheConfiguration().cacheStoragePolicy
+        }
+
+        var cacheDuration: NSTimeInterval {
+            return CacheConfiguration().cacheDuration
+        }
+    }
+
+    enum CacheableArrayResource: HTTPResource, Wolf.CacheableResource {
+        typealias Value = [User]
+        typealias Error = ArgoResponseError
+
+        case getCachedUsers(cache: URLCache)
+
+        var path: String {
+            switch self {
+            case .getCachedUsers:
+                return "get/users"
+            }
+        }
+
+        var cache: URLCache {
+            switch self {
             case .getCachedUsers(let cache):
                 return cache
             }
         }
 
         var cacheStoragePolicy: NSURLCacheStoragePolicy {
-            return .AllowedInMemoryOnly
+            return CacheConfiguration().cacheStoragePolicy
         }
 
         var cacheDuration: NSTimeInterval {
-            return 15
+            return CacheConfiguration().cacheDuration
         }
     }
 }

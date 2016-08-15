@@ -22,7 +22,7 @@ extension Show {
     }
 
     enum Resource: HTTPResource {
-        typealias Value = Show
+        typealias Value = [Show]
         typealias Error = ArgoResponseError
 
         case getPopularShows

@@ -10,16 +10,6 @@ public extension HTTPClient {
                             responseSerializer: resource.responseSerializer,
                             completionHandler: cache(resource, completionHandler))
     }
-
-    func sendArrayRequest<R: protocol<HTTPResource, CacheableResource>>
-        (resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) -> Request {
-
-        return request(resource)
-            .validate()
-            .cachedResponse(resource,
-                            responseSerializer: resource.arrayResponseSerializer,
-                            completionHandler: cache(resource, completionHandler))
-    }
 }
 
 public protocol CacheableResource {

@@ -11,15 +11,16 @@ public extension HTTPResource where Value: Decodable, Value.DecodedType == Value
             return .Failure(.AbsentData)
         }
     }
+}
 
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        if let error = error {
-            return .Failure(.FailedRequest(error))
-        } else if let data = data {
-            return decodeArray(data)
-        } else {
-            return .Failure(.AbsentData)
-        }
+private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, ArgoResponseError> {
+    do {
+        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
+        return try .Success(decode(JSONObject).dematerialize())
+    } catch let error as DecodeError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error as NSError {
+        return .Failure(.InvalidFormat(error))
     }
 }
 
@@ -38,21 +39,6 @@ public extension HTTPResource
             return .Failure(.AbsentData)
         }
     }
-
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        return .Success([])
-    }
-}
-
-private func decode<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<T, ArgoResponseError> {
-    do {
-        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-        return try .Success(decode(JSONObject).dematerialize())
-    } catch let error as DecodeError {
-        return .Failure(.InvalidSchema(error))
-    } catch let error as NSError {
-        return .Failure(.InvalidFormat(error))
-    }
 }
 
 private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData) -> Result<[T], ArgoResponseError> {
@@ -63,20 +49,6 @@ private func decodeArray<T: Decodable where T.DecodedType == T>(data: NSData) ->
         return .Failure(.InvalidSchema(error))
     } catch let error as NSError {
         return .Failure(.InvalidFormat(error))
-    }
-}
-
-public extension HTTPResource where Self: JSONEnvelope, Value: Decodable, Value.DecodedType == Value, Error == ArgoResponseError {
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        if let error = error {
-            return .Failure(.FailedRequest(error))
-        } else if let data = data, rootKey = rootKey {
-            return decodeArray(data, rootKey: rootKey)
-        } else if let data = data {
-            return decodeArray(data)
-        } else {
-            return .Failure(.AbsentData)
-        }
     }
 }
 
@@ -97,10 +69,6 @@ public extension HTTPResource
         } else {
             return .Failure(.AbsentData)
         }
-    }
-
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        return .Success([])
     }
 }
 

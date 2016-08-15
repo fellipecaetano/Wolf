@@ -11,15 +11,16 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
             return .Failure(.AbsentData)
         }
     }
+}
 
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        if let error = error {
-            return .Failure(.FailedRequest(error))
-        } else if let data = data {
-            return decodeArray(data)
-        } else {
-            return .Failure(.AbsentData)
-        }
+private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError> {
+    do {
+        let value: T = try Unbox(data)
+        return .Success(value)
+    } catch let error as UnboxError {
+        return .Failure(.InvalidSchema(error))
+    } catch let error {
+        return .Failure(.UnknownFailure(error))
     }
 }
 
@@ -37,21 +38,6 @@ public extension HTTPResource
             return .Failure(.AbsentData)
         }
     }
-
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        return .Success([])
-    }
-}
-
-private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError> {
-    do {
-        let value: T = try Unbox(data)
-        return .Success(value)
-    } catch let error as UnboxError {
-        return .Failure(.InvalidSchema(error))
-    } catch let error {
-        return .Failure(.UnknownFailure(error))
-    }
 }
 
 private func decodeArray<T: Unboxable>(data: NSData) -> Result<[T], UnboxResponseError> {
@@ -62,20 +48,6 @@ private func decodeArray<T: Unboxable>(data: NSData) -> Result<[T], UnboxRespons
         return .Failure(.InvalidSchema(error))
     } catch let error {
         return .Failure(.UnknownFailure(error))
-    }
-}
-
-public extension HTTPResource where Self: JSONEnvelope, Value: Unboxable, Error == UnboxResponseError {
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        if let error = error {
-            return .Failure(.FailedRequest(error))
-        } else if let data = data, rootKey = rootKey {
-            return decodeArray(data, rootKey: rootKey)
-        } else if let data = data {
-            return decodeArray(data)
-        } else {
-            return .Failure(.AbsentData)
-        }
     }
 }
 
@@ -95,10 +67,6 @@ public extension HTTPResource
         } else {
             return .Failure(.AbsentData)
         }
-    }
-
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error> {
-        return .Success([])
     }
 }
 

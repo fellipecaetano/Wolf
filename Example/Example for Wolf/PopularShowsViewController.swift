@@ -13,7 +13,7 @@ class PopularShowsViewController: UICollectionViewController, Identifiable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        client.sendArrayRequest(Show.getPopularShows) { [weak self] response in
+        client.sendRequest(Show.getPopularShows) { [weak self] response in
             self?.shows = response.result.value ?? []
         }
 

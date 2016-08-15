@@ -18,12 +18,6 @@ public extension HTTPClient {
             .validate()
             .response(responseSerializer: resource.responseSerializer, completionHandler: completionHandler)
     }
-
-    func sendArrayRequest<R: HTTPResource>(resource: R, completionHandler: Response<[R.Value], R.Error> -> Void) -> Request {
-        return request(resource)
-            .validate()
-            .response(responseSerializer: resource.arrayResponseSerializer, completionHandler: completionHandler)
-    }
 }
 
 public protocol HTTPResource {
@@ -37,7 +31,6 @@ public protocol HTTPResource {
     var parameterEncoding: ParameterEncoding { get }
 
     func serialize(data: NSData?, error: NSError?) -> Result<Value, Error>
-    func serializeArray(data: NSData?, error: NSError?) -> Result<[Value], Error>
 }
 
 public extension HTTPResource {
@@ -60,12 +53,6 @@ public extension HTTPResource {
     var responseSerializer: ResponseSerializer<Value, Error> {
         return ResponseSerializer { _, _, data, error in
             return self.serialize(data, error: error)
-        }
-    }
-
-    var arrayResponseSerializer: ResponseSerializer<[Value], Error> {
-        return ResponseSerializer { _, _, data, error in
-            return self.serializeArray(data, error: error)
         }
     }
 }
