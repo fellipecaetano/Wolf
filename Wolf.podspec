@@ -1,9 +1,3 @@
-def configure_subspec(subspec)
-  subspec.source_files = ['Wolf/Classes/**/*']
-  subspec.dependency 'Alamofire', '~> 3.4'
-  subspec.dependency 'BrightFutures', '~> 4.1'
-end
-
 Pod::Spec.new do |s|
   s.name = 'Wolf'
   s.version = '0.7.0'
