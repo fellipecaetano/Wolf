@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/cocoapods/l/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 [![Platform](https://img.shields.io/cocoapods/p/Wolf.svg?style=flat)](http://cocoapods.org/pods/Wolf)
 
-Wolf is a collection of solutions to common problems faced when developing iOS apps. Currently it features an opinionated networking layer and type-safe routines to ease management of reusable views and storyboards, and the list is likely to grow in the near future.
+Wolf approaches networking by bringing together the battle experience of Alamofire and the flexible power of Swift protocols. It enables developers to fully describe HTTP resources and it derives all HTTP communications out of those descriptions. Support for caching and JSON comes out of the box.
 
 ## Contents
 
