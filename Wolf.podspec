@@ -1,3 +1,9 @@
+def configure_subspec(subspec)
+  subspec.source_files = ['Wolf/Classes/**/*']
+  subspec.dependency 'Alamofire', '~> 3.4'
+  subspec.dependency 'BrightFutures', '~> 4.1'
+end
+
 Pod::Spec.new do |s|
   s.name = 'Wolf'
   s.version = '0.6.0'
@@ -13,18 +19,18 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
   s.osx.deployment_target = '10.10'
   s.requires_arc = true
   s.subspec 'Unbox' do |unbox|
-    configure_subspec(unbox)
+    unbox.source_files = ['Wolf/Classes/**/*']
+    unbox.dependency 'Alamofire', '~> 3.4'
+    unbox.dependency 'BrightFutures', '~> 4.1'
+    unbox.dependency 'Unbox', '~> 1.9'
     unbox.exclude_files = ['Wolf/Classes/Argo/**/*']
   end
   s.subspec 'Argo' do |argo|
-    configure_subspec(argo)
+    argo.source_files = ['Wolf/Classes/**/*']
+    argo.dependency 'Alamofire', '~> 3.4'
+    argo.dependency 'BrightFutures', '~> 4.1'
+    argo.dependency 'Argo', '~> 3.1'
     argo.exclude_files = ['Wolf/Classes/Unbox/**/*']
   end
   s.default_subspec = 'Unbox'
-end
-
-def configure_subspec(subspec)
-  subspec.source_files = ['Wolf/Classes/**/*']
-  subspec.dependency 'Alamofire', '~> 3.4'
-  subspec.dependency 'BrightFutures', '~> 4.1'
 end

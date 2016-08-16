@@ -148,18 +148,12 @@
 		607FACD21AFB9204008FA782 /* Example for Wolf */ = {
 			isa = PBXGroup;
 			children = (
+				B3DBCC571D63515200109E27 /* Model */,
+				B3DBCC551D63510C00109E27 /* Resources */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				B3DBCC561D63512400109E27 /* UI */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				607FACDC1AFB9204008FA782 /* Images.xcassets */,
-				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				B3E4C8361D4FC81100420FA4 /* Networking.swift */,
-				B36D89C41D4FC31E007AE71D /* PopularShowsViewController.swift */,
-				B3A9FA171D4FC5B200A0B871 /* Show.swift */,
-				B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */,
-				B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */,
-				B36D89C61D4FC375007AE71D /* Storyboards.swift */,
-				B3E4C8381D4FCE9900420FA4 /* popular_shows.json */,
 			);
 			path = "Example for Wolf";
 			sourceTree = "<group>";
@@ -260,6 +254,36 @@
 				B33D0A381D4BA1E400F8FC29 /* Storyboards */,
 			);
 			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		B3DBCC551D63510C00109E27 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				607FACDC1AFB9204008FA782 /* Images.xcassets */,
+				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
+				607FACD91AFB9204008FA782 /* Main.storyboard */,
+				B3E4C8381D4FCE9900420FA4 /* popular_shows.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		B3DBCC561D63512400109E27 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B36D89C41D4FC31E007AE71D /* PopularShowsViewController.swift */,
+				B3A9FA131D4FC3E000A0B871 /* ShowCollectionViewCell.swift */,
+				B3A9FA141D4FC3E000A0B871 /* ShowCollectionViewCell.xib */,
+				B36D89C61D4FC375007AE71D /* Storyboards.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		B3DBCC571D63515200109E27 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B3A9FA171D4FC5B200A0B871 /* Show.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		B3DFA5741D55017D0083AEE7 /* Fakes */ = {
