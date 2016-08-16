@@ -4,6 +4,7 @@ PODS:
   - BrightFutures (4.1.1):
     - Result (~> 2.0)
   - Curry (2.3.3)
+  - IBentifiers (0.1.1)
   - Nimble (3.2.0)
   - Nuke (3.1.3)
   - OHHTTPStubs (5.1.0):
@@ -23,9 +24,9 @@ PODS:
     - OHHTTPStubs/Core
   - Result (2.1.3)
   - Unbox (1.9)
-  - Wolf (0.4.0):
-    - Wolf/All (= 0.4.0)
-  - Wolf/All (0.4.0):
+  - Wolf (0.6.0):
+    - Wolf/All (= 0.6.0)
+  - Wolf/All (0.6.0):
     - Alamofire (~> 3.4)
     - Argo (~> 3.1)
     - BrightFutures (~> 4.1)
@@ -33,6 +34,7 @@ PODS:
 
 DEPENDENCIES:
   - Curry (~> 2.3)
+  - IBentifiers (~> 0.1)
   - Nimble (~> 3.0)
   - Nuke (~> 3.1)
   - OHHTTPStubs (~> 5.1)
@@ -48,13 +50,14 @@ SPEC CHECKSUMS:
   Argo: bb0e94e309d6ceb8fa58910205c8968be101e429
   BrightFutures: 2b9f317ca249be86025f5747a76e72c9a0b4f4d2
   Curry: 37223f4467e4802a08b6a414b526dcd919a4a777
+  IBentifiers: e966cbce02d186657154934068fd788d113379e2
   Nimble: 703854335d181df169bbca9c97117b5cf8c47c1d
   Nuke: d951142c7499e18f242e59ae7fb95a021a2a4974
   OHHTTPStubs: 592f74439d2d72615115cf99a954237a3fbe26e5
   Result: 18e1a7597fbcca5923c565b40a25a98afafdee02
   Unbox: a6f56a1682b5fd2ba6aea96d7b1ec17599db4f05
-  Wolf: afc4d51a9f7f411b90ff2cf61a65975edecfc8c3
+  Wolf: 7ed068868ebe3522200c3ae0668e9ee9a8c5fd70
 
-PODFILE CHECKSUM: c659f2eefc04e7b171440cda6a04fbcac8193610
+PODFILE CHECKSUM: 3d647031f6a35bd604f18dcb7c8ea893f298b535
 
 COCOAPODS: 1.0.1
