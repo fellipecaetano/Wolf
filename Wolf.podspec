@@ -1,34 +1,30 @@
 Pod::Spec.new do |s|
-  s.name             = 'Wolf'
-  s.version          = '0.6.0'
-  s.summary          = 'Handy solutions to common iOS app development problems.'
-
-  s.description      = <<-DESC
-Wolf brings handy solutions to common iOS app development problems. It includes storyboard management, error handling shortcuts, an opinionated networking layer and more.
-                       DESC
-
+  s.name = 'Wolf'
+  s.version = '0.6.0'
+  s.summary = 'An opinionated, protocol-oriented networking layer.'
+  s.description = <<-DESC
+Wolf approaches networking by bringing together the battle experience of Alamofire and the flexible power of Swift protocols.
+                  DESC
   s.homepage = 'https://github.com/fellipecaetano/Wolf'
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.author = { 'Fellipe Caetano' => 'fellipe.caetano4@gmail.com' }
   s.source = { :git => 'https://github.com/fellipecaetano/Wolf.git', :tag => s.version.to_s }
   s.ios.deployment_target = '8.0'
+  s.osx.deployment_target = '10.10'
   s.requires_arc = true
-
-  s.default_subspec = 'All'
-
-  s.subspec 'All' do |all|
-    all.source_files = ['Wolf/Classes/**/*']
-    all.dependency 'Alamofire', '~> 3.4'
-    all.dependency 'BrightFutures', '~> 4.1'
-    all.dependency 'Argo', '~> 3.1'
-    all.dependency 'Unbox', '~> 1.9'
+  s.subspec 'Unbox' do |unbox|
+    configure_subspec(unbox)
+    unbox.exclude_files = ['Wolf/Classes/Argo/**/*']
   end
-
-  s.subspec 'Standard' do |std|
-    std.source_files = ['Wolf/Classes/**/*']
-    std.exclude_files = ['Wolf/Classes/Argo/**/*']
-    std.dependency 'Alamofire', '~> 3.4'
-    std.dependency 'BrightFutures', '~> 4.1'
-    std.dependency 'Unbox', '~> 1.9'
+  s.subspec 'Argo' do |argo|
+    configure_subspec(argo)
+    argo.exclude_files = ['Wolf/Classes/Unbox/**/*']
   end
+  s.default_subspec = 'Unbox'
+end
+
+def configure_subspec(subspec)
+  subspec.source_files = ['Wolf/Classes/**/*']
+  subspec.dependency 'Alamofire', '~> 3.4'
+  subspec.dependency 'BrightFutures', '~> 4.1'
 end
