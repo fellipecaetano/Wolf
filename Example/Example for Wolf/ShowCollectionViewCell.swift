@@ -1,5 +1,5 @@
 import UIKit
-import Wolf
+import IBentifiers
 import Nuke
 
 class ShowCollectionViewCell: UICollectionViewCell, NibLoadable, Reusable {
