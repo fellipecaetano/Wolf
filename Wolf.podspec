@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Wolf'
-  s.version = '0.8.1'
+  s.version = '0.8.2'
   s.summary = 'An opinionated, protocol-oriented networking layer.'
   s.description = <<-DESC
 Wolf approaches networking by bringing together the battle experience of Alamofire and the flexible power of Swift protocols.
