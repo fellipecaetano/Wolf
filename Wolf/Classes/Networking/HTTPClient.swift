@@ -5,6 +5,10 @@ import BrightFutures
 public protocol HTTPClient {
     var baseURL: NSURL { get }
     var manager: Manager { get }
+
+    func sendRequest<S: ResponseSerializerType>(request: Request,
+                     responseSerializer: S,
+                     completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Request
 }
 
 public extension HTTPClient {
@@ -14,9 +18,15 @@ public extension HTTPClient {
     }
 
     func sendRequest<R: HTTPResource>(resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
-        return request(resource)
-            .validate()
-            .response(responseSerializer: resource.responseSerializer, completionHandler: completionHandler)
+        return sendRequest(request(resource),
+                           responseSerializer: resource.responseSerializer,
+                           completionHandler: completionHandler)
+    }
+
+    func sendRequest<S: ResponseSerializerType>(request: Request,
+                     responseSerializer: S,
+                     completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Request {
+        return request.validate().response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
 
