@@ -3,36 +3,36 @@ import Alamofire
 import BrightFutures
 
 public protocol HTTPClient {
-    var baseURL: NSURL { get }
+    var baseURL: URL { get }
     var manager: Manager { get }
 
-    func sendRequest<S: ResponseSerializerType>(request: Request,
+    func sendRequest<S: ResponseSerializerType>(_ request: Request,
                      responseSerializer: S,
-                     completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Request
+                     completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Request
 }
 
 public extension HTTPClient {
-    func request<R: HTTPResource>(resource: R) -> Request {
+    func request<R: HTTPResource>(_ resource: R) -> Request {
         let target = HTTPTarget(baseURL: baseURL, resource: resource)
         return manager.request(target)
     }
 
-    func sendRequest<R: HTTPResource>(resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
+    func sendRequest<R: HTTPResource>(_ resource: R, completionHandler: (Response<R.Value, R.Error>) -> Void) -> Request {
         return sendRequest(request(resource),
                            responseSerializer: resource.responseSerializer,
                            completionHandler: completionHandler)
     }
 
-    func sendRequest<S: ResponseSerializerType>(request: Request,
+    func sendRequest<S: ResponseSerializerType>(_ request: Request,
                      responseSerializer: S,
-                     completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Request {
+                     completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Request {
         return request.validate().response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
 
 public protocol HTTPResource {
     associatedtype Value
-    associatedtype Error: ErrorType
+    associatedtype Error: Swift.Error
 
     var path: String { get }
     var method: Alamofire.Method { get }
@@ -40,7 +40,7 @@ public protocol HTTPResource {
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
 
-    func serialize(data: NSData?, error: NSError?) -> Result<Value, Error>
+    func serialize(_ data: Data?, error: NSError?) -> Result<Value, Error>
 }
 
 public extension HTTPResource {
@@ -68,25 +68,25 @@ public extension HTTPResource {
 }
 
 struct HTTPTarget<R: HTTPResource>: HTTPTargetProtocol {
-    let baseURL: NSURL
+    let baseURL: URL
     let resource: R
 }
 
 protocol HTTPTargetProtocol {
     associatedtype Resource: HTTPResource
 
-    var baseURL: NSURL { get }
+    var baseURL: Foundation.URL { get }
     var resource: Resource { get }
 }
 
 extension HTTPTargetProtocol {
-    var URL: NSURL {
-        return baseURL.URLByAppendingPathComponent(resource.path)
+    var URL: Foundation.URL {
+        return baseURL.appendingPathComponent(resource.path)
     }
 }
 
 private extension Manager {
-    func request<T: HTTPTargetProtocol>(target: T) -> Request {
+    func request<T: HTTPTargetProtocol>(_ target: T) -> Request {
         return request(target.resource.method,
                        target.URL.absoluteString,
                        parameters: target.resource.parameters,

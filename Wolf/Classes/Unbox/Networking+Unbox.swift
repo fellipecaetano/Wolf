@@ -2,7 +2,7 @@ import Unbox
 import Alamofire
 
 public extension HTTPResource where Value: Unboxable, Error == UnboxResponseError {
-    func serialize(data: NSData?, error: NSError?) -> Result<Value, Error> {
+    func serialize(_ data: NSData?, error: NSError?) -> Result<Value, Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))
         } else if let data = data {
@@ -13,7 +13,7 @@ public extension HTTPResource where Value: Unboxable, Error == UnboxResponseErro
     }
 }
 
-private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError> {
+private func decode<T: Unboxable>(_ data: Data) -> Result<T, UnboxResponseError> {
     do {
         let value: T = try Unbox(data)
         return .Success(value)
@@ -25,11 +25,11 @@ private func decode<T: Unboxable>(data: NSData) -> Result<T, UnboxResponseError>
 }
 
 public extension HTTPResource
-    where Value: CollectionType,
-    Value.Generator.Element: Unboxable,
+    where Value: Collection,
+    Value.Iterator.Element: Unboxable,
     Error == UnboxResponseError {
 
-    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+    func serialize(_ data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))
         } else if let data = data {
@@ -40,7 +40,7 @@ public extension HTTPResource
     }
 }
 
-private func decodeArray<T: Unboxable>(data: NSData) -> Result<[T], UnboxResponseError> {
+private func decodeArray<T: Unboxable>(_ data: Data) -> Result<[T], UnboxResponseError> {
     do {
         let valueArray: [T] = try Unbox(data)
         return .Success(valueArray)
@@ -53,14 +53,14 @@ private func decodeArray<T: Unboxable>(data: NSData) -> Result<[T], UnboxRespons
 
 public extension HTTPResource
     where Self: JSONEnvelope,
-    Value: CollectionType,
-    Value.Generator.Element: Unboxable,
+    Value: Collection,
+    Value.Iterator.Element: Unboxable,
     Error == UnboxResponseError {
 
-    func serialize(data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
+    func serialize(_ data: NSData?, error: NSError?) -> Result<[Value.Generator.Element], Error> {
         if let error = error {
             return .Failure(.FailedRequest(error))
-        } else if let data = data, rootKey = rootKey {
+        } else if let data = data, let rootKey = rootKey {
             return decodeArray(data, rootKey: rootKey)
         } else if let data = data {
             return decodeArray(data)
@@ -70,7 +70,7 @@ public extension HTTPResource
     }
 }
 
-private func decodeArray<T: Unboxable>(data: NSData, rootKey: String) -> Result<[T], UnboxResponseError> {
+private func decodeArray<T: Unboxable>(_ data: Data, rootKey: String) -> Result<[T], UnboxResponseError> {
     do {
         let dictionary: UnboxableDictionary = try NSJSONSerialization.JSONObject(data, options: [])
         let valueArray: [T] = try Unbox(dictionary, at: rootKey)
@@ -82,9 +82,9 @@ private func decodeArray<T: Unboxable>(data: NSData, rootKey: String) -> Result<
     }
 }
 
-private extension NSJSONSerialization {
-    static func JSONObject<T>(data: NSData, options: NSJSONReadingOptions) throws -> T {
-        let JSONObject = try NSJSONSerialization.JSONObjectWithData(data, options: options)
+private extension JSONSerialization {
+    static func JSONObject<T>(_ data: Data, options: JSONSerialization.ReadingOptions) throws -> T {
+        let JSONObject = try JSONSerialization.jsonObject(with: data, options: options)
         guard let typedObject = JSONObject as? T else {
             throw UnboxError.InvalidData
         }
@@ -92,10 +92,10 @@ private extension NSJSONSerialization {
     }
 }
 
-public enum UnboxResponseError: ErrorType {
-    case FailedRequest(NSError)
-    case InvalidSchema(UnboxError)
-    case InvalidFormat(NSError)
-    case AbsentData
-    case UnknownFailure(ErrorType)
+public enum UnboxResponseError: Error {
+    case failedRequest(NSError)
+    case invalidSchema(UnboxError)
+    case invalidFormat(NSError)
+    case absentData
+    case unknownFailure(Error)
 }

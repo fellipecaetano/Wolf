@@ -1,8 +1,8 @@
 import Alamofire
 
 public extension HTTPClient {
-    func sendRequest<R: protocol<HTTPResource, CacheableResource>>
-        (resource: R, completionHandler: Response<R.Value, R.Error> -> Void) -> Request {
+    func sendRequest<R: HTTPResource & CacheableResource>
+        (_ resource: R, completionHandler: (Response<R.Value, R.Error>) -> Void) -> Request {
 
         return request(resource)
             .validate()
@@ -14,25 +14,25 @@ public extension HTTPClient {
 
 public protocol CacheableResource {
     var cache: URLCache { get }
-    var cacheDuration: NSTimeInterval { get }
-    var cacheStoragePolicy: NSURLCacheStoragePolicy { get }
+    var cacheDuration: TimeInterval { get }
+    var cacheStoragePolicy: Foundation.URLCache.StoragePolicy { get }
 }
 
 public extension CacheableResource {
     var cache: URLCache {
-        return NSURLCache.sharedURLCache()
+        return Foundation.URLCache.shared as! URLCache
     }
 
-    var cacheStoragePolicy: NSURLCacheStoragePolicy {
-        return .Allowed
+    var cacheStoragePolicy: Foundation.URLCache.StoragePolicy {
+        return .allowed
     }
 }
 
 private extension Request {
     func cachedResponse<C: CacheableResource, S: ResponseSerializerType>
-        (resource: C, responseSerializer: S, completionHandler: Response<S.SerializedObject, S.ErrorObject> -> Void) -> Self {
+        (_ resource: C, responseSerializer: S, completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Self {
 
-        if let cachedResponse = CachedResponse(request: self, resource: resource) where !cachedResponse.isExpired {
+        if let cachedResponse = CachedResponse(request: self, resource: resource), !cachedResponse.isExpired {
             let response: Response = responseSerializer.serializeResponse(request,
                                                                           cachedResponse.response as? NSHTTPURLResponse,
                                                                           cachedResponse.data,
@@ -48,7 +48,7 @@ private extension Request {
 
 private extension CachedResponse {
     init? <R: CacheableResource> (request: Request, resource: R) {
-        if let request = request.request, response = resource.cache.cachedResponseForRequest(request) {
+        if let request = request.request, let response = resource.cache.cachedResponseForRequest(request) {
             self.init(cachedResponse: response, duration: resource.cacheDuration)
         } else {
             return nil
@@ -56,11 +56,11 @@ private extension CachedResponse {
     }
 }
 
-private func cache<R: CacheableResource, V, E: ErrorType>
-    (resource: R, _ completionHandler: Response<V, E> -> Void) -> Response<V, E> -> Void {
+private func cache<R: CacheableResource, V, E: Error>
+    (_ resource: R, _ completionHandler: (Response<V, E>) -> Void) -> (Response<V, E>) -> Void {
 
     return { response in
-        if let request = response.request, httpResponse = response.response, data = response.data where response.result.error == nil {
+        if let request = response.request, let httpResponse = response.response, let data = response.data, response.result.error == nil {
             let cachedResponse = CachedResponse(response: httpResponse,
                                                 data: data,
                                                 duration: resource.cacheDuration,
@@ -72,7 +72,7 @@ private func cache<R: CacheableResource, V, E: ErrorType>
 }
 
 private extension ResponseSerializerType {
-    func serializeResponse(request: NSURLRequest?,
+    func serializeResponse(_ request: NSURLRequest?,
                            _ response: NSHTTPURLResponse?,
                              _ data: NSData?,
                                _ error: NSError?) -> Response<SerializedObject, ErrorObject> {

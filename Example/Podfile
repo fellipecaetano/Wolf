@@ -1,18 +1,16 @@
 use_frameworks!
 
 target 'Wolf_Example' do
-  pod 'Wolf/Argo', :path => '../'
-  pod 'Curry', '~> 2.3'
-  pod 'Nuke', '~> 3.1'
-  pod 'OHHTTPStubs', '~> 5.1'
-  pod 'OHHTTPStubs/Swift', '~> 5.1'
+  pod 'Wolf/Unbox', :path => '../'
+  pod 'Nuke', '~> 4.1'
+  pod 'OHHTTPStubs', '~> 5.2'
+  pod 'OHHTTPStubs/Swift', '~> 5.2'
   pod 'IBentifiers', '~> 0.1'
 
   target 'Wolf_Tests' do
-    pod 'Wolf/Argo', :path => '../'
     pod 'Wolf/Unbox', :path => '../'
-    pod 'Nimble', '~> 3.0'
-    pod 'OHHTTPStubs', '~> 5.1'
-    pod 'OHHTTPStubs/Swift', '~> 5.1'
+    pod 'Nimble', '~> 5.0'
+    pod 'OHHTTPStubs', '~> 5.2'
+    pod 'OHHTTPStubs/Swift', '~> 5.2'
   end
 end
