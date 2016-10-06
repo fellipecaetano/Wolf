@@ -22,7 +22,7 @@ PODS:
     - OHHTTPStubs/Core
   - Result (3.0.0)
   - Unbox (2.0)
-  - Wolf/Unbox (0.8.2):
+  - Wolf/Unbox (1.0.0):
     - Alamofire (~> 4.0)
     - BrightFutures (~> 5.0)
     - Unbox (~> 2.0)
@@ -48,7 +48,7 @@ SPEC CHECKSUMS:
   OHHTTPStubs: 3a42f25c00563b71355ac73112ba2324e9e6cef4
   Result: 1b3e431f37cbcd3ad89c6aa9ab0ae55515fae3b6
   Unbox: 4838b95f7d6b7cb125cb7577b355640410fdd318
-  Wolf: caa935f4a5660c6c502cd804a8a68cfafe873cc6
+  Wolf: 4606a7752d198f157d93d1a663a3e5dfa47d9662
 
 PODFILE CHECKSUM: b19cc6f014b71333f1c0897e912e261aaf672e96
 
