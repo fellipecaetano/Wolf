@@ -77,7 +77,7 @@ private func decodeArray<T: Unboxable>(_ data: Data, rootKey: String) -> Result<
         return .success(valueArray)
     } catch let error as UnboxError {
         return .failure(UnboxResponseError.invalidSchema(error))
-    } catch let error as Error {
+    } catch let error {
         return .failure(UnboxResponseError.invalidFormat(error))
     }
 }
