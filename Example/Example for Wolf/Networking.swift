@@ -3,9 +3,9 @@ import Alamofire
 import Wolf
 
 class TVGuideClient: HTTPClient {
-    var baseURL: NSURL {
-        return NSURL(string: "https://tvguide.com")!
+    var baseURL: URL {
+        return URL(string: "https://tvguide.com")!
     }
 
-    let manager = Manager()
+    let manager = SessionManager()
 }

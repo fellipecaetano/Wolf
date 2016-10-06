@@ -5,15 +5,14 @@ import OHHTTPStubs
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
-    func application(application: UIApplication,
-                     didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         installNetworkStubs()
         installKeyWindow()
         return true
     }
 
     private func installKeyWindow() {
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = UINavigationController(
             rootViewController: Storyboard.Main.instantiateViewController() as PopularShowsViewController
         )
@@ -21,8 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func installNetworkStubs() {
-        stub(isPath("/shows/popular")) { _ in
-            return fixture(OHPathForFile("popular_shows.json", self.dynamicType)!, headers: nil)
+        _ = stub(condition: isPath("/shows/popular")) { _ in
+            return fixture(filePath: OHPathForFile("popular_shows.json", type(of: self))!, headers: nil)
         }
     }
 }

@@ -14,7 +14,7 @@ class ShowCollectionViewCell: UICollectionViewCell, NibLoadable, Reusable {
 
     private func render() {
         if let show = show {
-            imageView.nk_setImageWith(show.imageURL)
+            loadImage(with: show.imageURL, into: imageView)
             label.text = show.title
         }
     }

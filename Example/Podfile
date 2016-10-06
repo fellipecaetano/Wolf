@@ -5,7 +5,7 @@ target 'Wolf_Example' do
   pod 'Nuke', '~> 4.1'
   pod 'OHHTTPStubs', '~> 5.2'
   pod 'OHHTTPStubs/Swift', '~> 5.2'
-  pod 'IBentifiers', '~> 0.1'
+  pod 'IBentifiers', '~> 1.0'
 
   target 'Wolf_Tests' do
     pod 'Wolf/Unbox', :path => '../'

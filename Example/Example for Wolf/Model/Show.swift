@@ -1,18 +1,16 @@
 import Foundation
-import Argo
-import Curry
+import Unbox
 import Wolf
 
 struct Show {
-    let imageURL: NSURL
+    let imageURL: URL
     let title: String
 }
 
-extension Show: Decodable {
-    static func decode(json: JSON) -> Decoded<Show> {
-        return curry(self.init)
-            <^> json <| ["images", "poster", "thumb"]
-            <*> json <| "title"
+extension Show: Unboxable {
+    init(unboxer: Unboxer) throws {
+        imageURL = try unboxer.unbox(keyPath: "images.poster.thumb")
+        title = try unboxer.unbox(key: "title")
     }
 }
 
@@ -23,7 +21,7 @@ extension Show {
 
     enum Resource: HTTPResource {
         typealias Value = [Show]
-        typealias Error = ArgoResponseError
+        typealias Error = UnboxResponseError
 
         case getPopularShows
 

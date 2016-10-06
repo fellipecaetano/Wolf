@@ -4,28 +4,31 @@ import BrightFutures
 
 public protocol HTTPClient {
     var baseURL: URL { get }
-    var manager: Manager { get }
+    var manager: SessionManager { get }
 
-    func sendRequest<S: ResponseSerializerType>(_ request: Request,
+    @discardableResult
+    func sendRequest<S: DataResponseSerializerProtocol>(_ request: DataRequest,
                      responseSerializer: S,
-                     completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Request
+                     completionHandler: @escaping (DataResponse<S.SerializedObject>) -> Void) -> DataRequest
 }
 
 public extension HTTPClient {
-    func request<R: HTTPResource>(_ resource: R) -> Request {
+    func request<R: HTTPResource>(_ resource: R) -> DataRequest {
         let target = HTTPTarget(baseURL: baseURL, resource: resource)
         return manager.request(target)
     }
 
-    func sendRequest<R: HTTPResource>(_ resource: R, completionHandler: (Response<R.Value, R.Error>) -> Void) -> Request {
+    @discardableResult
+    func sendRequest<R: HTTPResource>(_ resource: R, completionHandler: @escaping (DataResponse<R.Value>) -> Void) -> DataRequest {
         return sendRequest(request(resource),
                            responseSerializer: resource.responseSerializer,
                            completionHandler: completionHandler)
     }
 
-    func sendRequest<S: ResponseSerializerType>(_ request: Request,
+    @discardableResult
+    func sendRequest<S: DataResponseSerializerProtocol>(_ request: DataRequest,
                      responseSerializer: S,
-                     completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Request {
+                     completionHandler: @escaping (DataResponse<S.SerializedObject>) -> Void) -> DataRequest {
         return request.validate().response(responseSerializer: responseSerializer, completionHandler: completionHandler)
     }
 }
@@ -35,17 +38,17 @@ public protocol HTTPResource {
     associatedtype Error: Swift.Error
 
     var path: String { get }
-    var method: Alamofire.Method { get }
+    var method: HTTPMethod { get }
     var parameters: [String: AnyObject]? { get }
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
 
-    func serialize(_ data: Data?, error: NSError?) -> Result<Value, Error>
+    func serialize(_ data: Data?, error: Swift.Error?) -> Result<Value>
 }
 
 public extension HTTPResource {
-    var method: Alamofire.Method {
-        return .GET
+    var method: HTTPMethod {
+        return .get
     }
 
     var parameters: [String: AnyObject]? {
@@ -57,11 +60,11 @@ public extension HTTPResource {
     }
 
     var parameterEncoding: ParameterEncoding {
-        return .URL
+        return URLEncoding()
     }
 
-    var responseSerializer: ResponseSerializer<Value, Error> {
-        return ResponseSerializer { _, _, data, error in
+    var responseSerializer: DataResponseSerializer<Value> {
+        return DataResponseSerializer { _, _, data, error in
             return self.serialize(data, error: error)
         }
     }
@@ -85,10 +88,10 @@ extension HTTPTargetProtocol {
     }
 }
 
-private extension Manager {
-    func request<T: HTTPTargetProtocol>(_ target: T) -> Request {
-        return request(target.resource.method,
-                       target.URL.absoluteString,
+private extension SessionManager {
+    func request<T: HTTPTargetProtocol>(_ target: T) -> DataRequest {
+        return request(target.URL,
+                       method: target.resource.method,
                        parameters: target.resource.parameters,
                        encoding: target.resource.parameterEncoding,
                        headers: target.resource.headers)

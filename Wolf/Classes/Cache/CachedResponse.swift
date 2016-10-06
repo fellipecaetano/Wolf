@@ -8,9 +8,9 @@ public struct CachedResponse {
                  creationDate: Date = Date(),
                  storagePolicy: Foundation.URLCache.StoragePolicy = .allowed) {
         cachedResponse = CachedURLResponse(response: response,
-                                             data: data,
-                                             userInfo: ["creation_date": creationDate],
-                                             storagePolicy: storagePolicy)
+                                           data: data,
+                                           userInfo: ["creation_date": creationDate],
+                                           storagePolicy: storagePolicy)
         self.duration = duration
     }
 

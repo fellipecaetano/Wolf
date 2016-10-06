@@ -18,14 +18,14 @@ class PopularShowsViewController: UICollectionViewController, Identifiable {
             self?.shows = response.result.value ?? []
         }
 
-        collectionView?.register(ShowCollectionViewCell)
+        collectionView?.register(ShowCollectionViewCell.self)
     }
 
-    override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return shows.count
     }
 
-    override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: ShowCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
         cell.show = shows[indexPath.item]
         return cell

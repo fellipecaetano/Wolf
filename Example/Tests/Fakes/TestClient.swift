@@ -2,13 +2,13 @@ import Alamofire
 import Wolf
 
 class TestClient: HTTPClient {
-    var baseURL: NSURL {
-        return NSURL(string: "http://example.com")!
+    var baseURL: URL {
+        return URL(string: "http://example.com")!
     }
 
-    let manager: Manager
+    let manager: SessionManager
 
     init() {
-        manager = Manager()
+        manager = SessionManager()
     }
 }

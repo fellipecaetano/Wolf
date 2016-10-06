@@ -7,8 +7,8 @@ struct Song {
 }
 
 extension Song: Unboxable {
-    init(unboxer: Unboxer) {
-        title = unboxer.unbox("title")
+    init(unboxer: Unboxer) throws {
+        title = try unboxer.unbox(key: "title")
     }
 }
 

@@ -12,8 +12,8 @@ class UnboxNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForObject() {
-        stub(isPath("/song")) { _ in
-            return fixture(OHPathForFile("song.json", self.dynamicType)!, headers: nil)
+        _ = stub(condition: isPath("/song")) { _ in
+            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
         }
 
         waitUntil { done in
@@ -25,8 +25,8 @@ class UnboxNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForFlatArray() {
-        stub(isPath("/songs")) { _ in
-            return fixture(OHPathForFile("songs.json", self.dynamicType)!, headers: nil)
+        _ = stub(condition: isPath("/songs")) { _ in
+            return fixture(filePath: OHPathForFile("songs.json", type(of: self))!, headers: nil)
         }
 
         waitUntil { done in
@@ -39,8 +39,8 @@ class UnboxNetworkingTests: XCTestCase {
     }
 
     func testSuccessfulRequestForEnvelopedArray() {
-        stub(isPath("/songs/enveloped")) { _ in
-            return fixture(OHPathForFile("enveloped_songs.json", self.dynamicType)!, headers: nil)
+        _ = stub(condition: isPath("/songs/enveloped")) { _ in
+            return fixture(filePath: OHPathForFile("enveloped_songs.json", type(of: self))!, headers: nil)
         }
 
         waitUntil { done in
@@ -53,8 +53,8 @@ class UnboxNetworkingTests: XCTestCase {
     }
 
     func testInvalidSchemaObjectRequest() {
-        stub(isPath("/songs/invalid_schema")) { _ in
-            return fixture(OHPathForFile("invalid_song.json", self.dynamicType)!, headers: nil)
+        _ = stub(condition: isPath("/songs/invalid_schema")) { _ in
+            return fixture(filePath: OHPathForFile("invalid_song.json", type(of: self))!, headers: nil)
         }
 
         waitUntil { done in
@@ -62,10 +62,10 @@ class UnboxNetworkingTests: XCTestCase {
                 expect(response.result.value).to(beNil())
 
                 switch response.result.error! {
-                case .InvalidSchema:
+                case UnboxResponseError.invalidSchema:
                     break
                 default:
-                    fail("Expected \(UnboxResponseError.InvalidSchema) but got \(response.result.error!)")
+                    fail("Expected \(UnboxResponseError.invalidSchema) but got \(response.result.error!)")
                 }
                 done()
             }

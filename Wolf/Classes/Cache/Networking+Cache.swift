@@ -1,8 +1,10 @@
 import Alamofire
+import Foundation
 
 public extension HTTPClient {
+    @discardableResult
     func sendRequest<R: HTTPResource & CacheableResource>
-        (_ resource: R, completionHandler: (Response<R.Value, R.Error>) -> Void) -> Request {
+        (_ resource: R, completionHandler: @escaping (DataResponse<R.Value>) -> Void) -> DataRequest {
 
         return request(resource)
             .validate()
@@ -20,7 +22,7 @@ public protocol CacheableResource {
 
 public extension CacheableResource {
     var cache: URLCache {
-        return Foundation.URLCache.shared as! URLCache
+        return Foundation.URLCache.shared
     }
 
     var cacheStoragePolicy: Foundation.URLCache.StoragePolicy {
@@ -28,15 +30,15 @@ public extension CacheableResource {
     }
 }
 
-private extension Request {
-    func cachedResponse<C: CacheableResource, S: ResponseSerializerType>
-        (_ resource: C, responseSerializer: S, completionHandler: (Response<S.SerializedObject, S.ErrorObject>) -> Void) -> Self {
+private extension DataRequest {
+    func cachedResponse<C: CacheableResource, S: DataResponseSerializerProtocol>
+        (_ resource: C, responseSerializer: S, completionHandler: @escaping (DataResponse<S.SerializedObject>) -> Void) -> Self {
 
         if let cachedResponse = CachedResponse(request: self, resource: resource), !cachedResponse.isExpired {
-            let response: Response = responseSerializer.serializeResponse(request,
-                                                                          cachedResponse.response as? NSHTTPURLResponse,
-                                                                          cachedResponse.data,
-                                                                          nil)
+            let response: DataResponse = responseSerializer.serializeResponse(request,
+                                                                              cachedResponse.response as? HTTPURLResponse,
+                                                                              cachedResponse.data,
+                                                                              nil)
             completionHandler(response)
             return self
         } else {
@@ -56,8 +58,8 @@ private extension CachedResponse {
     }
 }
 
-private func cache<R: CacheableResource, V, E: Error>
-    (_ resource: R, _ completionHandler: (Response<V, E>) -> Void) -> (Response<V, E>) -> Void {
+private func cache<R: CacheableResource, V>
+    (_ resource: R, _ completionHandler: @escaping (DataResponse<V>) -> Void) -> (DataResponse<V>) -> Void {
 
     return { response in
         if let request = response.request, let httpResponse = response.response, let data = response.data, response.result.error == nil {
@@ -71,12 +73,12 @@ private func cache<R: CacheableResource, V, E: Error>
     }
 }
 
-private extension ResponseSerializerType {
-    func serializeResponse(_ request: NSURLRequest?,
-                           _ response: NSHTTPURLResponse?,
-                             _ data: NSData?,
-                               _ error: NSError?) -> Response<SerializedObject, ErrorObject> {
+private extension DataResponseSerializerProtocol {
+    func serializeResponse(_ request: URLRequest?,
+                           _ response: HTTPURLResponse?,
+                           _ data: Data?,
+                           _ error: NSError?) -> DataResponse<SerializedObject> {
         let result = serializeResponse(request, response, data, error)
-        return Response(request: request, response: response, data: data, result: result)
+        return DataResponse(request: request, response: response, data: data, result: result)
     }
 }
