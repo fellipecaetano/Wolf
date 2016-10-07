@@ -39,7 +39,7 @@ public protocol HTTPResource {
 
     var path: String { get }
     var method: HTTPMethod { get }
-    var parameters: [String: AnyObject]? { get }
+    var parameters: Parameters? { get }
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
 
@@ -51,7 +51,7 @@ public extension HTTPResource {
         return .get
     }
 
-    var parameters: [String: AnyObject]? {
+    var parameters: Parameters? {
         return nil
     }
 
