@@ -30,7 +30,7 @@ PODS:
   - PromiseKit/UIKit (4.0.3):
     - PromiseKit/CorePromise
   - Unbox (2.0)
-  - Wolf/Unbox (1.1.0):
+  - Wolf/Unbox (2.0.0):
     - Alamofire (~> 4.0)
     - PromiseKit (~> 4.0)
     - Unbox (~> 2.0)
@@ -55,7 +55,7 @@ SPEC CHECKSUMS:
   OHHTTPStubs: 3a42f25c00563b71355ac73112ba2324e9e6cef4
   PromiseKit: dfe8fcc6445674fb23378d89990838c1cbdbf05a
   Unbox: 4838b95f7d6b7cb125cb7577b355640410fdd318
-  Wolf: 4d06874a64a7458eb92e47e033f1b0b480fc6e5b
+  Wolf: b4f9144f6512956ebd09a8553c74b839ce700e3f
 
 PODFILE CHECKSUM: b19cc6f014b71333f1c0897e912e261aaf672e96
 
