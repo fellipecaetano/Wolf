@@ -52,6 +52,20 @@ class UnboxNetworkingTests: XCTestCase {
         }
     }
 
+    func testResponseWithInvalidStatusCode() {
+        _ = stub(condition: isPath("/song")) { _ in
+            return OHHTTPStubsResponse(jsonObject: [:], statusCode: 403, headers: nil)
+        }
+
+        waitUntil { done in
+            self.client.sendRequest(Song.Resource.getSong) { response in
+                expect(response.result.value).to(beNil())
+                expect(response.result.error).toNot(beNil())
+                done()
+            }
+        }
+    }
+
     func testInvalidSchemaObjectRequest() {
         _ = stub(condition: isPath("/songs/invalid_schema")) { _ in
             return fixture(filePath: OHPathForFile("invalid_song.json", type(of: self))!, headers: nil)
