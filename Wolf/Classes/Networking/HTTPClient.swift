@@ -41,7 +41,8 @@ public protocol HTTPResource {
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
 
-    func serialize(_ data: Data?, error: Swift.Error?) -> Result<Value>
+    func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult
+    func serialize(data: Data?, error: Swift.Error?) -> Result<Value>
 }
 
 public extension HTTPResource {
@@ -63,8 +64,12 @@ public extension HTTPResource {
 
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in
-            return self.serialize(data, error: error)
+            return self.serialize(data: data, error: error)
         }
+    }
+
+    func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult {
+        return .success
     }
 }
 
