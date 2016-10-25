@@ -17,13 +17,14 @@ extension Song {
         typealias Value = Song
 
         case getSong
+        case getValidatedSong(Error)
         case getSongs
         case getInvalidSchemaSong
         case getInvalidFormatSong
 
         var path: String {
             switch self {
-            case .getSong:
+            case .getSong, .getValidatedSong:
                 return "song"
             case .getSongs:
                 return "songs"
@@ -31,6 +32,15 @@ extension Song {
                 return "songs/invalid_schema"
             case .getInvalidFormatSong:
                 return "songs/invalid_format"
+            }
+        }
+
+        func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult {
+            switch self {
+            case .getValidatedSong(let error):
+                return .failure(error)
+            default:
+                return .success
             }
         }
     }

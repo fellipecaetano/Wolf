@@ -19,7 +19,7 @@ public extension HTTPClient {
 
     @discardableResult
     func sendRequest<R: HTTPResource>(_ resource: R, completionHandler: @escaping (DataResponse<R.Value>) -> Void) -> DataRequest {
-        return sendRequest(request(resource),
+        return sendRequest(request(resource).validate(resource.validate),
                            responseSerializer: resource.responseSerializer,
                            completionHandler: completionHandler)
     }

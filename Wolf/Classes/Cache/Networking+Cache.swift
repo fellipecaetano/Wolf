@@ -7,6 +7,7 @@ public extension HTTPClient {
         (_ resource: R, completionHandler: @escaping (DataResponse<R.Value>) -> Void) -> DataRequest {
 
         return request(resource)
+            .validate(resource.validate)
             .validate()
             .cachedResponse(resource,
                             responseSerializer: resource.responseSerializer,
@@ -31,9 +32,9 @@ public extension CacheableResource {
 }
 
 private extension DataRequest {
-    func cachedResponse<C: CacheableResource, S: DataResponseSerializerProtocol>
-        (_ resource: C, responseSerializer: S, completionHandler: @escaping (DataResponse<S.SerializedObject>) -> Void) -> Self {
-
+    func cachedResponse<C: CacheableResource, S: DataResponseSerializerProtocol>(_ resource: C,
+                        responseSerializer: S,
+                        completionHandler: @escaping (DataResponse<S.SerializedObject>) -> Void) -> Self {
         if let cachedResponse = CachedResponse(request: self, resource: resource), !cachedResponse.isExpired {
             let response: DataResponse = responseSerializer.serializeResponse(request,
                                                                               cachedResponse.response as? HTTPURLResponse,

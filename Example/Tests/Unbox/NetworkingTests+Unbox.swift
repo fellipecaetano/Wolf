@@ -66,6 +66,23 @@ class UnboxNetworkingTests: XCTestCase {
         }
     }
 
+    func testRequestThatFailsCustomValidation() {
+        _ = stub(condition: isPath("/song")) { _ in
+            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+        }
+
+        waitUntil { done in
+            let expected = NSError(domain: "WolfTestErrorDomain", code: 666, userInfo: nil)
+
+            self.client.sendRequest(Song.Resource.getValidatedSong(expected)) { response in
+                let actual = response.result.error as? NSError
+                expect(actual?.domain) == expected.domain
+                expect(actual?.code) == expected.code
+                done()
+            }
+        }
+    }
+
     func testInvalidSchemaObjectRequest() {
         _ = stub(condition: isPath("/songs/invalid_schema")) { _ in
             return fixture(filePath: OHPathForFile("invalid_song.json", type(of: self))!, headers: nil)

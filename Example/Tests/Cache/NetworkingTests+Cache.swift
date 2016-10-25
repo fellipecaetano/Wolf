@@ -2,6 +2,7 @@ import XCTest
 import Nimble
 import OHHTTPStubs
 import Wolf
+import Alamofire
 
 class CacheNetworkingTests: XCTestCase {
     private let client = TestClient()
@@ -18,6 +19,25 @@ class CacheNetworkingTests: XCTestCase {
             self.client.sendRequest(resource) { response in
                 let cachedResponse = cache.cachedResponseForRequest(response.request!)
                 expect(cachedResponse?.storagePolicy) == .allowedInMemoryOnly
+                done()
+            }
+        }
+    }
+
+    func testThatCacheableResourcesValidateRequests() {
+        _ = stub(condition: isPath("/get/song")) { _ in
+            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+        }
+
+        let cache = TestURLCache()
+        let expected = NSError(domain: "WolfTestErrorDomain", code: 666, userInfo: nil)
+        let resource = Song.CacheableResource.getValidatedSong(cache: cache, error: expected)
+
+        waitUntil { done in
+            self.client.sendRequest(resource) { response in
+                let actual = response.result.error as? NSError
+                expect(actual?.domain) == expected.domain
+                expect(actual?.code) == expected.code
                 done()
             }
         }
@@ -198,10 +218,11 @@ private extension Song {
         typealias Value = Song
 
         case getCachedSong(cache: Wolf.URLCache)
+        case getValidatedSong(cache: Wolf.URLCache, error: Error)
 
         var path: String {
             switch self {
-            case .getCachedSong:
+            case .getCachedSong, .getValidatedSong:
                 return "get/song"
             }
         }
@@ -209,6 +230,8 @@ private extension Song {
         var cache: Wolf.URLCache {
             switch self {
             case .getCachedSong(let cache):
+                return cache
+            case let .getValidatedSong(cache, _):
                 return cache
             }
         }
@@ -219,6 +242,15 @@ private extension Song {
 
         var cacheDuration: TimeInterval {
             return CacheConfiguration().cacheDuration
+        }
+
+        fileprivate func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult {
+            switch self {
+            case let .getValidatedSong(_, error):
+                return .failure(error)
+            default:
+                return .success
+            }
         }
     }
 
