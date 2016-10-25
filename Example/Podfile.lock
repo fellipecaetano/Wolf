@@ -18,9 +18,21 @@ PODS:
   - OHHTTPStubs/OHPathHelpers (5.2.1)
   - OHHTTPStubs/Swift (5.2.1):
     - OHHTTPStubs/Core
+  - PromiseKit (4.0.3):
+    - PromiseKit/Foundation (= 4.0.3)
+    - PromiseKit/QuartzCore (= 4.0.3)
+    - PromiseKit/UIKit (= 4.0.3)
+  - PromiseKit/CorePromise (4.0.3)
+  - PromiseKit/Foundation (4.0.3):
+    - PromiseKit/CorePromise
+  - PromiseKit/QuartzCore (4.0.3):
+    - PromiseKit/CorePromise
+  - PromiseKit/UIKit (4.0.3):
+    - PromiseKit/CorePromise
   - Unbox (2.0)
   - Wolf/Unbox (1.1.0):
     - Alamofire (~> 4.0)
+    - PromiseKit (~> 4.0)
     - Unbox (~> 2.0)
 
 DEPENDENCIES:
@@ -41,8 +53,9 @@ SPEC CHECKSUMS:
   Nimble: 56fc9f5020effa2206de22c3dd910f4fb011b92f
   Nuke: e334bd9834f380951237e880f084c93846fdc36c
   OHHTTPStubs: 3a42f25c00563b71355ac73112ba2324e9e6cef4
+  PromiseKit: dfe8fcc6445674fb23378d89990838c1cbdbf05a
   Unbox: 4838b95f7d6b7cb125cb7577b355640410fdd318
-  Wolf: b8119fe4381b9e6507fce2f6f54eb6994ecd7d47
+  Wolf: 4d06874a64a7458eb92e47e033f1b0b480fc6e5b
 
 PODFILE CHECKSUM: b19cc6f014b71333f1c0897e912e261aaf672e96
 
