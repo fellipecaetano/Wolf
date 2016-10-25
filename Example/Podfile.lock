@@ -1,7 +1,5 @@
 PODS:
   - Alamofire (4.0.1)
-  - BrightFutures (5.0.1):
-    - Result (~> 3.0)
   - IBentifiers (1.0.0)
   - Nimble (5.0.0)
   - Nuke (4.1.1)
@@ -20,11 +18,9 @@ PODS:
   - OHHTTPStubs/OHPathHelpers (5.2.1)
   - OHHTTPStubs/Swift (5.2.1):
     - OHHTTPStubs/Core
-  - Result (3.0.0)
   - Unbox (2.0)
-  - Wolf/Unbox (1.0.0):
+  - Wolf/Unbox (1.1.0):
     - Alamofire (~> 4.0)
-    - BrightFutures (~> 5.0)
     - Unbox (~> 2.0)
 
 DEPENDENCIES:
@@ -41,15 +37,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  BrightFutures: 72fbc51227fa912ccdd5af04f2f6cea0b2d401a6
   IBentifiers: 6bf75e0a4ff97694a35fa4d94108482ce1a2d8a2
   Nimble: 56fc9f5020effa2206de22c3dd910f4fb011b92f
   Nuke: e334bd9834f380951237e880f084c93846fdc36c
   OHHTTPStubs: 3a42f25c00563b71355ac73112ba2324e9e6cef4
-  Result: 1b3e431f37cbcd3ad89c6aa9ab0ae55515fae3b6
   Unbox: 4838b95f7d6b7cb125cb7577b355640410fdd318
-  Wolf: 4606a7752d198f157d93d1a663a3e5dfa47d9662
+  Wolf: b8119fe4381b9e6507fce2f6f54eb6994ecd7d47
 
 PODFILE CHECKSUM: b19cc6f014b71333f1c0897e912e261aaf672e96
 
-COCOAPODS: 1.1.0.rc.2
+COCOAPODS: 1.1.0

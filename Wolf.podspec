@@ -14,13 +14,11 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
   s.subspec 'Basic' do |ss|
     ss.source_files = ['Wolf/Classes/**/*']
     ss.dependency 'Alamofire', '~> 4.0'
-    ss.dependency 'BrightFutures', '~> 5.0'
     ss.exclude_files = ['Wolf/Classes/Unbox/**/*']
   end
   s.subspec 'Unbox' do |ss|
     ss.source_files = ['Wolf/Classes/**/*']
     ss.dependency 'Alamofire', '~> 4.0'
-    ss.dependency 'BrightFutures', '~> 5.0'
     ss.dependency 'Unbox', '~> 2.0'
   end
   s.default_subspec = 'Basic'

@@ -87,12 +87,15 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource).onSuccess { value in
-                expect(value.title  ) == "Northern Lites"
-                done()
-            }.onFailure { _ in
-                fail("This request should not fail")
-                done()
+            self.client.sendRequest(resource) { response in
+                switch response.result {
+                case .success(let value):
+                    expect(value.title) == "Northern Lites"
+                    done()
+                case .failure:
+                    fail("This request should not fail")
+                    done()
+                }
             }
         }
     }
@@ -110,12 +113,15 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource).onSuccess { value in
-                expect(value.count) == 4
-                done()
-            }.onFailure { _ in
-                fail("This request should not fail")
-                done()
+            self.client.sendRequest(resource) { response in
+                switch response.result {
+                case .success(let value):
+                    expect(value.count) == 4
+                    done()
+                case .failure:
+                    fail("This request should not fail")
+                    done()
+                }
             }
         }
     }
@@ -136,11 +142,14 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource).onSuccess { _ in
-                fail("This request should not succeed")
-                done()
-            }.onFailure { _ in
-                done()
+            self.client.sendRequest(resource) { response in
+                switch response.result {
+                case .success:
+                    fail("This request should not succeed")
+                    done()
+                case .failure:
+                    done()
+                }
             }
         }
     }
@@ -161,11 +170,14 @@ class CacheNetworkingTests: XCTestCase {
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
 
         waitUntil { done in
-            self.client.sendRequest(resource).onSuccess { _ in
-                fail("This request should not succeed")
-                done()
-            }.onFailure { _ in
-                done()
+            self.client.sendRequest(resource) { response in
+                switch response.result {
+                case .success:
+                    fail("This request should not succeed")
+                    done()
+                case .failure:
+                    done()
+                }
             }
         }
     }
