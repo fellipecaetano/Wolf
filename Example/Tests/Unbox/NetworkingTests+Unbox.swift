@@ -91,13 +91,7 @@ class UnboxNetworkingTests: XCTestCase {
         waitUntil { done in
             self.client.sendRequest(Song.Resource.getInvalidSchemaSong) { response in
                 expect(response.result.value).to(beNil())
-
-                switch response.result.error! {
-                case UnboxError.missingValue("title"):
-                    break
-                default:
-                    fail("Expected \(UnboxError.missingValue("title")) but got \(response.result.error!)")
-                }
+                expect(response.result.error).toNot(beNil())
                 done()
             }
         }

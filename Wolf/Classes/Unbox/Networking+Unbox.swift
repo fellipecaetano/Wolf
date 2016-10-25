@@ -71,7 +71,7 @@ private extension JSONSerialization {
     static func JSONObject<T>(with data: Data, options: JSONSerialization.ReadingOptions) throws -> T {
         let JSONObject = try JSONSerialization.jsonObject(with: data, options: options)
         guard let typedObject = JSONObject as? T else {
-            throw UnboxError.invalidData
+            throw NSError(domain: NSCocoaErrorDomain, code: 3840, userInfo: ["dirtyObject": JSONObject])
         }
         return typedObject
     }

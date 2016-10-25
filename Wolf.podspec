@@ -21,7 +21,7 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
     ss.source_files = ['Wolf/Classes/**/*']
     ss.dependency 'Alamofire', '~> 4.0'
     ss.dependency 'PromiseKit', '~> 4.0'
-    ss.dependency 'Unbox', '~> 2.0'
+    ss.dependency 'Unbox', '~> 2.2'
   end
   s.default_subspec = 'Basic'
 end
