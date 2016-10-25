@@ -62,10 +62,10 @@ class UnboxNetworkingTests: XCTestCase {
                 expect(response.result.value).to(beNil())
 
                 switch response.result.error! {
-                case UnboxResponseError.invalidSchema:
+                case UnboxError.missingValue("title"):
                     break
                 default:
-                    fail("Expected \(UnboxResponseError.invalidSchema) but got \(response.result.error!)")
+                    fail("Expected \(UnboxError.missingValue("title")) but got \(response.result.error!)")
                 }
                 done()
             }

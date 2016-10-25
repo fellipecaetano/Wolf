@@ -196,7 +196,6 @@ private extension Song {
 
     enum CacheableResource: HTTPResource, Wolf.CacheableResource {
         typealias Value = Song
-        typealias Error = UnboxResponseError
 
         case getCachedSong(cache: Wolf.URLCache)
 
@@ -225,7 +224,6 @@ private extension Song {
 
     enum CacheableArrayResource: HTTPResource, Wolf.CacheableResource {
         typealias Value = [Song]
-        typealias Error = UnboxResponseError
 
         case getCachedSongs(cache: Wolf.URLCache)
 

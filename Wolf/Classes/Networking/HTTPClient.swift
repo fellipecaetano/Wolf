@@ -34,7 +34,6 @@ public extension HTTPClient {
 
 public protocol HTTPResource {
     associatedtype Value
-    associatedtype Error: Swift.Error
 
     var path: String { get }
     var method: HTTPMethod { get }

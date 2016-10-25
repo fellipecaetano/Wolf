@@ -21,7 +21,6 @@ extension Show {
 
     enum Resource: HTTPResource {
         typealias Value = [Show]
-        typealias Error = UnboxResponseError
 
         case getPopularShows
 
