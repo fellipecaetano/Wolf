@@ -74,7 +74,6 @@
 				5500E9F11DDD290C00DC6880 /* Info.plist */,
 				5500E9F01DDD290C00DC6880 /* Wolf.h */,
 			);
-			name = Source;
 			path = Source;
 			sourceTree = "<group>";
 		};
@@ -84,7 +83,6 @@
 				5500E9FD1DDD290D00DC6880 /* Info.plist */,
 				5500E9FB1DDD290D00DC6880 /* WolfTests.swift */,
 			);
-			name = Tests;
 			path = Tests;
 			sourceTree = "<group>";
 		};
