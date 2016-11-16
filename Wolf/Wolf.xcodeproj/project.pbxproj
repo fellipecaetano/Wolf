@@ -53,9 +53,9 @@
 		5500E9E31DDD290C00DC6880 = {
 			isa = PBXGroup;
 			children = (
-				5500E9EF1DDD290C00DC6880 /* Wolf */,
-				5500E9FA1DDD290D00DC6880 /* WolfTests */,
 				5500E9EE1DDD290C00DC6880 /* Products */,
+				5500E9EF1DDD290C00DC6880 /* Source */,
+				5500E9FA1DDD290D00DC6880 /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -68,22 +68,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5500E9EF1DDD290C00DC6880 /* Wolf */ = {
+		5500E9EF1DDD290C00DC6880 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				5500E9F01DDD290C00DC6880 /* Wolf.h */,
 				5500E9F11DDD290C00DC6880 /* Info.plist */,
+				5500E9F01DDD290C00DC6880 /* Wolf.h */,
 			);
-			path = Wolf;
+			name = Source;
+			path = Source;
 			sourceTree = "<group>";
 		};
-		5500E9FA1DDD290D00DC6880 /* WolfTests */ = {
+		5500E9FA1DDD290D00DC6880 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5500E9FB1DDD290D00DC6880 /* WolfTests.swift */,
 				5500E9FD1DDD290D00DC6880 /* Info.plist */,
+				5500E9FB1DDD290D00DC6880 /* WolfTests.swift */,
 			);
-			path = WolfTests;
+			name = Tests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,7 +330,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Wolf/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.Wolf;
@@ -347,7 +349,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Wolf/Info.plist;
+				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.Wolf;
@@ -361,7 +363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
-				INFOPLIST_FILE = WolfTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -373,7 +375,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
-				INFOPLIST_FILE = WolfTests/Info.plist;
+				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -400,6 +402,7 @@
 				5500EA031DDD290D00DC6880 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5500EA041DDD290D00DC6880 /* Build configuration list for PBXNativeTarget "WolfTests" */ = {
 			isa = XCConfigurationList;
@@ -408,6 +411,7 @@
 				5500EA061DDD290D00DC6880 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
