@@ -19,6 +19,7 @@
 		5500EA811DDD3CAB00DC6880 /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA801DDD3CAB00DC6880 /* IBentifiers.framework */; };
 		5500EA831DDD3DB400DC6880 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA821DDD3DB400DC6880 /* Nuke.framework */; };
 		5500EA861DDD3E0C00DC6880 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA851DDD3E0C00DC6880 /* Show.swift */; };
+		5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA881DDD3E7800DC6880 /* Main.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		5500EA801DDD3CAB00DC6880 /* IBentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBentifiers.framework; path = "../Carthage/Checkouts/IBentifiers/build/Debug-iphoneos/IBentifiers.framework"; sourceTree = "<group>"; };
 		5500EA821DDD3DB400DC6880 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = "../Carthage/Checkouts/Nuke/build/Debug-iphoneos/Nuke.framework"; sourceTree = "<group>"; };
 		5500EA851DDD3E0C00DC6880 /* Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
+		5500EA881DDD3E7800DC6880 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +59,7 @@
 			children = (
 				5500EA721DDD3A7600DC6880 /* Frameworks */,
 				5500EA631DDD36C300DC6880 /* Products */,
+				5500EA871DDD3E5F00DC6880 /* Resources */,
 				5500EA641DDD36C300DC6880 /* Sources */,
 			);
 			sourceTree = "<group>";
@@ -77,7 +80,6 @@
 				5500EA651DDD36C300DC6880 /* AppDelegate.swift */,
 				5500EA671DDD36C300DC6880 /* Assets.xcassets */,
 				5500EA6C1DDD36C300DC6880 /* Info.plist */,
-				5500EA691DDD36C300DC6880 /* LaunchScreen.storyboard */,
 				5500EA751DDD3AE500DC6880 /* Networking.swift */,
 			);
 			path = Sources;
@@ -110,6 +112,16 @@
 				5500EA851DDD3E0C00DC6880 /* Show.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		5500EA871DDD3E5F00DC6880 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA691DDD36C300DC6880 /* LaunchScreen.storyboard */,
+				5500EA881DDD3E7800DC6880 /* Main.storyboard */,
+			);
+			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -175,6 +187,7 @@
 				5500EA681DDD36C300DC6880 /* Assets.xcassets in Resources */,
 				5500EA6B1DDD36C300DC6880 /* LaunchScreen.storyboard in Resources */,
 				5500EA7E1DDD3B1600DC6880 /* ShowCollectionViewCell.xib in Resources */,
+				5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
