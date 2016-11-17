@@ -13,3 +13,6 @@
 [submodule "Carthage/Checkouts/OHHTTPStubs"]
 	path = Carthage/Checkouts/OHHTTPStubs
 	url = https://github.com/AliSoftware/OHHTTPStubs.git
+[submodule "Carthage/Checkouts/IBentifiers"]
+	path = Carthage/Checkouts/IBentifiers
+	url = https://github.com/fellipecaetano/IBentifiers.git
