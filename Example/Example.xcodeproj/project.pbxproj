@@ -284,6 +284,7 @@
 				5500EA711DDD36C300DC6880 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
