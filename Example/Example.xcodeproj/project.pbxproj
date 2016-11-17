@@ -20,6 +20,7 @@
 		5500EA831DDD3DB400DC6880 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA821DDD3DB400DC6880 /* Nuke.framework */; };
 		5500EA861DDD3E0C00DC6880 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA851DDD3E0C00DC6880 /* Show.swift */; };
 		5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA881DDD3E7800DC6880 /* Main.storyboard */; };
+		5500EA8B1DDD3ED400DC6880 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA8A1DDD3ED400DC6880 /* popular_shows.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		5500EA821DDD3DB400DC6880 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = "../Carthage/Checkouts/Nuke/build/Debug-iphoneos/Nuke.framework"; sourceTree = "<group>"; };
 		5500EA851DDD3E0C00DC6880 /* Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
 		5500EA881DDD3E7800DC6880 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		5500EA8A1DDD3ED400DC6880 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,10 +119,10 @@
 		5500EA871DDD3E5F00DC6880 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5500EA8A1DDD3ED400DC6880 /* popular_shows.json */,
 				5500EA691DDD36C300DC6880 /* LaunchScreen.storyboard */,
 				5500EA881DDD3E7800DC6880 /* Main.storyboard */,
 			);
-			name = Resources;
 			path = Resources;
 			sourceTree = "<group>";
 		};
@@ -184,6 +186,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5500EA8B1DDD3ED400DC6880 /* popular_shows.json in Resources */,
 				5500EA681DDD36C300DC6880 /* Assets.xcassets in Resources */,
 				5500EA6B1DDD36C300DC6880 /* LaunchScreen.storyboard in Resources */,
 				5500EA7E1DDD3B1600DC6880 /* ShowCollectionViewCell.xib in Resources */,
