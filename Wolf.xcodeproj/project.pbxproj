@@ -10,6 +10,13 @@
 		5500E9F71DDD290D00DC6880 /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500E9ED1DDD290C00DC6880 /* Wolf.framework */; };
 		5500E9FC1DDD290D00DC6880 /* WolfTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500E9FB1DDD290D00DC6880 /* WolfTests.swift */; };
 		5500E9FE1DDD290D00DC6880 /* Wolf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5500E9F01DDD290C00DC6880 /* Wolf.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA081DDD2A9200DC6880 /* CachedResponse.swift */; };
+		5500EA131DDD2A9200DC6880 /* Networking+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */; };
+		5500EA141DDD2A9200DC6880 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0B1DDD2A9200DC6880 /* HTTPClient.swift */; };
+		5500EA151DDD2A9200DC6880 /* JSONEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0C1DDD2A9200DC6880 /* JSONEnvelope.swift */; };
+		5500EA161DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0E1DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift */; };
+		5500EA171DDD2A9200DC6880 /* Networking+PromiseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0F1DDD2A9200DC6880 /* Networking+PromiseKit.swift */; };
+		5500EA181DDD2A9200DC6880 /* Networking+Unbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +36,13 @@
 		5500E9F61DDD290D00DC6880 /* WolfTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WolfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5500E9FB1DDD290D00DC6880 /* WolfTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolfTests.swift; sourceTree = "<group>"; };
 		5500E9FD1DDD290D00DC6880 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5500EA081DDD2A9200DC6880 /* CachedResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponse.swift; sourceTree = "<group>"; };
+		5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+Cache.swift"; sourceTree = "<group>"; };
+		5500EA0B1DDD2A9200DC6880 /* HTTPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		5500EA0C1DDD2A9200DC6880 /* JSONEnvelope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONEnvelope.swift; sourceTree = "<group>"; };
+		5500EA0E1DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CacheNetworking+PromiseKit.swift"; sourceTree = "<group>"; };
+		5500EA0F1DDD2A9200DC6880 /* Networking+PromiseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+PromiseKit.swift"; sourceTree = "<group>"; };
+		5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+Unbox.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +85,10 @@
 		5500E9EF1DDD290C00DC6880 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5500EA071DDD2A9200DC6880 /* Cache */,
+				5500EA0A1DDD2A9200DC6880 /* Networking */,
+				5500EA0D1DDD2A9200DC6880 /* PromiseKit */,
+				5500EA101DDD2A9200DC6880 /* Unbox */,
 				5500E9F11DDD290C00DC6880 /* Info.plist */,
 				5500E9F01DDD290C00DC6880 /* Wolf.h */,
 			);
@@ -84,6 +102,41 @@
 				5500E9FB1DDD290D00DC6880 /* WolfTests.swift */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		5500EA071DDD2A9200DC6880 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA081DDD2A9200DC6880 /* CachedResponse.swift */,
+				5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
+		5500EA0A1DDD2A9200DC6880 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA0B1DDD2A9200DC6880 /* HTTPClient.swift */,
+				5500EA0C1DDD2A9200DC6880 /* JSONEnvelope.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		5500EA0D1DDD2A9200DC6880 /* PromiseKit */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA0E1DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift */,
+				5500EA0F1DDD2A9200DC6880 /* Networking+PromiseKit.swift */,
+			);
+			path = PromiseKit;
+			sourceTree = "<group>";
+		};
+		5500EA101DDD2A9200DC6880 /* Unbox */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */,
+			);
+			path = Unbox;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -198,6 +251,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5500EA161DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift in Sources */,
+				5500EA131DDD2A9200DC6880 /* Networking+Cache.swift in Sources */,
+				5500EA151DDD2A9200DC6880 /* JSONEnvelope.swift in Sources */,
+				5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */,
+				5500EA171DDD2A9200DC6880 /* Networking+PromiseKit.swift in Sources */,
+				5500EA141DDD2A9200DC6880 /* HTTPClient.swift in Sources */,
+				5500EA181DDD2A9200DC6880 /* Networking+Unbox.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +422,7 @@
 		5500EA051DDD290D00DC6880 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -374,6 +435,7 @@
 		5500EA061DDD290D00DC6880 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
