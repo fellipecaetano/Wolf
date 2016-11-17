@@ -17,6 +17,9 @@
       location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Carthage/Checkouts/IBentifiers/IBentifiers.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Example/Example.xcodeproj">
    </FileRef>
    <FileRef
