@@ -1,5 +1,5 @@
 github "Alamofire/Alamofire" "4.1.0"
-github "fellipecaetano/IBentifiers" "1.2.1"
+github "fellipecaetano/IBentifiers" "1.2.2"
 github "Quick/Nimble" "v5.1.1"
 github "kean/Nuke" "4.1.2"
 github "AliSoftware/OHHTTPStubs" "5.2.2-swift3"
