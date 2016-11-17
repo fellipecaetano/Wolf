@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5500E9F71DDD290D00DC6880 /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500E9ED1DDD290C00DC6880 /* Wolf.framework */; };
-		5500E9FC1DDD290D00DC6880 /* WolfTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500E9FB1DDD290D00DC6880 /* WolfTests.swift */; };
 		5500E9FE1DDD290D00DC6880 /* Wolf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5500E9F01DDD290C00DC6880 /* Wolf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA081DDD2A9200DC6880 /* CachedResponse.swift */; };
 		5500EA131DDD2A9200DC6880 /* Networking+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */; };
@@ -20,6 +19,21 @@
 		5500EA1D1DDD2D2200DC6880 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */; };
 		5500EA1E1DDD2D2200DC6880 /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1B1DDD2D2200DC6880 /* PromiseKit.framework */; };
 		5500EA1F1DDD2D2200DC6880 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1C1DDD2D2200DC6880 /* Unbox.framework */; };
+		5500EA351DDD2DBA00DC6880 /* CachedResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA211DDD2DBA00DC6880 /* CachedResponseTests.swift */; };
+		5500EA361DDD2DBA00DC6880 /* NetworkingTests+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA221DDD2DBA00DC6880 /* NetworkingTests+Cache.swift */; };
+		5500EA371DDD2DBA00DC6880 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA241DDD2DBA00DC6880 /* Song.swift */; };
+		5500EA381DDD2DBA00DC6880 /* TestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA251DDD2DBA00DC6880 /* TestClient.swift */; };
+		5500EA391DDD2DBA00DC6880 /* enveloped_songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA281DDD2DBA00DC6880 /* enveloped_songs.json */; };
+		5500EA3A1DDD2DBA00DC6880 /* enveloped_users.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA291DDD2DBA00DC6880 /* enveloped_users.json */; };
+		5500EA3B1DDD2DBA00DC6880 /* invalid_json.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2A1DDD2DBA00DC6880 /* invalid_json.json */; };
+		5500EA3C1DDD2DBA00DC6880 /* invalid_song.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2B1DDD2DBA00DC6880 /* invalid_song.json */; };
+		5500EA3D1DDD2DBA00DC6880 /* invalid_user.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2C1DDD2DBA00DC6880 /* invalid_user.json */; };
+		5500EA3E1DDD2DBA00DC6880 /* song.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2D1DDD2DBA00DC6880 /* song.json */; };
+		5500EA3F1DDD2DBA00DC6880 /* songs.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2E1DDD2DBA00DC6880 /* songs.json */; };
+		5500EA401DDD2DBA00DC6880 /* user.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA2F1DDD2DBA00DC6880 /* user.json */; };
+		5500EA411DDD2DBA00DC6880 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA301DDD2DBA00DC6880 /* users.json */; };
+		5500EA421DDD2DBA00DC6880 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA321DDD2DBA00DC6880 /* Test.storyboard */; };
+		5500EA431DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA341DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +51,6 @@
 		5500E9F01DDD290C00DC6880 /* Wolf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Wolf.h; sourceTree = "<group>"; };
 		5500E9F11DDD290C00DC6880 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5500E9F61DDD290D00DC6880 /* WolfTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WolfTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5500E9FB1DDD290D00DC6880 /* WolfTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolfTests.swift; sourceTree = "<group>"; };
 		5500E9FD1DDD290D00DC6880 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5500EA081DDD2A9200DC6880 /* CachedResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponse.swift; sourceTree = "<group>"; };
 		5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+Cache.swift"; sourceTree = "<group>"; };
@@ -49,6 +62,21 @@
 		5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Carthage/Checkouts/Alamofire/build/Debug-iphoneos/Alamofire.framework"; sourceTree = "<group>"; };
 		5500EA1B1DDD2D2200DC6880 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Checkouts/PromiseKit/build/Debug/PromiseKit.framework; sourceTree = "<group>"; };
 		5500EA1C1DDD2D2200DC6880 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = "Carthage/Checkouts/Unbox/build/Debug-iphoneos/Unbox.framework"; sourceTree = "<group>"; };
+		5500EA211DDD2DBA00DC6880 /* CachedResponseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedResponseTests.swift; sourceTree = "<group>"; };
+		5500EA221DDD2DBA00DC6880 /* NetworkingTests+Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Cache.swift"; sourceTree = "<group>"; };
+		5500EA241DDD2DBA00DC6880 /* Song.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		5500EA251DDD2DBA00DC6880 /* TestClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestClient.swift; sourceTree = "<group>"; };
+		5500EA281DDD2DBA00DC6880 /* enveloped_songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enveloped_songs.json; sourceTree = "<group>"; };
+		5500EA291DDD2DBA00DC6880 /* enveloped_users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = enveloped_users.json; sourceTree = "<group>"; };
+		5500EA2A1DDD2DBA00DC6880 /* invalid_json.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_json.json; sourceTree = "<group>"; };
+		5500EA2B1DDD2DBA00DC6880 /* invalid_song.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_song.json; sourceTree = "<group>"; };
+		5500EA2C1DDD2DBA00DC6880 /* invalid_user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = invalid_user.json; sourceTree = "<group>"; };
+		5500EA2D1DDD2DBA00DC6880 /* song.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = song.json; sourceTree = "<group>"; };
+		5500EA2E1DDD2DBA00DC6880 /* songs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = songs.json; sourceTree = "<group>"; };
+		5500EA2F1DDD2DBA00DC6880 /* user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user.json; sourceTree = "<group>"; };
+		5500EA301DDD2DBA00DC6880 /* users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
+		5500EA321DDD2DBA00DC6880 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
+		5500EA341DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Unbox.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,8 +136,11 @@
 		5500E9FA1DDD290D00DC6880 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5500EA201DDD2DBA00DC6880 /* Cache */,
+				5500EA231DDD2DBA00DC6880 /* Fakes */,
+				5500EA261DDD2DBA00DC6880 /* Fixtures */,
+				5500EA331DDD2DBA00DC6880 /* Unbox */,
 				5500E9FD1DDD290D00DC6880 /* Info.plist */,
-				5500E9FB1DDD290D00DC6880 /* WolfTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -157,6 +188,65 @@
 				5500EA1C1DDD2D2200DC6880 /* Unbox.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5500EA201DDD2DBA00DC6880 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA211DDD2DBA00DC6880 /* CachedResponseTests.swift */,
+				5500EA221DDD2DBA00DC6880 /* NetworkingTests+Cache.swift */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
+		5500EA231DDD2DBA00DC6880 /* Fakes */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA241DDD2DBA00DC6880 /* Song.swift */,
+				5500EA251DDD2DBA00DC6880 /* TestClient.swift */,
+			);
+			path = Fakes;
+			sourceTree = "<group>";
+		};
+		5500EA261DDD2DBA00DC6880 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA271DDD2DBA00DC6880 /* JSON */,
+				5500EA311DDD2DBA00DC6880 /* Storyboards */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		5500EA271DDD2DBA00DC6880 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA281DDD2DBA00DC6880 /* enveloped_songs.json */,
+				5500EA291DDD2DBA00DC6880 /* enveloped_users.json */,
+				5500EA2A1DDD2DBA00DC6880 /* invalid_json.json */,
+				5500EA2B1DDD2DBA00DC6880 /* invalid_song.json */,
+				5500EA2C1DDD2DBA00DC6880 /* invalid_user.json */,
+				5500EA2D1DDD2DBA00DC6880 /* song.json */,
+				5500EA2E1DDD2DBA00DC6880 /* songs.json */,
+				5500EA2F1DDD2DBA00DC6880 /* user.json */,
+				5500EA301DDD2DBA00DC6880 /* users.json */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		5500EA311DDD2DBA00DC6880 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA321DDD2DBA00DC6880 /* Test.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		5500EA331DDD2DBA00DC6880 /* Unbox */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA341DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift */,
+			);
+			path = Unbox;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,6 +351,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5500EA401DDD2DBA00DC6880 /* user.json in Resources */,
+				5500EA3B1DDD2DBA00DC6880 /* invalid_json.json in Resources */,
+				5500EA391DDD2DBA00DC6880 /* enveloped_songs.json in Resources */,
+				5500EA411DDD2DBA00DC6880 /* users.json in Resources */,
+				5500EA421DDD2DBA00DC6880 /* Test.storyboard in Resources */,
+				5500EA3D1DDD2DBA00DC6880 /* invalid_user.json in Resources */,
+				5500EA3F1DDD2DBA00DC6880 /* songs.json in Resources */,
+				5500EA3C1DDD2DBA00DC6880 /* invalid_song.json in Resources */,
+				5500EA3E1DDD2DBA00DC6880 /* song.json in Resources */,
+				5500EA3A1DDD2DBA00DC6880 /* enveloped_users.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +385,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5500E9FC1DDD290D00DC6880 /* WolfTests.swift in Sources */,
+				5500EA371DDD2DBA00DC6880 /* Song.swift in Sources */,
+				5500EA361DDD2DBA00DC6880 /* NetworkingTests+Cache.swift in Sources */,
+				5500EA381DDD2DBA00DC6880 /* TestClient.swift in Sources */,
+				5500EA431DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift in Sources */,
+				5500EA351DDD2DBA00DC6880 /* CachedResponseTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
