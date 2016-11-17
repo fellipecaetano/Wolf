@@ -1,3 +1,4 @@
 github "Quick/Nimble" ~> 5.1
 github "AliSoftware/OHHTTPStubs" "5.2.2-swift3"
 github "fellipecaetano/IBentifiers"
+github "kean/Nuke" ~> 4.1

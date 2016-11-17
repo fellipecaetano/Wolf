@@ -16,3 +16,6 @@
 [submodule "Carthage/Checkouts/IBentifiers"]
 	path = Carthage/Checkouts/IBentifiers
 	url = https://github.com/fellipecaetano/IBentifiers.git
+[submodule "Carthage/Checkouts/Nuke"]
+	path = Carthage/Checkouts/Nuke
+	url = https://github.com/kean/Nuke.git
