@@ -1,3 +1,5 @@
 github "Alamofire/Alamofire" "4.1.0"
+github "Quick/Nimble" "v5.1.1"
+github "AliSoftware/OHHTTPStubs" "5.2.2-swift3"
 github "mxcl/PromiseKit" "4.0.5"
 github "JohnSundell/Unbox" "2.2.1"

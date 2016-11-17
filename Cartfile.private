@@ -1,0 +1,2 @@
+github "Quick/Nimble" ~> 5.1
+github "AliSoftware/OHHTTPStubs" "5.2.2-swift3"
