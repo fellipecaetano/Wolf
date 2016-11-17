@@ -17,6 +17,9 @@
       location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Example/Example.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "container:Wolf.xcodeproj">
    </FileRef>
 </Workspace>
