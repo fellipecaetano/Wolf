@@ -17,6 +17,9 @@
 		5500EA161DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0E1DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift */; };
 		5500EA171DDD2A9200DC6880 /* Networking+PromiseKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA0F1DDD2A9200DC6880 /* Networking+PromiseKit.swift */; };
 		5500EA181DDD2A9200DC6880 /* Networking+Unbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */; };
+		5500EA1D1DDD2D2200DC6880 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */; };
+		5500EA1E1DDD2D2200DC6880 /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1B1DDD2D2200DC6880 /* PromiseKit.framework */; };
+		5500EA1F1DDD2D2200DC6880 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA1C1DDD2D2200DC6880 /* Unbox.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +46,9 @@
 		5500EA0E1DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CacheNetworking+PromiseKit.swift"; sourceTree = "<group>"; };
 		5500EA0F1DDD2A9200DC6880 /* Networking+PromiseKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+PromiseKit.swift"; sourceTree = "<group>"; };
 		5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Networking+Unbox.swift"; sourceTree = "<group>"; };
+		5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Carthage/Checkouts/Alamofire/build/Debug-iphoneos/Alamofire.framework"; sourceTree = "<group>"; };
+		5500EA1B1DDD2D2200DC6880 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Checkouts/PromiseKit/build/Debug/PromiseKit.framework; sourceTree = "<group>"; };
+		5500EA1C1DDD2D2200DC6880 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = "Carthage/Checkouts/Unbox/build/Debug-iphoneos/Unbox.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +56,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5500EA1D1DDD2D2200DC6880 /* Alamofire.framework in Frameworks */,
+				5500EA1E1DDD2D2200DC6880 /* PromiseKit.framework in Frameworks */,
+				5500EA1F1DDD2D2200DC6880 /* Unbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +79,7 @@
 				5500E9EE1DDD290C00DC6880 /* Products */,
 				5500E9EF1DDD290C00DC6880 /* Source */,
 				5500E9FA1DDD290D00DC6880 /* Tests */,
+				5500EA191DDD2D2200DC6880 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -137,6 +147,16 @@
 				5500EA111DDD2A9200DC6880 /* Networking+Unbox.swift */,
 			);
 			path = Unbox;
+			sourceTree = "<group>";
+		};
+		5500EA191DDD2D2200DC6880 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */,
+				5500EA1B1DDD2D2200DC6880 /* PromiseKit.framework */,
+				5500EA1C1DDD2D2200DC6880 /* Unbox.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
