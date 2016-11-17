@@ -19,3 +19,6 @@
 [submodule "Carthage/Checkouts/Nuke"]
 	path = Carthage/Checkouts/Nuke
 	url = https://github.com/kean/Nuke.git
+[submodule "Carthage/Checkouts/Wolf"]
+	path = Carthage/Checkouts/Wolf
+	url = https://github.com/fellipecaetano/Wolf.git

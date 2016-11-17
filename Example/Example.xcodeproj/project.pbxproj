@@ -18,29 +18,11 @@
 		5500EA861DDD3E0C00DC6880 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA851DDD3E0C00DC6880 /* Show.swift */; };
 		5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA881DDD3E7800DC6880 /* Main.storyboard */; };
 		5500EA8B1DDD3ED400DC6880 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA8A1DDD3ED400DC6880 /* popular_shows.json */; };
-		5500EA9F1DDD40B900DC6880 /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9C1DDD40B900DC6880 /* IBentifiers.framework */; };
-		5500EAA01DDD40B900DC6880 /* IBentifiers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9C1DDD40B900DC6880 /* IBentifiers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5500EAA11DDD40B900DC6880 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9D1DDD40B900DC6880 /* Nuke.framework */; };
-		5500EAA21DDD40B900DC6880 /* Nuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9D1DDD40B900DC6880 /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5500EAA31DDD40B900DC6880 /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9E1DDD40B900DC6880 /* OHHTTPStubs.framework */; };
-		5500EAA41DDD40B900DC6880 /* OHHTTPStubs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EA9E1DDD40B900DC6880 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5500EAB31DDD480F00DC6880 /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EAB01DDD480F00DC6880 /* IBentifiers.framework */; };
+		5500EAB41DDD480F00DC6880 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EAB11DDD480F00DC6880 /* Nuke.framework */; };
+		5500EAB51DDD480F00DC6880 /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EAB21DDD480F00DC6880 /* Wolf.framework */; };
+		5500EAB71DDD482700DC6880 /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5500EAB61DDD482700DC6880 /* OHHTTPStubs.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		5500EAA51DDD40B900DC6880 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				5500EAA41DDD40B900DC6880 /* OHHTTPStubs.framework in Embed Frameworks */,
-				5500EAA01DDD40B900DC6880 /* IBentifiers.framework in Embed Frameworks */,
-				5500EAA21DDD40B900DC6880 /* Nuke.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5500EA621DDD36C300DC6880 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -61,12 +43,11 @@
 		5500EA8A1DDD3ED400DC6880 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
 		5500EA8D1DDD3FC600DC6880 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-curyfoxgnlthkcdjtonjabizkals/Build/Products/Debug-iphonesimulator/Alamofire.framework"; sourceTree = "<group>"; };
 		5500EA8E1DDD3FC600DC6880 /* Wolf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Wolf.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-curyfoxgnlthkcdjtonjabizkals/Build/Products/Debug-iphonesimulator/Wolf.framework"; sourceTree = "<group>"; };
-		5500EA931DDD407700DC6880 /* IBentifiers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IBentifiers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5500EA961DDD407700DC6880 /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5500EA9B1DDD40B900DC6880 /* 2647FA87-F18A-3551-B6BE-A03C6486A789.bcsymbolmap */ = {isa = PBXFileReference; lastKnownFileType = text; name = "2647FA87-F18A-3551-B6BE-A03C6486A789.bcsymbolmap"; path = "../Carthage/Build/iOS/2647FA87-F18A-3551-B6BE-A03C6486A789.bcsymbolmap"; sourceTree = "<group>"; };
-		5500EA9C1DDD40B900DC6880 /* IBentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBentifiers.framework; path = ../Carthage/Build/iOS/IBentifiers.framework; sourceTree = "<group>"; };
-		5500EA9D1DDD40B900DC6880 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = ../Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
-		5500EA9E1DDD40B900DC6880 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = ../Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
+		5500EAAB1DDD438E00DC6880 /* Wolf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Wolf.framework; path = "../build/Debug-iphoneos/Wolf.framework"; sourceTree = "<group>"; };
+		5500EAB01DDD480F00DC6880 /* IBentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBentifiers.framework; path = ../Carthage/Build/iOS/IBentifiers.framework; sourceTree = "<group>"; };
+		5500EAB11DDD480F00DC6880 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = ../Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
+		5500EAB21DDD480F00DC6880 /* Wolf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Wolf.framework; path = ../Carthage/Build/iOS/Wolf.framework; sourceTree = "<group>"; };
+		5500EAB61DDD482700DC6880 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = ../Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,9 +55,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5500EAA31DDD40B900DC6880 /* OHHTTPStubs.framework in Frameworks */,
-				5500EA9F1DDD40B900DC6880 /* IBentifiers.framework in Frameworks */,
-				5500EAA11DDD40B900DC6880 /* Nuke.framework in Frameworks */,
+				5500EAB71DDD482700DC6880 /* OHHTTPStubs.framework in Frameworks */,
+				5500EAB31DDD480F00DC6880 /* IBentifiers.framework in Frameworks */,
+				5500EAB41DDD480F00DC6880 /* Nuke.framework in Frameworks */,
+				5500EAB51DDD480F00DC6880 /* Wolf.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,12 +68,6 @@
 		5500EA591DDD36C300DC6880 = {
 			isa = PBXGroup;
 			children = (
-				5500EA9B1DDD40B900DC6880 /* 2647FA87-F18A-3551-B6BE-A03C6486A789.bcsymbolmap */,
-				5500EA9C1DDD40B900DC6880 /* IBentifiers.framework */,
-				5500EA9D1DDD40B900DC6880 /* Nuke.framework */,
-				5500EA9E1DDD40B900DC6880 /* OHHTTPStubs.framework */,
-				5500EA961DDD407700DC6880 /* Nuke.framework */,
-				5500EA931DDD407700DC6880 /* IBentifiers.framework */,
 				5500EA721DDD3A7600DC6880 /* Frameworks */,
 				5500EA631DDD36C300DC6880 /* Products */,
 				5500EA871DDD3E5F00DC6880 /* Resources */,
@@ -123,6 +99,11 @@
 		5500EA721DDD3A7600DC6880 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5500EAB61DDD482700DC6880 /* OHHTTPStubs.framework */,
+				5500EAB01DDD480F00DC6880 /* IBentifiers.framework */,
+				5500EAB11DDD480F00DC6880 /* Nuke.framework */,
+				5500EAB21DDD480F00DC6880 /* Wolf.framework */,
+				5500EAAB1DDD438E00DC6880 /* Wolf.framework */,
 				5500EA8D1DDD3FC600DC6880 /* Alamofire.framework */,
 				5500EA8E1DDD3FC600DC6880 /* Wolf.framework */,
 				5500EA821DDD3DB400DC6880 /* Nuke.framework */,
@@ -171,7 +152,6 @@
 				5500EA5E1DDD36C300DC6880 /* Sources */,
 				5500EA601DDD36C300DC6880 /* Resources */,
 				5500EA5F1DDD36C300DC6880 /* Frameworks */,
-				5500EAA51DDD40B900DC6880 /* Embed Frameworks */,
 				5500EA8C1DDD3F4700DC6880 /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
@@ -243,6 +223,7 @@
 				"$(SRCROOT)/../Carthage/Build/iOS/Nuke.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/IBentifiers.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/OHHTTPStubs.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Wolf.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputPaths = (
@@ -376,7 +357,6 @@
 		5500EA701DDD36C300DC6880 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
 				INFOPLIST_FILE = Sources/Info.plist;
@@ -391,7 +371,6 @@
 		5500EA711DDD36C300DC6880 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 2EZN66QRS5;
 				INFOPLIST_FILE = Sources/Info.plist;
