@@ -12,13 +12,13 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
   s.ios.deployment_target = '9.0'
   s.requires_arc = true
   s.subspec 'Basic' do |ss|
-    ss.source_files = ['Wolf/Classes/**/*']
+    ss.source_files = ['Source/**/*.swift']
     ss.dependency 'Alamofire', '~> 4.1'
     ss.dependency 'PromiseKit', '~> 4.0'
-    ss.exclude_files = ['Wolf/Classes/Unbox/**/*']
+    ss.exclude_files = ['Source/Unbox/**/*']
   end
   s.subspec 'Unbox' do |ss|
-    ss.source_files = ['Wolf/Classes/**/*']
+    ss.source_files = ['Source/**/*.swift']
     ss.dependency 'Alamofire', '~> 4.1'
     ss.dependency 'PromiseKit', '~> 4.0'
     ss.dependency 'Unbox', '~> 2.2'
