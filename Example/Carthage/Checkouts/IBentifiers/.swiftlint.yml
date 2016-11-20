@@ -1,4 +1,0 @@
-excluded:
-  - Example/Pods
-disabled_rules:
-  - line_length

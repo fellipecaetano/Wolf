@@ -18,20 +18,20 @@
 		5500EA861DDD3E0C00DC6880 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA851DDD3E0C00DC6880 /* Show.swift */; };
 		5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA881DDD3E7800DC6880 /* Main.storyboard */; };
 		5500EA8B1DDD3ED400DC6880 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA8A1DDD3ED400DC6880 /* popular_shows.json */; };
-		B3E9C8A51DE1F68A00644180 /* OHHTTPStubs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A21DE1F68A00644180 /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8A71DE1F68A00644180 /* Wolf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A31DE1F68A00644180 /* Wolf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8AB1DE1F8AB00644180 /* IBentifiers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A91DE1F8AB00644180 /* IBentifiers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8B21DE1F96D00644180 /* Nuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B01DE1F96D00644180 /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8B91DE1FA8500644180 /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B41DE1FA8400644180 /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8BB1DE1FA8500644180 /* Unbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B51DE1FA8400644180 /* Unbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E9C8BD1DE1FCEF00644180 /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B41DE1FA8400644180 /* PromiseKit.framework */; };
-		B3E9C8BE1DE1FCEF00644180 /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B51DE1FA8400644180 /* Unbox.framework */; };
-		B3E9C8BF1DE1FCEF00644180 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8B01DE1F96D00644180 /* Nuke.framework */; };
-		B3E9C8C01DE1FCEF00644180 /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A91DE1F8AB00644180 /* IBentifiers.framework */; };
-		B3E9C8C11DE1FCEF00644180 /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A21DE1F68A00644180 /* OHHTTPStubs.framework */; };
-		B3E9C8C21DE1FCEF00644180 /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E9C8A31DE1F68A00644180 /* Wolf.framework */; };
-		B3F667CC1DE2007C0058787F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667CB1DE2007C0058787F /* Alamofire.framework */; };
-		B3F667CD1DE2007C0058787F /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667CB1DE2007C0058787F /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667D31DE208610058787F /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D21DE208610058787F /* OHHTTPStubs.framework */; };
+		B3F667D41DE208610058787F /* OHHTTPStubs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D21DE208610058787F /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667D61DE208610058787F /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D51DE208610058787F /* Unbox.framework */; };
+		B3F667D71DE208610058787F /* Unbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D51DE208610058787F /* Unbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667D91DE208610058787F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D81DE208610058787F /* PromiseKit.framework */; };
+		B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D81DE208610058787F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667DC1DE208610058787F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; };
+		B3F667DD1DE208610058787F /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; };
+		B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667E21DE208610058787F /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; };
+		B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F667E51DE208610058787F /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E41DE208610058787F /* Wolf.framework */; };
+		B3F667E61DE208610058787F /* Wolf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E41DE208610058787F /* Wolf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,13 +41,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3E9C8A71DE1F68A00644180 /* Wolf.framework in Embed Frameworks */,
-				B3E9C8B21DE1F96D00644180 /* Nuke.framework in Embed Frameworks */,
-				B3E9C8AB1DE1F8AB00644180 /* IBentifiers.framework in Embed Frameworks */,
-				B3E9C8B91DE1FA8500644180 /* PromiseKit.framework in Embed Frameworks */,
-				B3E9C8A51DE1F68A00644180 /* OHHTTPStubs.framework in Embed Frameworks */,
-				B3E9C8BB1DE1FA8500644180 /* Unbox.framework in Embed Frameworks */,
-				B3F667CD1DE2007C0058787F /* Alamofire.framework in Embed Frameworks */,
+				B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */,
+				B3F667D41DE208610058787F /* OHHTTPStubs.framework in Embed Frameworks */,
+				B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */,
+				B3F667E61DE208610058787F /* Wolf.framework in Embed Frameworks */,
+				B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */,
+				B3F667D71DE208610058787F /* Unbox.framework in Embed Frameworks */,
+				B3F667DD1DE208610058787F /* Alamofire.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,13 +68,13 @@
 		5500EA851DDD3E0C00DC6880 /* Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
 		5500EA881DDD3E7800DC6880 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5500EA8A1DDD3ED400DC6880 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
-		B3E9C8A21DE1F68A00644180 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
-		B3E9C8A31DE1F68A00644180 /* Wolf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Wolf.framework; path = Carthage/Build/iOS/Wolf.framework; sourceTree = "<group>"; };
-		B3E9C8A91DE1F8AB00644180 /* IBentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IBentifiers.framework; path = Carthage/Build/iOS/IBentifiers.framework; sourceTree = "<group>"; };
-		B3E9C8B01DE1F96D00644180 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
-		B3E9C8B41DE1FA8400644180 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = Carthage/Build/iOS/PromiseKit.framework; sourceTree = "<group>"; };
-		B3E9C8B51DE1FA8400644180 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = Carthage/Build/iOS/Unbox.framework; sourceTree = "<group>"; };
-		B3F667CB1DE2007C0058787F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667D21DE208610058787F /* OHHTTPStubs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OHHTTPStubs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667D51DE208610058787F /* Unbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Unbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667D81DE208610058787F /* PromiseKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667DB1DE208610058787F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667DE1DE208610058787F /* IBentifiers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = IBentifiers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667E11DE208610058787F /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F667E41DE208610058787F /* Wolf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Wolf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,13 +82,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E9C8BD1DE1FCEF00644180 /* PromiseKit.framework in Frameworks */,
-				B3E9C8BE1DE1FCEF00644180 /* Unbox.framework in Frameworks */,
-				B3E9C8BF1DE1FCEF00644180 /* Nuke.framework in Frameworks */,
-				B3E9C8C01DE1FCEF00644180 /* IBentifiers.framework in Frameworks */,
-				B3E9C8C11DE1FCEF00644180 /* OHHTTPStubs.framework in Frameworks */,
-				B3E9C8C21DE1FCEF00644180 /* Wolf.framework in Frameworks */,
-				B3F667CC1DE2007C0058787F /* Alamofire.framework in Frameworks */,
+				B3F667D91DE208610058787F /* PromiseKit.framework in Frameworks */,
+				B3F667D31DE208610058787F /* OHHTTPStubs.framework in Frameworks */,
+				B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */,
+				B3F667E51DE208610058787F /* Wolf.framework in Frameworks */,
+				B3F667E21DE208610058787F /* Nuke.framework in Frameworks */,
+				B3F667D61DE208610058787F /* Unbox.framework in Frameworks */,
+				B3F667DC1DE208610058787F /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,13 +129,13 @@
 		5500EA721DDD3A7600DC6880 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3F667CB1DE2007C0058787F /* Alamofire.framework */,
-				B3E9C8B41DE1FA8400644180 /* PromiseKit.framework */,
-				B3E9C8B51DE1FA8400644180 /* Unbox.framework */,
-				B3E9C8B01DE1F96D00644180 /* Nuke.framework */,
-				B3E9C8A91DE1F8AB00644180 /* IBentifiers.framework */,
-				B3E9C8A21DE1F68A00644180 /* OHHTTPStubs.framework */,
-				B3E9C8A31DE1F68A00644180 /* Wolf.framework */,
+				B3F667E41DE208610058787F /* Wolf.framework */,
+				B3F667E11DE208610058787F /* Nuke.framework */,
+				B3F667DE1DE208610058787F /* IBentifiers.framework */,
+				B3F667DB1DE208610058787F /* Alamofire.framework */,
+				B3F667D81DE208610058787F /* PromiseKit.framework */,
+				B3F667D51DE208610058787F /* Unbox.framework */,
+				B3F667D21DE208610058787F /* OHHTTPStubs.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -179,7 +179,6 @@
 				5500EA5E1DDD36C300DC6880 /* Sources */,
 				5500EA601DDD36C300DC6880 /* Resources */,
 				5500EA5F1DDD36C300DC6880 /* Frameworks */,
-				5500EA8C1DDD3F4700DC6880 /* Copy Carthage Frameworks */,
 				B3E9C8A81DE1F68B00644180 /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -240,27 +239,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5500EA8C1DDD3F4700DC6880 /* Copy Carthage Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/Nuke.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/IBentifiers.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/OHHTTPStubs.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/Wolf.framework",
-			);
-			name = "Copy Carthage Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5500EA5E1DDD36C300DC6880 /* Sources */ = {
