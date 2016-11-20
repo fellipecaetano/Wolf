@@ -1,5 +1,7 @@
 github "Alamofire/Alamofire" "4.1.0"
-github "AliSoftware/OHHTTPStubs" "5.2.2"
+github "fellipecaetano/IBentifiers" "400fbbf4bab045d888015069f35845f5226fc08b"
+github "kean/Nuke" "4.1.2"
+github "AliSoftware/OHHTTPStubs" "5.2.2-swift3"
 github "mxcl/PromiseKit" "4.0.5"
 github "JohnSundell/Unbox" "2.2.1"
 github "fellipecaetano/Wolf" "e3360810299f5413345be3ec1ef54b2bcd88ec73"
