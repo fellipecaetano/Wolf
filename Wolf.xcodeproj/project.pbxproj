@@ -33,12 +33,12 @@
 		5500EA411DDD2DBA00DC6880 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA301DDD2DBA00DC6880 /* users.json */; };
 		5500EA421DDD2DBA00DC6880 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA321DDD2DBA00DC6880 /* Test.storyboard */; };
 		5500EA431DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA341DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift */; };
-		B3F667D01DE2014A0058787F /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667CE1DE2014A0058787F /* Nimble.framework */; };
-		B3F667D11DE2014A0058787F /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667CF1DE2014A0058787F /* OHHTTPStubs.framework */; };
+		B352102C1E1C316C005EA2EF /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B352102B1E1C316C005EA2EF /* Nimble.framework */; };
+		B352102E1E1C3180005EA2EF /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B352102D1E1C3180005EA2EF /* OHHTTPStubs.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5500E9F81DDD290D00DC6880 /* PBXContainerItemProxy */ = {
+		B352102F1E1C32B1005EA2EF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5500E9E41DDD290C00DC6880 /* Project object */;
 			proxyType = 1;
@@ -78,10 +78,10 @@
 		5500EA301DDD2DBA00DC6880 /* users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
 		5500EA321DDD2DBA00DC6880 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		5500EA341DDD2DBA00DC6880 /* NetworkingTests+Unbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Unbox.swift"; sourceTree = "<group>"; };
+		B352102B1E1C316C005EA2EF /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "Carthage/Checkouts/Nimble/build/Debug-iphoneos/Nimble.framework"; sourceTree = "<group>"; };
+		B352102D1E1C3180005EA2EF /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = "Carthage/Checkouts/OHHTTPStubs/OHHTTPStubs/build/Debug-iphoneos/OHHTTPStubs.framework"; sourceTree = "<group>"; };
 		B3E9C8AC1DE1F8D600644180 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
 		B3E9C8AE1DE1F8D900644180 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
-		B3F667CE1DE2014A0058787F /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-cezsfokhtfuvvzcmzznursokyuvs/Build/Products/Debug-iphonesimulator/Nimble.framework"; sourceTree = "<group>"; };
-		B3F667CF1DE2014A0058787F /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-cezsfokhtfuvvzcmzznursokyuvs/Build/Products/Debug-iphonesimulator/OHHTTPStubs.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,8 +99,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3F667D01DE2014A0058787F /* Nimble.framework in Frameworks */,
-				B3F667D11DE2014A0058787F /* OHHTTPStubs.framework in Frameworks */,
+				B352102E1E1C3180005EA2EF /* OHHTTPStubs.framework in Frameworks */,
+				B352102C1E1C316C005EA2EF /* Nimble.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,8 +189,8 @@
 		5500EA191DDD2D2200DC6880 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3F667CE1DE2014A0058787F /* Nimble.framework */,
-				B3F667CF1DE2014A0058787F /* OHHTTPStubs.framework */,
+				B352102D1E1C3180005EA2EF /* OHHTTPStubs.framework */,
+				B352102B1E1C316C005EA2EF /* Nimble.framework */,
 				B3E9C8AE1DE1F8D900644180 /* OHHTTPStubs.framework */,
 				B3E9C8AC1DE1F8D600644180 /* Nimble.framework */,
 				5500EA1A1DDD2D2200DC6880 /* Alamofire.framework */,
@@ -302,7 +302,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5500E9F91DDD290D00DC6880 /* PBXTargetDependency */,
+				B35210301E1C32B1005EA2EF /* PBXTargetDependency */,
 			);
 			name = WolfTests;
 			productName = WolfTests;
@@ -406,10 +406,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5500E9F91DDD290D00DC6880 /* PBXTargetDependency */ = {
+		B35210301E1C32B1005EA2EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5500E9EC1DDD290C00DC6880 /* Wolf */;
-			targetProxy = 5500E9F81DDD290D00DC6880 /* PBXContainerItemProxy */;
+			targetProxy = B352102F1E1C32B1005EA2EF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -457,6 +457,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks @executable_path/Frameworks\n@executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -505,6 +506,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks @executable_path/Frameworks\n@executable_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -528,7 +530,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.Wolf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -550,7 +552,7 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.Wolf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -563,8 +565,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 8Q86GGRUX8;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -576,8 +579,9 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				DEVELOPMENT_TEAM = 8Q86GGRUX8;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
