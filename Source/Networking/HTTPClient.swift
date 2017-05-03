@@ -32,7 +32,13 @@ public extension HTTPClient {
     }
 }
 
+enum HTTPResourceErrors: Error {
+    case unavailableData
+}
+
 public protocol HTTPResource {
+
+
     associatedtype Value
 
     var path: String { get }
@@ -42,10 +48,12 @@ public protocol HTTPResource {
     var parameterEncoding: ParameterEncoding { get }
 
     func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult
-    func serialize(data: Data?, error: Swift.Error?) -> Result<Value>
+    func serialize(response: Result<Data>) -> Result<Value>
 }
 
 public extension HTTPResource {
+
+
     var method: HTTPMethod {
         return .get
     }
@@ -64,7 +72,13 @@ public extension HTTPResource {
 
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in
-            return self.serialize(data: data, error: error)
+            if let data = data {
+                return self.serialize(response: .success(data))
+            } else if let error = error {
+                return self.serialize(response: .failure(error))
+            } else {
+                return self.serialize(response: .failure(HTTPResourceErrors.unavailableData))
+            }
         }
     }
 

@@ -2,13 +2,12 @@ import Unbox
 import Alamofire
 
 public extension HTTPResource where Value: Unboxable {
-    func serialize(data: Data?, error: Swift.Error?) -> Result<Value> {
-        if let error = error {
+    func serialize(response: Result<Data>) -> Result<Value> {
+        switch response {
+        case .failure(let error):
             return .failure(error)
-        } else if let data = data {
+        case .success(let data):
             return decode(data: data)
-        } else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
     }
 }
@@ -23,13 +22,12 @@ private func decode<T: Unboxable>(data: Data) -> Result<T> {
 }
 
 public extension HTTPResource where Value: Collection, Value.Iterator.Element: Unboxable {
-    func serialize(data: Data?, error: Swift.Error?) -> Result<[Value.Iterator.Element]> {
-        if let error = error {
+    func serialize(response: Result<Data>) -> Result<[Value.Iterator.Element]> {
+        switch response {
+        case .failure(let error):
             return .failure(error)
-        } else if let data = data {
+        case .success(let data):
             return decodeArray(data: data)
-        } else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
         }
     }
 }
@@ -44,15 +42,16 @@ private func decodeArray<T: Unboxable>(data: Data) -> Result<[T]> {
 }
 
 public extension HTTPResource where Self: JSONEnvelope, Value: Collection, Value.Iterator.Element: Unboxable {
-    func serialize(data: Data?, error: Swift.Error?) -> Result<[Value.Iterator.Element]> {
-        if let error = error {
+    func serialize(response: Result<Data>) -> Result<[Value.Iterator.Element]> {
+        switch response {
+        case .failure(let error):
             return .failure(error)
-        } else if let data = data, let rootKey = rootKey {
-            return decodeArray(data: data, rootKey: rootKey)
-        } else if let data = data {
-            return decodeArray(data: data)
-        } else {
-            return .failure(AFError.responseSerializationFailed(reason: .inputDataNil))
+        case .success(let data):
+            if let rootKey = rootKey {
+                return decodeArray(data: data, rootKey: rootKey)
+            } else {
+                return decodeArray(data: data)
+            }
         }
     }
 }
