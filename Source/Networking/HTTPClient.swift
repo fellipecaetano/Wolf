@@ -32,13 +32,11 @@ public extension HTTPClient {
     }
 }
 
-enum HTTPResourceErrors: Error {
+enum HTTPResourceError: Error {
     case unavailableData
 }
 
 public protocol HTTPResource {
-
-
     associatedtype Value
 
     var path: String { get }
@@ -52,8 +50,6 @@ public protocol HTTPResource {
 }
 
 public extension HTTPResource {
-
-
     var method: HTTPMethod {
         return .get
     }
@@ -77,7 +73,7 @@ public extension HTTPResource {
             } else if let error = error {
                 return self.serialize(response: .failure(error))
             } else {
-                return self.serialize(response: .failure(HTTPResourceErrors.unavailableData))
+                return self.serialize(response: .failure(HTTPResourceError.unavailableData))
             }
         }
     }
