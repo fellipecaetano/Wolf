@@ -1,3 +1,3 @@
-github "mxcl/PromiseKit" ~> 4.0
-github "JohnSundell/Unbox" == 2.2.1
-github "Alamofire/Alamofire" ~> 4.0
+github "mxcl/PromiseKit" "5.0.0-beta.5"
+github "gsampaio/Unbox" == 3.0
+github "Alamofire/Alamofire" "alamofire5"

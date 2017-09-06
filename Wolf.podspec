@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Wolf'
-  s.version = '2.1.5'
+  s.version = '3.0'
   s.summary = 'An opinionated, protocol-oriented networking layer.'
   s.description = <<-DESC
 Wolf approaches networking by bringing together the battle experience of Alamofire and the flexible power of Swift protocols.
@@ -14,13 +14,13 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
   s.subspec 'Basic' do |ss|
     ss.source_files = ['Source/**/*.swift']
     ss.dependency 'Alamofire', '~> 4.1'
-    ss.dependency 'PromiseKit', '~> 4.0'
+    ss.dependency 'PromiseKit'
     ss.exclude_files = ['Source/Unbox/**/*']
   end
   s.subspec 'Unbox' do |ss|
     ss.source_files = ['Source/**/*.swift']
     ss.dependency 'Alamofire', '~> 4.1'
-    ss.dependency 'PromiseKit', '~> 4.0'
+    ss.dependency 'PromiseKit'
     ss.dependency 'Unbox', '~> 2.2'
   end
   s.default_subspec = 'Basic'

@@ -1,7 +1,7 @@
 import UIKit.UIViewController
 import Foundation.NSData
 import AssetsLibrary
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -25,10 +25,10 @@ extension UIViewController {
 
         present(vc, animated: animated, completion: completion)
 
-        return proxy.promise.then(on: zalgo) { info -> Promise<NSData> in
+        return proxy.promise.then(on: nil) { info -> Promise<NSData> in
             let url = info[UIImagePickerControllerReferenceURL] as! URL
             
-            return Promise { fulfill, reject in
+            return Promise(.pending) { seal in
                 ALAssetsLibrary().asset(for: url, resultBlock: { asset in
                     let N = Int(asset!.defaultRepresentation().size())
                     let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: N)
@@ -36,20 +36,20 @@ extension UIViewController {
                     asset!.defaultRepresentation().getBytes(bytes, fromOffset: 0, length: N, error: &error)
 
                     if let error = error {
-                        reject(error)
+                        seal.reject(error)
                     } else {
-                        fulfill(NSData(bytesNoCopy: bytes, length: N))
+                        seal.fulfill(NSData(bytesNoCopy: bytes, length: N))
                     }
-                }, failureBlock: { reject($0!) } )
+                }, failureBlock: { seal.reject($0!) } )
             }
-        }.always {
+        }.ensure {
             self.dismiss(animated: animated, completion: nil)
         }
     }
 }
 
 @objc private class UIImagePickerControllerProxy: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    let (promise, fulfill, reject) = Promise<[String: Any]>.pending()
+    let (promise, seal) = Promise<[String: Any]>.pending()
     var retainCycle: AnyObject?
 
     required override init() {
@@ -58,12 +58,12 @@ extension UIViewController {
     }
 
     fileprivate func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        fulfill(info)
+        seal.fulfill(info)
         retainCycle = nil
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        reject(UIImagePickerController.PMKError.cancelled)
+        seal.reject(UIImagePickerController.PMKError.cancelled)
         retainCycle = nil
     }
 }

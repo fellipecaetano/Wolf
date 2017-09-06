@@ -7,7 +7,7 @@
 //
 
 import EventKit
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -43,25 +43,24 @@ public enum EventKitError: Error, CustomStringConvertible {
  - Returns: A promise that fulfills with the EKEventStore.
  */
 public func EKEventStoreRequestAccess() -> Promise<EKEventStore> {
-    let eventStore = EKEventStore()
-    return Promise { fulfill, reject in
+    return Promise(.pending) { seal in
+        let eventStore = EKEventStore()
 
-        let authorization = EKEventStore.authorizationStatus(for: .event)
-        switch authorization {
+        switch EKEventStore.authorizationStatus(for: .event) {
         case .authorized:
-            fulfill(eventStore)
+            seal.fulfill(eventStore)
         case .denied:
-            reject(EventKitError.denied)
+            seal.reject(EventKitError.denied)
         case .restricted:
-            reject(EventKitError.restricted)
+            seal.reject(EventKitError.restricted)
         case .notDetermined:
             eventStore.requestAccess(to: .event) { granted, error in
                 if granted {
-                    fulfill(eventStore)
+                    seal.fulfill(eventStore)
                 } else if let error = error {
-                    reject(error)
+                    seal.reject(error)
                 } else {
-                    reject(EventKitError.denied)
+                    seal.reject(EventKitError.denied)
                 }
             }
         }

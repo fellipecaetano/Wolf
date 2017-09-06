@@ -13,7 +13,7 @@ class TestBolts: XCTestCase {
             return Promise(value: ())
         }.then { _ -> BFTask<NSString> in
             return BFTask(result: value())
-        }.then { obj -> Void in
+        }.done { obj in
             XCTAssertEqual(obj, value())
             ex.fulfill()
         }

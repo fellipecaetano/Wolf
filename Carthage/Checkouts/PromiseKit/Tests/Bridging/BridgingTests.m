@@ -19,4 +19,16 @@
     [self waitForExpectationsWithTimeout:20 handler:nil];
 }
 
+- (void)test626 {
+    XCTestExpectation *ex = [self expectationWithDescription:@""];
+
+    testCase626().then(^{
+        XCTFail();
+    }).ensure(^{
+        [ex fulfill];
+    });
+
+    [self waitForExpectationsWithTimeout:20 handler:nil];
+}
+
 @end

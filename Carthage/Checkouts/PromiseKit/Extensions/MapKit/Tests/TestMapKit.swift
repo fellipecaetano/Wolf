@@ -8,7 +8,7 @@ class Test_MKDirections_Swift: XCTestCase {
         let ex = expectation(description: "")
 
         class MockDirections: MKDirections {
-            private override func calculate(completionHandler: @escaping MKDirectionsHandler) {
+            override func calculate(completionHandler: @escaping MKDirectionsHandler) {
                 completionHandler(MKDirectionsResponse(), nil)
             }
         }
@@ -16,7 +16,7 @@ class Test_MKDirections_Swift: XCTestCase {
         let rq = MKDirectionsRequest()
         let directions = MockDirections(request: rq)
 
-        directions.calculate().then { _ in
+        directions.calculate().done { _ in
             ex.fulfill()
         }
 
@@ -28,13 +28,13 @@ class Test_MKDirections_Swift: XCTestCase {
         let ex = expectation(description: "")
 
         class MockDirections: MKDirections {
-            private override func calculateETA(completionHandler: @escaping MKETAHandler) {
+            override func calculateETA(completionHandler: @escaping MKETAHandler) {
                 completionHandler(MKETAResponse(), nil)
             }
         }
 
         let rq = MKDirectionsRequest()
-        MockDirections(request: rq).calculateETA().then { (rsp: MKETAResponse) in
+        MockDirections(request: rq).calculateETA().done { rsp in
             ex.fulfill()
         }
 
@@ -48,13 +48,13 @@ class Test_MKSnapshotter_Swift: XCTestCase {
         let ex = expectation(description: "")
 
         class MockSnapshotter: MKMapSnapshotter {
-            private override func start(completionHandler: @escaping MKMapSnapshotCompletionHandler) {
+            override func start(completionHandler: @escaping MKMapSnapshotCompletionHandler) {
                 completionHandler(MKMapSnapshot(), nil)
             }
         }
 
         let snapshotter = MockSnapshotter()
-        snapshotter.start().then { _ in
+        snapshotter.start().done { _ in
             ex.fulfill()
         }
 

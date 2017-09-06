@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6352FDE31D69130200680F48 /* URLDataPromise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6352FDE21D69130200680F48 /* URLDataPromise.swift */; };
 		6364F66F1D68B8DF008D7B94 /* NSNotificationCenter+AnyPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 6364F66C1D68B8DF008D7B94 /* NSNotificationCenter+AnyPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6364F6701D68B8DF008D7B94 /* NSTask+AnyPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 6364F66D1D68B8DF008D7B94 /* NSTask+AnyPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6364F6711D68B8DF008D7B94 /* NSURLSession+AnyPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 6364F66E1D68B8DF008D7B94 /* NSURLSession+AnyPromise.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,7 +38,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		6352FDE21D69130200680F48 /* URLDataPromise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = URLDataPromise.swift; path = Sources/URLDataPromise.swift; sourceTree = SOURCE_ROOT; };
 		6364F66C1D68B8DF008D7B94 /* NSNotificationCenter+AnyPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSNotificationCenter+AnyPromise.h"; path = "Sources/NSNotificationCenter+AnyPromise.h"; sourceTree = SOURCE_ROOT; };
 		6364F66D1D68B8DF008D7B94 /* NSTask+AnyPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSTask+AnyPromise.h"; path = "Sources/NSTask+AnyPromise.h"; sourceTree = SOURCE_ROOT; };
 		6364F66E1D68B8DF008D7B94 /* NSURLSession+AnyPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURLSession+AnyPromise.h"; path = "Sources/NSURLSession+AnyPromise.h"; sourceTree = SOURCE_ROOT; };
@@ -121,11 +119,9 @@
 				63C7FFDA1D5C00F2003BAE60 /* NSURLSession+AnyPromise.m */,
 				63C7FFDB1D5C00F2003BAE60 /* NSURLSession+Promise.swift */,
 				63C7FFEB1D5C00FD003BAE60 /* PMKFoundation.h */,
-				6352FDE21D69130200680F48 /* URLDataPromise.swift */,
 			);
-			name = Sources;
-			path = "PMK+UIKit";
-			sourceTree = "<group>";
+			path = Sources;
+			sourceTree = SOURCE_ROOT;
 		};
 		63C7FFF31D5C020D003BAE60 /* Tests */ = {
 			isa = PBXGroup;
@@ -136,9 +132,8 @@
 				63C700021D5C021F003BAE60 /* TestNSURLSession.swift */,
 				63CAF1051D682F9600D3835B /* TestNSURLSession.m */,
 			);
-			name = Tests;
-			path = PMKTests/NS;
-			sourceTree = "<group>";
+			path = Tests;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -199,17 +194,17 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Max Howell";
 				TargetAttributes = {
 					63C7FFA61D5BEE09003BAE60 = {
 						CreatedOnToolsVersion = 8.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					63C7FFF11D5C020D003BAE60 = {
 						CreatedOnToolsVersion = 8.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -256,7 +251,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6352FDE31D69130200680F48 /* URLDataPromise.swift in Sources */,
 				63C7FFDF1D5C00F2003BAE60 /* NSNotificationCenter+Promise.swift in Sources */,
 				63C7FFDC1D5C00F2003BAE60 /* afterlife.swift in Sources */,
 				63C7FFDE1D5C00F2003BAE60 /* NSNotificationCenter+AnyPromise.m in Sources */,
@@ -301,7 +295,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -309,7 +305,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -358,7 +358,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -366,7 +368,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;

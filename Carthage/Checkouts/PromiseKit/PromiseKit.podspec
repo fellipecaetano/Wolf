@@ -25,6 +25,10 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.10'
   s.watchos.deployment_target = '2.0'
   s.tvos.deployment_target = '9.0'
+  
+  s.pod_target_xcconfig = {
+    'OTHER_SWIFT_FLAGS' => '-DPMKCocoaPods',
+  }
 
   s.subspec 'Accounts' do |ss|
     ss.ios.source_files = ss.osx.source_files = 'Extensions/Accounts/Sources/*'
@@ -36,7 +40,7 @@ Pod::Spec.new do |s|
     ss.source_files = 'Extensions/Alamofire/Sources/*'
     ss.dependency 'Alamofire', '~> 4.0'
     ss.dependency 'PromiseKit/CorePromise'
-    ss.ios.deployment_target = '9.0'
+    ss.ios.deployment_target = '8.0'
     ss.osx.deployment_target = '10.11'
     ss.watchos.deployment_target = '2.0'
     ss.tvos.deployment_target = '9.0'
@@ -105,12 +109,7 @@ Pod::Spec.new do |s|
   end
   
   s.subspec 'Foundation' do |ss|
-    base_files = Dir['Extensions/Foundation/Sources/*']
-    nstask_files = Dir['Extensions/Foundation/Sources/*NSTask*']
-    base_files -= nstask_files
-
-    ss.source_files = base_files
-    ss.osx.source_files = base_files + nstask_files
+    ss.source_files = Dir['Extensions/Foundation/Sources/*']
     ss.dependency 'PromiseKit/CorePromise'
     ss.frameworks = 'Foundation'
   end
@@ -142,17 +141,13 @@ Pod::Spec.new do |s|
   end
 
   s.subspec 'Photos' do |ss|
-    ss.ios.source_files = ss.tvos.source_files = 'Extensions/Photos/Sources/*'
-    ss.ios.frameworks = ss.tvos.frameworks = 'Photos'
+    ss.ios.source_files = ss.tvos.source_files = ss.osx.source_files = 'Extensions/Photos/Sources/*'
+    ss.ios.frameworks = ss.tvos.frameworks = ss.osx.frameworks = 'Photos'
     ss.tvos.deployment_target = '10.0'
-    ss.dependency 'PromiseKit/CorePromise'
-    
-    # respecify due to CocoaPods bug where specifying any
-    # deployment_target on a subspec causes all other platforms
-    # to not inherit deployment targets from their parent spec
+    # CocoaPods sucks: can’t enable this until Xcode 9 is released or lint fails
+    #ss.osx.deployment_target = '10.13'
     ss.ios.deployment_target = '8.0'
-    ss.osx.deployment_target = '10.10'
-    ss.watchos.deployment_target = '2.0'
+    ss.dependency 'PromiseKit/CorePromise'
   end
 
   s.subspec 'QuartzCore' do |ss|

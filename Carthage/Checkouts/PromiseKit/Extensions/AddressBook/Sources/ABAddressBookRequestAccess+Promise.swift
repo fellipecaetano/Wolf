@@ -1,7 +1,7 @@
 import Foundation.NSError
 import CoreFoundation
 import AddressBook
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -37,7 +37,7 @@ public enum AddressBookError: Error {
  @return A promise that fulfills with the ABAuthorizationStatus.
 */
 public func ABAddressBookRequestAccess() -> Promise<ABAuthorizationStatus> {
-    return ABAddressBookRequestAccess().then(on: zalgo) { (_, _) -> ABAuthorizationStatus in
+    return ABAddressBookRequestAccess().map(on: nil) { (_, _) -> ABAuthorizationStatus in
         return ABAddressBookGetAuthorizationStatus()
     }
 }
@@ -56,7 +56,7 @@ public func ABAddressBookRequestAccess() -> Promise<ABAuthorizationStatus> {
  @return A promise that fulfills with the ABAddressBook instance if access was granted.
 */
 public func ABAddressBookRequestAccess() -> Promise<ABAddressBook> {
-    return ABAddressBookRequestAccess().then(on: zalgo) { granted, book -> Promise<ABAddressBook> in
+    return ABAddressBookRequestAccess().then(on: nil) { granted, book -> Promise<ABAddressBook> in
         guard granted else {
             switch ABAddressBookGetAuthorizationStatus() {
             case .notDetermined:
@@ -78,7 +78,7 @@ extension NSError {
     fileprivate convenience init(CFError error: CoreFoundation.CFError) {
         let domain = CFErrorGetDomain(error) as String
         let code = CFErrorGetCode(error)
-        let info = CFErrorCopyUserInfo(error) as [NSObject: AnyObject]
+        let info = CFErrorCopyUserInfo(error) as? [String: Any] ?? [:]
         self.init(domain: domain, code: code, userInfo: info)
     }
 }
@@ -90,12 +90,12 @@ private func ABAddressBookRequestAccess() -> Promise<(Bool, ABAddressBook)> {
     }
 
     let book: ABAddressBook = ubook.takeRetainedValue()
-    return Promise { fulfill, reject in
+    return Promise(.pending) { seal in
         ABAddressBookRequestAccessWithCompletion(book) { granted, error in
             if let error = error {
-                reject(NSError(CFError: error))
+                seal.reject(NSError(CFError: error))
             } else {
-                fulfill(granted, book)
+                seal.fulfill((granted, book))
             }
         }
     }
