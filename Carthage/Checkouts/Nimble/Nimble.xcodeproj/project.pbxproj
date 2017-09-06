@@ -1057,7 +1057,7 @@
 				TargetAttributes = {
 					1F1A74281940169200FFFC47 = {
 						CreatedOnToolsVersion = 6.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					1F1A74331940169200FFFC47 = {
 						CreatedOnToolsVersion = 6.0;
@@ -1718,6 +1718,8 @@
 				PRODUCT_NAME = Nimble;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1752,6 +1754,8 @@
 				PRODUCT_NAME = Nimble;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

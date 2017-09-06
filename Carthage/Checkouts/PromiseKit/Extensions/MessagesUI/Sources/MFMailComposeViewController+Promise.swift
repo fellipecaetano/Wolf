@@ -1,6 +1,6 @@
 import MessageUI.MFMailComposeViewController
 import UIKit.UIViewController
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -21,7 +21,7 @@ extension UIViewController {
         proxy.retainCycle = proxy
         vc.mailComposeDelegate = proxy
         present(vc, animated: animated, completion: completion)
-        _ = proxy.promise.always {
+        _ = proxy.promise.ensure {
             self.dismiss(animated: animated, completion: nil)
         }
         return proxy.promise
@@ -59,22 +59,22 @@ extension MFMailComposeViewController {
 
 private class PMKMailComposeViewControllerDelegate: NSObject, MFMailComposeViewControllerDelegate, UINavigationControllerDelegate {
 
-    let (promise, fulfill, reject) = Promise<MFMailComposeResult>.pending()
+    let (promise, seal) = Promise<MFMailComposeResult>.pending()
     var retainCycle: NSObject?
 
     @objc func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         defer { retainCycle = nil }
 
         if let error = error {
-            reject(error)
+            seal.reject(error)
         } else {
             switch result {
             case .failed:
-                reject(MFMailComposeViewController.PMKError.failed)
+                seal.reject(MFMailComposeViewController.PMKError.failed)
             case .cancelled:
-                reject(MFMailComposeViewController.PMKError.cancelled)
+                seal.reject(MFMailComposeViewController.PMKError.cancelled)
             default:
-                fulfill(result)
+                seal.fulfill(result)
             }
         }
     }

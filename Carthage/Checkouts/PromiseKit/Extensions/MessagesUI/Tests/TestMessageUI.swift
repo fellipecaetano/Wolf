@@ -17,7 +17,7 @@ class MessageUITests: XCTestCase {
         mailer.setToRecipients(["mxcl@me.com"])
 
         let promise = rootvc.promise(mailer, animated: false, completion: {
-            after(interval: 0.25).then { _ -> Void in
+            after(seconds: 0.25).done { _ in
                 XCTAssertFalse(order)
                 let button = mailer.viewControllers[0].navigationItem.leftBarButtonItem!
                 UIControl().sendAction(button.action!, to: button.target, for: nil)
@@ -29,7 +29,7 @@ class MessageUITests: XCTestCase {
         }
         promise.catch(policy: .allErrors) { _ -> Void in
             // seems necessary to give vc stack a bit of time
-            after(interval: 0.5).then(execute: ex2.fulfill)
+            after(seconds: 0.5).done(ex2.fulfill)
             order = true
         }
         waitForExpectations(timeout: 10, handler: nil)
@@ -45,7 +45,7 @@ class MessageUITests: XCTestCase {
         let messager = MFMessageComposeViewController()
 
         let promise = rootvc.promise(messager, animated: false, completion: {
-            after(interval: 0.25).then { _ -> Void in
+            after(seconds: 0.25).done { _ in
                 XCTAssertFalse(order)
 
                 let button = messager.viewControllers[0].navigationItem.leftBarButtonItem!
@@ -59,7 +59,7 @@ class MessageUITests: XCTestCase {
         }
         promise.catch(policy: .allErrors) { _ -> Void in
             // seems necessary to give vc stack a bit of time
-            after(interval: 0.5).then(execute: ex2.fulfill)
+            after(seconds: 0.5).done(ex2.fulfill)
             order = true
         }
         waitForExpectations(timeout: 10, handler: nil)

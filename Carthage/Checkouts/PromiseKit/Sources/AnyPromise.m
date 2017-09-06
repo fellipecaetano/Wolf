@@ -1,8 +1,6 @@
 #import "PMKCallVariadicBlock.m"
 #import "AnyPromise+Private.h"
 
-extern dispatch_queue_t PMKDefaultDispatchQueue();
-
 NSString *const PMKErrorDomain = @"PMKErrorDomain";
 
 
@@ -16,7 +14,7 @@ NSString *const PMKErrorDomain = @"PMKErrorDomain";
 
 - (AnyPromise *(^)(id))then {
     return ^(id block) {
-        return [self __thenOn:PMKDefaultDispatchQueue() execute:^(id obj) {
+        return [self __thenOn:dispatch_get_main_queue() execute:^(id obj) {
             return PMKCallVariadicBlock(block, obj);
         }];
     };
@@ -38,32 +36,44 @@ NSString *const PMKErrorDomain = @"PMKErrorDomain";
     };
 }
 
+- (AnyPromise *(^)(dispatch_queue_t, id))catchOn {
+    return ^(dispatch_queue_t q, id block) {
+        return [self __catchOn:q execute:^(id obj) {
+            return PMKCallVariadicBlock(block, obj);
+        }];
+    };
+}
+
 - (AnyPromise *(^)(id))catch {
     return ^(id block) {
-        return [self __catchWithPolicy:PMKCatchPolicyAllErrorsExceptCancellation execute:^(id obj) {
+        return [self __catchOn:dispatch_get_main_queue() execute:^(id obj) {
             return PMKCallVariadicBlock(block, obj);
         }];
     };
 }
 
-- (AnyPromise *(^)(PMKCatchPolicy, id))catchWithPolicy {
-    return ^(PMKCatchPolicy policy, id block) {
-        return [self __catchWithPolicy:policy execute:^(id obj) {
+- (AnyPromise *(^)(id))catchInBackground {
+    return ^(id block) {
+        return [self __catchOn:dispatch_get_global_queue(0, 0) execute:^(id obj) {
             return PMKCallVariadicBlock(block, obj);
         }];
     };
 }
 
-- (AnyPromise *(^)(dispatch_block_t))always {
+- (AnyPromise *(^)(dispatch_block_t))ensure {
     return ^(dispatch_block_t block) {
-        return [self __alwaysOn:PMKDefaultDispatchQueue() execute:block];
+        return [self __alwaysOn:dispatch_get_main_queue() execute:block];
     };
 }
 
-- (AnyPromise *(^)(dispatch_queue_t, dispatch_block_t))alwaysOn {
+- (AnyPromise *(^)(dispatch_queue_t, dispatch_block_t))ensureOn {
     return ^(dispatch_queue_t queue, dispatch_block_t block) {
         return [self __alwaysOn:queue execute:block];
     };
+}
+
+- (BOOL)pending {
+    return [[self valueForKey:@"__pending"] boolValue];
 }
 
 @end

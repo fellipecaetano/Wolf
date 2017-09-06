@@ -9,8 +9,8 @@ struct Show {
 
 extension Show: Unboxable {
     init(unboxer: Unboxer) throws {
-        imageURL = try unboxer.unbox(keyPath: "images.poster.thumb")
-        title = try unboxer.unbox(key: "title")
+        imageURL = try unboxer.unbox(at: ["images", "poster", "thumb"])
+        title = try unboxer.unbox(at: "title")
     }
 }
 

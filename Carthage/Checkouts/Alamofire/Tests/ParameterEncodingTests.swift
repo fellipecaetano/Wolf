@@ -506,7 +506,7 @@ class URLParameterEncodingTestCase: ParameterEncodingTestCase {
             // Given
             let repeatedCount = 2_000
             let url = URL(string: "https://example.com/movies")!
-            let parameters = ["chinese": String(count: repeatedCount, repeatedString: "一二三四五六七八九十")]
+            let parameters = ["chinese": String(repeating: "一二三四五六七八九十", count: repeatedCount)]
 
             // When
             let urlRequest = try encoding.encode(URLRequest(url: url), with: parameters)
@@ -646,8 +646,38 @@ class JSONParameterEncodingTestCase: ParameterEncodingTestCase {
                 } catch {
                     XCTFail("json should not be nil")
                 }
-            } else {
-                XCTFail("json should not be nil")
+            }
+        } catch {
+            XCTFail("Test encountered unexpected error: \(error)")
+        }
+    }
+
+    func testJSONParameterEncodeArray() {
+        do {
+            // Given
+            let array: [String] = ["foo", "bar", "baz"]
+
+            // When
+            let URLRequest = try encoding.encode(self.urlRequest, withJSONObject: array)
+
+            // Then
+            XCTAssertNil(URLRequest.url?.query)
+            XCTAssertNotNil(URLRequest.value(forHTTPHeaderField: "Content-Type"))
+            XCTAssertEqual(URLRequest.value(forHTTPHeaderField: "Content-Type"), "application/json")
+            XCTAssertNotNil(URLRequest.httpBody)
+
+            if let httpBody = URLRequest.httpBody {
+                do {
+                    let json = try JSONSerialization.jsonObject(with: httpBody, options: .allowFragments)
+
+                    if let json = json as? NSObject {
+                        XCTAssertEqual(json, array as NSObject)
+                    } else {
+                        XCTFail("json should be an NSObject")
+                    }
+                } catch {
+                    XCTFail("json should not be nil")
+                }
             }
         } catch {
             XCTFail("Test encountered unexpected error: \(error)")

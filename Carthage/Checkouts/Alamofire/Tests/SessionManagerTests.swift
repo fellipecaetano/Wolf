@@ -52,6 +52,7 @@ class SessionManagerTestCase: BaseTestCase {
     private class RequestHandler: RequestAdapter, RequestRetrier {
         var adaptedCount = 0
         var retryCount = 0
+        var retryErrors: [Error] = []
 
         var shouldApplyAuthorizationHeader = false
         var throwsErrorOnSecondAdapt = false
@@ -77,6 +78,7 @@ class SessionManagerTestCase: BaseTestCase {
 
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
+            retryErrors.append(error)
 
             if retryCount < 2 {
                 completion(true, 0.0)
@@ -89,6 +91,7 @@ class SessionManagerTestCase: BaseTestCase {
     private class UploadHandler: RequestAdapter, RequestRetrier {
         var adaptedCount = 0
         var retryCount = 0
+        var retryErrors: [Error] = []
 
         func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
             adaptedCount += 1
@@ -100,6 +103,8 @@ class SessionManagerTestCase: BaseTestCase {
 
         func should(_ manager: SessionManager, retry request: Request, with error: Error, completion: @escaping RequestRetryCompletion) {
             retryCount += 1
+            retryErrors.append(error)
+
             completion(true, 0.0)
         }
     }
@@ -628,6 +633,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenDownloadInitiallyEncountersAdaptError() {
@@ -663,6 +670,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsRequestRetrierWhenUploadInitiallyEncountersAdaptError() {
@@ -692,6 +701,8 @@ class SessionManagerTestCase: BaseTestCase {
         XCTAssertEqual(handler.adaptedCount, 2)
         XCTAssertEqual(handler.retryCount, 1)
         XCTAssertEqual(response?.result.isSuccess, true)
+
+        handler.retryErrors.forEach { XCTAssertFalse($0 is AdaptError) }
     }
 
     func testThatSessionManagerCallsAdapterWhenRequestIsRetried() {
@@ -776,12 +787,12 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
         // Given, When, Then
         executeAuthorizationHeaderTest(for: .ephemeral)
     }
-
-//    ⚠️ This test has been removed as a result of rdar://26870455 in Xcode 8 Seed 1
-//    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
-//        // Given, When, Then
-//        executeAuthorizationHeaderTest(for: .background)
-//    }
+#if os(macOS)
+    func testThatBackgroundConfigurationHeadersAreSentWithRequest() {
+        // Given, When, Then
+        executeAuthorizationHeaderTest(for: .background)
+    }
+#endif
 
     private func executeAuthorizationHeaderTest(for type: ConfigurationType) {
         // Given
@@ -829,10 +840,9 @@ class SessionManagerConfigurationHeadersTestCase: BaseTestCase {
             XCTAssertNotNil(response.data, "data should not be nil")
             XCTAssertTrue(response.result.isSuccess, "result should be a success")
 
-            // The `as NSString` cast is necessary due to a compiler bug. See the following rdar for more info.
-            // - https://openradar.appspot.com/radar?id=5517037090635776
             if
-                let headers = (response.result.value as AnyObject?)?["headers" as NSString] as? [String: String],
+                let response = response.result.value as? [String: Any],
+                let headers = response["headers"] as? [String: String],
                 let authorization = headers["Authorization"]
             {
                 XCTAssertEqual(authorization, "Bearer 123456", "authorization header value does not match")
