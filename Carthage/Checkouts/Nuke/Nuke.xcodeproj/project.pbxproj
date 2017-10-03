@@ -65,13 +65,9 @@
 		0C22DA3D1BCAA22A006E1D3B /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C22DA2C1BCAA220006E1D3B /* Nuke.framework */; };
 		0C22DA531BCAAA06006E1D3B /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068D1BCA888800089D7F /* Tests.swift */; };
 		0C22DA571BCAAA36006E1D3B /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068E1BCA888800089D7F /* XCTestCaseExtensions.swift */; };
-		0C22DA581BCAAA3A006E1D3B /* MockImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockImageCache.swift */; };
+		0C22DA581BCAAA3A006E1D3B /* MockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockCache.swift */; };
 		0C22DA591BCAAA3A006E1D3B /* MockImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068A1BCA888800089D7F /* MockImageProcessor.swift */; };
 		0C22DA5B1BCAAA3A006E1D3B /* MockDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068C1BCA888800089D7F /* MockDataLoader.swift */; };
-		0C34BF5D1D4D1554006B8A57 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF5C1D4D1554006B8A57 /* Promise.swift */; };
-		0C34BF5E1D4D1554006B8A57 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF5C1D4D1554006B8A57 /* Promise.swift */; };
-		0C34BF5F1D4D1554006B8A57 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF5C1D4D1554006B8A57 /* Promise.swift */; };
-		0C34BF601D4D1554006B8A57 /* Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF5C1D4D1554006B8A57 /* Promise.swift */; };
 		0C34BF621D4D1576006B8A57 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF611D4D1576006B8A57 /* Scheduler.swift */; };
 		0C34BF631D4D1576006B8A57 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF611D4D1576006B8A57 /* Scheduler.swift */; };
 		0C34BF641D4D1576006B8A57 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C34BF611D4D1576006B8A57 /* Scheduler.swift */; };
@@ -94,7 +90,7 @@
 		0C69FA501D4E222E00DA9982 /* PreheaterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CD195291D4348AC00E011BB /* PreheaterTests.swift */; };
 		0C6CF0CD1DAF789C007B8C0E /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068E1BCA888800089D7F /* XCTestCaseExtensions.swift */; };
 		0C75279D1D473AE800EC6222 /* ThreadSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C5D81871D46A385000ECCB6 /* ThreadSafetyTests.swift */; };
-		0C75279E1D473AEF00EC6222 /* MockImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockImageCache.swift */; };
+		0C75279E1D473AEF00EC6222 /* MockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockCache.swift */; };
 		0C75279F1D473AEF00EC6222 /* MockImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068A1BCA888800089D7F /* MockImageProcessor.swift */; };
 		0C7527A01D473AF100EC6222 /* MockImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C01287F1D43E85100668A1F /* MockImageLoader.swift */; };
 		0C778CFD1D89634B00361A1F /* Nuke.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C778CFC1D89634B00361A1F /* Nuke.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -119,8 +115,12 @@
 		0C8D7BED1D9DC02B00D12EB7 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C9174901BAE99EE004A7905 /* Nuke.framework */; };
 		0C8D7BF51D9DC07E00D12EB7 /* PerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C8D74201D9D6EEB0036349E /* PerformanceTests.swift */; };
 		0C973E141D9FDB9F00C00AD9 /* Nuke.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0C9174901BAE99EE004A7905 /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0CAAB0101E45D6DA00924450 /* NukeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */; };
+		0CAAB0111E45D6DA00924450 /* NukeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */; };
+		0CAAB0121E45D6DA00924450 /* NukeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */; };
+		0CAAB0131E45D6DA00924450 /* NukeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */; };
 		0CC345A81BD96D2A005C2DD8 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0CC345971BD96CFE005C2DD8 /* Nuke.framework */; };
-		0CC345C01BD96E16005C2DD8 /* MockImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockImageCache.swift */; };
+		0CC345C01BD96E16005C2DD8 /* MockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C06891BCA888800089D7F /* MockCache.swift */; };
 		0CC345C11BD96E16005C2DD8 /* MockImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068A1BCA888800089D7F /* MockImageProcessor.swift */; };
 		0CC345C31BD96E16005C2DD8 /* MockDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068C1BCA888800089D7F /* MockDataLoader.swift */; };
 		0CC345C41BD96E19005C2DD8 /* XCTestCaseExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C7C068E1BCA888800089D7F /* XCTestCaseExtensions.swift */; };
@@ -212,17 +212,18 @@
 		0C22D9C51BCA9734006E1D3B /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C22DA2C1BCAA220006E1D3B /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C22DA381BCAA22A006E1D3B /* Nuke macOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nuke macOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0C34BF5C1D4D1554006B8A57 /* Promise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Promise.swift; sourceTree = "<group>"; };
 		0C34BF611D4D1576006B8A57 /* Scheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scheduler.swift; sourceTree = "<group>"; };
 		0C34BF661D4D15B6006B8A57 /* CancellationToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancellationToken.swift; sourceTree = "<group>"; };
+		0C4B6A341E36630E00E86B21 /* Nuke 5 Migration Guide.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Nuke 5 Migration Guide.md"; sourceTree = "<group>"; };
 		0C5D81831D46A18F000ECCB6 /* IntegrationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 		0C5D81871D46A385000ECCB6 /* ThreadSafetyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafetyTests.swift; sourceTree = "<group>"; };
+		0C66879A1E41EF2F00CEBFAE /* Third Party Libraries.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Third Party Libraries.md"; sourceTree = "<group>"; };
 		0C778CFC1D89634B00361A1F /* Nuke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nuke.h; sourceTree = "<group>"; };
 		0C7C06771BCA882A00089D7F /* Nuke iOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nuke iOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C7C06821BCA888800089D7F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
 		0C7C06871BCA888800089D7F /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		0C7C06881BCA888800089D7F /* ProcessingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessingTests.swift; sourceTree = "<group>"; };
-		0C7C06891BCA888800089D7F /* MockImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockImageCache.swift; sourceTree = "<group>"; };
+		0C7C06891BCA888800089D7F /* MockCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCache.swift; sourceTree = "<group>"; };
 		0C7C068A1BCA888800089D7F /* MockImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockImageProcessor.swift; sourceTree = "<group>"; };
 		0C7C068C1BCA888800089D7F /* MockDataLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockDataLoader.swift; sourceTree = "<group>"; };
 		0C7C068D1BCA888800089D7F /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
@@ -243,6 +244,7 @@
 		0C9174901BAE99EE004A7905 /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C94466D1D47EC0E006DB314 /* ManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManagerTests.swift; sourceTree = "<group>"; };
 		0CA301701DAF9CD1000B9105 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NukeExtensions.swift; sourceTree = "<group>"; };
 		0CC345971BD96CFE005C2DD8 /* Nuke.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nuke.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CC345A31BD96D2A005C2DD8 /* Nuke tvOS Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nuke tvOS Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0CD195291D4348AC00E011BB /* PreheaterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreheaterTests.swift; sourceTree = "<group>"; };
@@ -388,7 +390,7 @@
 		0C7C069A1BCA888C00089D7F /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				0C7C06891BCA888800089D7F /* MockImageCache.swift */,
+				0C7C06891BCA888800089D7F /* MockCache.swift */,
 				0C7C068A1BCA888800089D7F /* MockImageProcessor.swift */,
 				0C7C068C1BCA888800089D7F /* MockDataLoader.swift */,
 				0C01287F1D43E85100668A1F /* MockImageLoader.swift */,
@@ -402,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				0C7C068E1BCA888800089D7F /* XCTestCaseExtensions.swift */,
+				0CAAB00F1E45D6DA00924450 /* NukeExtensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -432,7 +435,6 @@
 		0C8808CF1D4519E700CDDA91 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
-				0C34BF5C1D4D1554006B8A57 /* Promise.swift */,
 				0C34BF611D4D1576006B8A57 /* Scheduler.swift */,
 				0C34BF661D4D15B6006B8A57 /* CancellationToken.swift */,
 			);
@@ -497,6 +499,7 @@
 				0CDB92791DAF9BA500002905 /* Installation Guide.md */,
 				0CDB927A1DAF9BA500002905 /* Performance Guide.md */,
 				0CDB927B1DAF9BA500002905 /* Tips and Tricks.md */,
+				0C66879A1E41EF2F00CEBFAE /* Third Party Libraries.md */,
 			);
 			path = Guides;
 			sourceTree = "<group>";
@@ -504,6 +507,7 @@
 		0CDB927C1DAF9BA500002905 /* Migrations */ = {
 			isa = PBXGroup;
 			children = (
+				0C4B6A341E36630E00E86B21 /* Nuke 5 Migration Guide.md */,
 				0CDB927D1DAF9BA500002905 /* Nuke 4 Migration Guide.md */,
 			);
 			path = Migrations;
@@ -730,7 +734,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Alexander Grebenyuk";
 				TargetAttributes = {
 					0C22D9C41BCA9734006E1D3B = {
@@ -747,11 +751,12 @@
 					};
 					0C7C06761BCA882A00089D7F = {
 						CreatedOnToolsVersion = 7.0.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					0C8D7BCF1D9DBF1600D12EB7 = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = NR8DLKJ7E6;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					0C8D7BE71D9DC02B00D12EB7 = {
@@ -762,7 +767,7 @@
 					};
 					0C91748F1BAE99EE004A7905 = {
 						CreatedOnToolsVersion = 7.0;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0900;
 					};
 					0CC345961BD96CFE005C2DD8 = {
 						CreatedOnToolsVersion = 7.1;
@@ -886,7 +891,6 @@
 				0CF4DE7F1D412A9E00170289 /* Preheater.swift in Sources */,
 				0C1ECA4E1D526964009063A9 /* Manager.swift in Sources */,
 				0C0FD6061CA47FE1002A78FB /* Request.swift in Sources */,
-				0C34BF5F1D4D1554006B8A57 /* Promise.swift in Sources */,
 				0C5108111D4E4E3B00F1F405 /* Deduplicator.swift in Sources */,
 				0C34BF641D4D1576006B8A57 /* Scheduler.swift in Sources */,
 				0C34BF691D4D15B6006B8A57 /* CancellationToken.swift in Sources */,
@@ -909,7 +913,6 @@
 				0C0FD6051CA47FE1002A78FB /* Request.swift in Sources */,
 				0C1ECA4D1D526964009063A9 /* Manager.swift in Sources */,
 				0CF4DE7E1D412A9E00170289 /* Preheater.swift in Sources */,
-				0C34BF5E1D4D1554006B8A57 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -922,7 +925,8 @@
 				0C1E62401D70246900AD5CF5 /* MockTarget.swift in Sources */,
 				0C5108151D4E50F300F1F405 /* DeduplicatorTests.swift in Sources */,
 				0C22DA571BCAAA36006E1D3B /* XCTestCaseExtensions.swift in Sources */,
-				0C22DA581BCAAA3A006E1D3B /* MockImageCache.swift in Sources */,
+				0CAAB0111E45D6DA00924450 /* NukeExtensions.swift in Sources */,
+				0C22DA581BCAAA3A006E1D3B /* MockCache.swift in Sources */,
 				0CE745761D4767B900123F65 /* MockDataDecoder.swift in Sources */,
 				0C7E86161DA59F12002EAD8D /* RateLimiterTests.swift in Sources */,
 				0C1ECA491D52673D009063A9 /* IntegrationTests.swift in Sources */,
@@ -948,11 +952,12 @@
 				0C1E623F1D70246900AD5CF5 /* MockTarget.swift in Sources */,
 				0C5108141D4E50F200F1F405 /* DeduplicatorTests.swift in Sources */,
 				0C7C06991BCA888800089D7F /* XCTestCaseExtensions.swift in Sources */,
+				0CAAB0101E45D6DA00924450 /* NukeExtensions.swift in Sources */,
 				0CE745751D4767B900123F65 /* MockDataDecoder.swift in Sources */,
 				0C7527A01D473AF100EC6222 /* MockImageLoader.swift in Sources */,
 				0C7E86151DA59F12002EAD8D /* RateLimiterTests.swift in Sources */,
 				0C1ECA481D52673C009063A9 /* IntegrationTests.swift in Sources */,
-				0C75279E1D473AEF00EC6222 /* MockImageCache.swift in Sources */,
+				0C75279E1D473AEF00EC6222 /* MockCache.swift in Sources */,
 				0C75279D1D473AE800EC6222 /* ThreadSafetyTests.swift in Sources */,
 				0C1E620B1D6F817700AD5CF5 /* RequestTests.swift in Sources */,
 				0C1ECA421D526461009063A9 /* CacheTests.swift in Sources */,
@@ -979,6 +984,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C6CF0CD1DAF789C007B8C0E /* XCTestCaseExtensions.swift in Sources */,
+				0CAAB0131E45D6DA00924450 /* NukeExtensions.swift in Sources */,
 				0C8D7BF51D9DC07E00D12EB7 /* PerformanceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -999,7 +1005,6 @@
 				0C0FD6041CA47FE1002A78FB /* Request.swift in Sources */,
 				0C1ECA4C1D526964009063A9 /* Manager.swift in Sources */,
 				0CF4DE7D1D412A9E00170289 /* Preheater.swift in Sources */,
-				0C34BF5D1D4D1554006B8A57 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1019,7 +1024,6 @@
 				0C0FD6071CA47FE1002A78FB /* Request.swift in Sources */,
 				0C1ECA4F1D526964009063A9 /* Manager.swift in Sources */,
 				0CF4DE801D412A9E00170289 /* Preheater.swift in Sources */,
-				0C34BF601D4D1554006B8A57 /* Promise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1032,6 +1036,7 @@
 				0C1E62411D70246900AD5CF5 /* MockTarget.swift in Sources */,
 				0C5108161D4E50F300F1F405 /* DeduplicatorTests.swift in Sources */,
 				0CC345C41BD96E19005C2DD8 /* XCTestCaseExtensions.swift in Sources */,
+				0CAAB0121E45D6DA00924450 /* NukeExtensions.swift in Sources */,
 				0CE745771D4767B900123F65 /* MockDataDecoder.swift in Sources */,
 				0CC345C11BD96E16005C2DD8 /* MockImageProcessor.swift in Sources */,
 				0C7E86171DA59F12002EAD8D /* RateLimiterTests.swift in Sources */,
@@ -1042,7 +1047,7 @@
 				0C1ECA441D526462009063A9 /* CacheTests.swift in Sources */,
 				0CC345C51BD96E1D005C2DD8 /* Tests.swift in Sources */,
 				0C1E623D1D6FA0FB00AD5CF5 /* CancellationTokenTests.swift in Sources */,
-				0CC345C01BD96E16005C2DD8 /* MockImageCache.swift in Sources */,
+				0CC345C01BD96E16005C2DD8 /* MockCache.swift in Sources */,
 				0C1ECA521D52811D009063A9 /* ManagerTests.swift in Sources */,
 				0C1ECA471D52667B009063A9 /* ProcessingTests.swift in Sources */,
 				0C5D818A1D46A385000ECCB6 /* ThreadSafetyTests.swift in Sources */,
@@ -1109,6 +1114,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = marker;
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1132,6 +1138,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = bitcode;
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1235,6 +1242,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.github.kean.Nuke-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -1248,6 +1256,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.github.kean.Nuke-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -1268,6 +1277,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.github.kean.Nuke-iOS-Tests-Host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -1288,6 +1298,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.github.kean.Nuke-iOS-Tests-Host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -1342,13 +1353,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1390,13 +1409,21 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1415,6 +1442,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1428,6 +1456,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = marker;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1440,6 +1469,8 @@
 				PRODUCT_NAME = Nuke;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1448,6 +1479,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = bitcode;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1460,6 +1492,8 @@
 				PRODUCT_NAME = Nuke;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1468,6 +1502,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = marker;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1491,6 +1526,7 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				BITCODE_GENERATION_MODE = bitcode;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

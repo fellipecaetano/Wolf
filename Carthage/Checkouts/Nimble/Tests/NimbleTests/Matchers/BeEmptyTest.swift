@@ -17,15 +17,15 @@ final class BeEmptyTest: XCTestCase, XCTestCaseProvider {
         expect([] as [CInt]).to(beEmpty())
         expect([1] as [CInt]).toNot(beEmpty())
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
         expect(NSDictionary() as? [Int:Int]).to(beEmpty())
         expect(NSDictionary(object: 1, forKey: 1 as NSNumber) as? [Int:Int]).toNot(beEmpty())
 #endif
 
-        expect(Dictionary<Int, Int>()).to(beEmpty())
+        expect([Int: Int]()).to(beEmpty())
         expect(["hi": 1]).toNot(beEmpty())
 
-#if _runtime(_ObjC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
         expect(NSArray() as? [Int]).to(beEmpty())
         expect(NSArray(array: [1]) as? [Int]).toNot(beEmpty())
 #endif
@@ -59,17 +59,17 @@ final class BeEmptyTest: XCTestCase, XCTestCaseProvider {
         }
 
         failsWithErrorMessage("expected to not be empty, got <{()}>") {
-            expect(NSSet()).toNot(beEmpty());
+            expect(NSSet()).toNot(beEmpty())
         }
         failsWithErrorMessage("expected to be empty, got <{(1)}>") {
-            expect(NSSet(object: NSNumber(value: 1))).to(beEmpty());
+            expect(NSSet(object: NSNumber(value: 1))).to(beEmpty())
         }
 
         failsWithErrorMessage("expected to not be empty, got <()>") {
-            expect(NSIndexSet()).toNot(beEmpty());
+            expect(NSIndexSet()).toNot(beEmpty())
         }
         failsWithErrorMessage("expected to be empty, got <(1)>") {
-            expect(NSIndexSet(index: 1)).to(beEmpty());
+            expect(NSIndexSet(index: 1)).to(beEmpty())
         }
 
         failsWithErrorMessage("expected to not be empty, got <>") {

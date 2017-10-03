@@ -29,7 +29,7 @@ class RateLimiterDemoViewController: UICollectionViewController {
         // We don't want default Deduplicator to affect the results
         // We don't want a memory cache either (but we take care of it
         // using memoryCacheOptions anyway).
-        let loader = Loader(loader: DataLoader(configuration: urlSessionConf), decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: DataLoader(configuration: urlSessionConf), decoder: DataDecoder())
         manager = Manager(loader: loader, cache: nil)
         
         photos = demoPhotosURLs
@@ -39,6 +39,9 @@ class RateLimiterDemoViewController: UICollectionViewController {
         
         collectionView?.backgroundColor = UIColor.white
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellReuseID)
+        if #available(iOS 10.0, *) {
+            collectionView?.isPrefetchingEnabled = false
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -88,11 +91,5 @@ class RateLimiterDemoViewController: UICollectionViewController {
             cell.addSubview(imageView!)
         }
         return imageView!
-    }
-    
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        // Makes sure that requests get cancelled as soon as the
-        // cell goes offscreen
-        manager.cancelRequest(for: self.imageViewForCell(cell))
     }
 }

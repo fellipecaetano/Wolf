@@ -33,7 +33,25 @@ public extension HTTPClient {
 }
 
 enum HTTPResourceError: Error {
-    case unavailableData
+    case emptyData
+    case serializationFailure(reason: String)
+}
+
+public enum SerializationResult<Value> {
+    case failure(Error)
+    case serializationFailure(reason: String)
+    case success(Value)
+
+    internal var resultProxy: Result<Value> {
+        switch self {
+        case .failure(let error):
+            return .failure(error)
+        case .serializationFailure(let reason):
+            return .failure(HTTPResourceError.serializationFailure(reason: reason))
+        case .success(let value):
+            return .success(value)
+        }
+    }
 }
 
 public protocol HTTPResource {
@@ -46,7 +64,7 @@ public protocol HTTPResource {
     var parameterEncoding: ParameterEncoding { get }
 
     func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult
-    func serialize(response: Result<Data>) -> Result<Value>
+    func serialize(response: Result<Data>) -> SerializationResult<Value>
 }
 
 public extension HTTPResource {
@@ -69,11 +87,11 @@ public extension HTTPResource {
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in
             if let data = data {
-                return self.serialize(response: .success(data))
+                return self.serialize(response: .success(data)).resultProxy
             } else if let error = error {
-                return self.serialize(response: .failure(error))
+                return self.serialize(response: .failure(error)).resultProxy
             } else {
-                return self.serialize(response: .failure(HTTPResourceError.unavailableData))
+                return self.serialize(response: .failure(HTTPResourceError.emptyData)).resultProxy
             }
         }
     }

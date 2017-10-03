@@ -33,7 +33,7 @@
 
 @interface WithContentsOfURLTests : XCTestCase @end
 
-static const NSTimeInterval kResponseTimeTolerence = 0.2;
+static const NSTimeInterval kResponseTimeMaxDelay = 2.5;
 
 @implementation WithContentsOfURLTests
 
@@ -70,7 +70,7 @@ static const NSTimeInterval kResponseTime = 0.5;
                                                error:NULL];
     
     XCTAssertEqualObjects(string, testString, @"Invalid returned string");
-    XCTAssertEqualWithAccuracy(-[startDate timeIntervalSinceNow], kResponseTime+kRequestTime, kResponseTimeTolerence, @"Invalid response time");
+    XCTAssertGreaterThan(-[startDate timeIntervalSinceNow], kResponseTime+kRequestTime, @"Invalid response time");
 }
 
 -(void)test_NSString_stringWithContentsOfURL_parallelQueue
@@ -80,7 +80,7 @@ static const NSTimeInterval kResponseTime = 0.5;
         [self test_NSString_stringWithContentsOfURL_mainQueue];
         [expectation fulfill];
     }];
-    [self waitForExpectationsWithTimeout:kRequestTime+kResponseTime+kResponseTimeTolerence handler:nil];
+    [self waitForExpectationsWithTimeout:kRequestTime+kResponseTime+kResponseTimeMaxDelay handler:nil];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ static const NSTimeInterval kResponseTime = 0.5;
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.iana.org/domains/example/"]];
     
     XCTAssertEqualObjects(data, testData, @"Invalid returned string");
-    XCTAssertEqualWithAccuracy(-[startDate timeIntervalSinceNow], kRequestTime+kResponseTime, kResponseTimeTolerence, @"Invalid response time");
+    XCTAssertGreaterThan(-[startDate timeIntervalSinceNow], kRequestTime+kResponseTime, @"Invalid response time");
 }
 
 -(void)test_NSData_dataWithContentsOfURL_parallelQueue
@@ -115,7 +115,7 @@ static const NSTimeInterval kResponseTime = 0.5;
         [self test_NSData_dataWithContentsOfURL_mainQueue];
         [expectation fulfill];
     }];
-    [self waitForExpectationsWithTimeout:kRequestTime+kResponseTime+kResponseTimeTolerence handler:nil];
+    [self waitForExpectationsWithTimeout:kRequestTime+kResponseTime+kResponseTimeMaxDelay handler:nil];
 }
 
 @end

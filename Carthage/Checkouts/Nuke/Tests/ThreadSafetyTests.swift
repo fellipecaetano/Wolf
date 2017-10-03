@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import Nuke
 import XCTest
@@ -14,8 +14,7 @@ extension XCTestCase {
                     let shouldCancel = rnd(3) == 0
                     
                     let cts = CancellationTokenSource()
-                    // Dispatch on global queue to avoid waiting on main thread
-                    _ = loader.loadImage(with: request, token: cts.token).then(on: DispatchQueue.global()) { _ in
+                    loader.loadImage(with: request, token: cts.token) { _ in
                         if shouldCancel {
                             // do nothing, we don't expect completion on cancel
                         } else {

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 import Nuke
@@ -69,9 +69,9 @@ class CacheTests: XCTestCase {
         XCTAssertNotNil(cache["key2"])
     }
 
-    #if !os(macOS)
-
     // MARK: Cost
+
+    #if !os(macOS)
 
     func testDefaultImageCost() {
         XCTAssertEqual(cache.cost(defaultImage), 1228800)
@@ -139,6 +139,20 @@ class CacheTests: XCTestCase {
     }
 
     #endif
+
+    func testThatAfterAddingEntryForExistingKeyCostIsUpdated() {
+        cache.cost = { _ in 10 }
+
+        cache["key1"] = defaultImage
+        cache["key2"] = defaultImage
+
+        XCTAssertEqual(cache.totalCost, 20)
+
+        cache.cost = { _ in 5 }
+
+        cache["key1"] = defaultImage
+        XCTAssertEqual(cache.totalCost, 15)
+    }
 
     // MARK: LRU
 
@@ -237,7 +251,7 @@ class CacheTests: XCTestCase {
             return (2 + rnd(20)) * 1024 * 1024
         }
 
-        var ops = [(Void) -> Void]()
+        var ops = [() -> Void]()
 
         for _ in 0..<10 { // those ops happen more frequently
             ops += [
@@ -279,15 +293,15 @@ class CacheTests: XCTestCase {
 
 class CacheIntegrationTests: XCTestCase {
     var mockCache: MockCache!
-    var mockSessionManager: MockDataLoader!
-    var loader: Loader!
+    var mockDataLoader: MockDataLoader!
+    var manager: Manager!
     
     override func setUp() {
         super.setUp()
 
         mockCache = MockCache()
-        mockSessionManager = MockDataLoader()
-        loader = Loader(loader: mockSessionManager, decoder: DataDecoder(), cache: mockCache)
+        mockDataLoader = MockDataLoader()
+        manager = Manager(loader: Loader(loader: mockDataLoader), cache: mockCache)
     }
 
     func testThatCacheWorks() {
@@ -297,20 +311,22 @@ class CacheIntegrationTests: XCTestCase {
         XCTAssertNil(mockCache[request])
 
         expect { fulfill in
-            _ = loader.loadImage(with: request).then { _ in
+            manager.loadImage(with: request, into: self, handler: { result, _ in
+                XCTAssertNotNil(result.value)
                 fulfill()
-            }
+            })
         }
         wait()
 
         // Suspend queue to make sure that the next request can
         // come only from cache.
-        mockSessionManager.queue.isSuspended = true
+        mockDataLoader.queue.isSuspended = true
 
         expect { fulfill in
-            _ = loader.loadImage(with: request).then { _ in
+            manager.loadImage(with: request, into: self, handler: { result, _ in
+                XCTAssertNotNil(result.value)
                 fulfill()
-            }
+            })
         }
         wait()
 
@@ -357,9 +373,10 @@ class CacheIntegrationTests: XCTestCase {
         XCTAssertNil(mockCache[request])
         
         expect { fulfill in
-            _ = loader.loadImage(with: request).then { _ in
+            manager.loadImage(with: request, into: self, handler: { result, _ in
+                XCTAssertNotNil(result.value)
                 fulfill()
-            }
+            })
         }
         wait()
         
