@@ -2,7 +2,7 @@ import Unbox
 import Alamofire
 
 public extension HTTPResource where Value: Unboxable {
-    func serialize(response: Result<Data>) -> Result<Value> {
+    func serialize(response: Result<Data>) -> SerializationResult<Value> {
         switch response {
         case .failure(let error):
             return .failure(error)
@@ -12,7 +12,7 @@ public extension HTTPResource where Value: Unboxable {
     }
 }
 
-private func decode<T: Unboxable>(data: Data) -> Result<T> {
+private func decode<T: Unboxable>(data: Data) -> SerializationResult<T> {
     do {
         let value: T = try unbox(data: data)
         return .success(value)
@@ -22,7 +22,7 @@ private func decode<T: Unboxable>(data: Data) -> Result<T> {
 }
 
 public extension HTTPResource where Value: Collection, Value.Iterator.Element: Unboxable {
-    func serialize(response: Result<Data>) -> Result<[Value.Iterator.Element]> {
+    func serialize(response: Result<Data>) -> SerializationResult<[Value.Iterator.Element]> {
         switch response {
         case .failure(let error):
             return .failure(error)
@@ -32,7 +32,7 @@ public extension HTTPResource where Value: Collection, Value.Iterator.Element: U
     }
 }
 
-private func decodeArray<T: Unboxable>(data: Data) -> Result<[T]> {
+private func decodeArray<T: Unboxable>(data: Data) -> SerializationResult<[T]> {
     do {
         let valueArray: [T] = try unbox(data: data)
         return .success(valueArray)
@@ -42,7 +42,7 @@ private func decodeArray<T: Unboxable>(data: Data) -> Result<[T]> {
 }
 
 public extension HTTPResource where Self: JSONEnvelope, Value: Collection, Value.Iterator.Element: Unboxable {
-    func serialize(response: Result<Data>) -> Result<[Value.Iterator.Element]> {
+    func serialize(response: Result<Data>) -> SerializationResult<[Value.Iterator.Element]> {
         switch response {
         case .failure(let error):
             return .failure(error)
@@ -56,7 +56,7 @@ public extension HTTPResource where Self: JSONEnvelope, Value: Collection, Value
     }
 }
 
-private func decodeArray<T: Unboxable>(data: Data, rootKey: String) -> Result<[T]> {
+private func decodeArray<T: Unboxable>(data: Data, rootKey: String) -> SerializationResult<[T]> {
     do {
         let dictionary: UnboxableDictionary = try JSONSerialization.JSONObject(with: data, options: [])
         let valueArray: [T] = try unbox(dictionary: dictionary, atKey: rootKey)
