@@ -1,102 +1,113 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
 
 /// Loads images.
 public protocol Loading {
     /// Loads an image with the given request.
-    func loadImage(with request: Request, token: CancellationToken?) -> Promise<Image>
+    ///
+    /// Loader doesn't make guarantees on which thread the completion
+    /// closure is called and whether it gets called or not after
+    /// the operation gets cancelled.
+    func loadImage(with request: Request, token: CancellationToken?, completion: @escaping (Result<Image>) -> Void)
 }
 
 public extension Loading {
-    /// Loads an image with the given URL.
-    func loadImage(with url: URL, token: CancellationToken? = nil) -> Promise<Image> {
-        return loadImage(with: Request(url: url), token: token)
+    /// Loads an image with the given request.
+    public func loadImage(with request: Request, completion: @escaping (Result<Image>) -> Void) {
+        loadImage(with: request, token: nil, completion: completion)
+    }
+
+    /// Loads an image with the given url.
+    public func loadImage(with url: URL, token: CancellationToken? = nil, completion: @escaping (Result<Image>) -> Void) {
+        loadImage(with: Request(url: url), token: token, completion: completion)
     }
 }
 
-/// `Loader` implements an image loading pipeline which consists of the
-/// several steps:
+/// `Loader` implements an image loading pipeline:
 ///
-/// 1. Read an image from the memory cache (if cache isn't `nil`). If the image
-/// is found skip remaining steps.
-/// 2. Load data using an object conforming to `DataLoading` protocol.
-/// 3. Create an image with the data using `DataDecoding` object.
-/// 4. Transform the image using processor (`Processing`) provided in the request.
-/// 5. Save the image into the memory cache (if cache isn't `nil`).
-///
-/// See built-in `CachingDataLoader` class if you need to add custom data cache
-/// into the pipeline.
+/// 1. Load data using an object conforming to `DataLoading` protocol.
+/// 2. Create an image with the data using `DataDecoding` object.
+/// 3. Transform the image using processor (`Processing`) provided in the request.
 ///
 /// `Loader` is thread-safe.
 public final class Loader: Loading {
-    public let loader: DataLoading
-    public let decoder: DataDecoding
-    public let cache: Caching?
-
+    private let loader: DataLoading
+    private let decoder: DataDecoding
     private let schedulers: Schedulers
     private let queue = DispatchQueue(label: "com.github.kean.Nuke.Loader")
-    
+
     /// Returns a processor for the given image and request. Default
     /// implementation simply returns `request.processor`.
     public var makeProcessor: (Image, Request) -> AnyProcessor? = {
         return $1.processor
     }
 
-    /// Initializes `Loader` instance with the given loader, decoder and cache.
+    /// Shared `Loading` object.
+    ///
+    /// Shared loader is created with `DataLoader()` wrapped in `Deduplicator`.
+    public static let shared: Loading = Deduplicator(loader: Loader(loader: DataLoader()))
+
+    /// Initializes `Loader` instance with the given loader, decoder.
+    /// - parameter decoder: `DataDecoder()` by default.
     /// - parameter schedulers: `Schedulers()` by default.
-    public init(loader: DataLoading, decoder: DataDecoding, cache: Caching?, schedulers: Schedulers = Schedulers()) {
+    public init(loader: DataLoading, decoder: DataDecoding = DataDecoder(), schedulers: Schedulers = Schedulers()) {
         self.loader = loader
         self.decoder = decoder
-        self.cache = cache
         self.schedulers = schedulers
     }
 
     /// Loads an image for the given request using image loading pipeline.
-    public func loadImage(with request: Request, token: CancellationToken? = nil) -> Promise<Image> {
-        return queue.sync { promise(with: request, token: token) }
-    }
-
-    public func promise(with request: Request, token: CancellationToken? = nil) -> Promise<Image> {
-        if request.memoryCacheOptions.readAllowed, let image = cache?[request] {
-            return Promise(value: image)
-        }
-        // It's safe to capture `Loader` in promises
-        return loader.loadData(with: request.urlRequest, token: token)
-            .then(on: queue) { self.decode(data: $0, response: $1, token: token) }
-            .then(on: queue) { self.process(image: $0, request: request, token: token) }
-            .then(on: queue) {
-                if request.memoryCacheOptions.writeAllowed {
-                    self.cache?[request] = $0
-                }
+    public func loadImage(with request: Request, token: CancellationToken?, completion: @escaping (Result<Image>) -> Void) {
+        queue.async {
+            if token?.isCancelling == true { return } // Fast preflight check
+            self.loadImage(with: Context(request: request, token: token, completion: completion))
         }
     }
 
-    private func decode(data: Data, response: URLResponse, token: CancellationToken? = nil) -> Promise<Image> {
-        return Promise() { fulfill, reject in
-            schedulers.decoding.execute(token: token) {
-                if let image = self.decoder.decode(data: data, response: response) {
-                    fulfill(image)
+    private func loadImage(with ctx: Context) {
+        self.loader.loadData(with: ctx.request, token: ctx.token) { [weak self] in
+            switch $0 {
+            case let .success(val): self?.decode(response: val, context: ctx)
+            case let .failure(err): ctx.completion(.failure(err))
+            }
+        }
+    }
+
+    private func decode(response: (Data, URLResponse), context ctx: Context) {
+        queue.async {
+            self.schedulers.decoding.execute(token: ctx.token) { [weak self] in
+                if let image = self?.decoder.decode(data: response.0, response: response.1) {
+                    self?.process(image: image, context: ctx)
                 } else {
-                    reject(Error.decodingFailed)
+                    ctx.completion(.failure(Error.decodingFailed))
                 }
             }
         }
     }
 
-    private func process(image: Image, request: Request, token: CancellationToken?) -> Promise<Image> {
-        guard let processor = makeProcessor(image, request) else { return Promise(value: image) }
-        return Promise() { fulfill, reject in
-            schedulers.processing.execute(token: token) {
+    private func process(image: Image, context ctx: Context) {
+        queue.async {
+            guard let processor = self.makeProcessor(image, ctx.request) else {
+                ctx.completion(.success(image)) // no need to process
+                return
+            }
+            self.schedulers.processing.execute(token: ctx.token) {
                 if let image = processor.process(image) {
-                    fulfill(image)
+                    ctx.completion(.success(image))
                 } else {
-                    reject(Error.processingFailed)
+                    ctx.completion(.failure(Error.processingFailed))
                 }
             }
         }
+    }
+
+    private struct Context {
+        let request: Request
+        let token: CancellationToken?
+        let completion: (Result<Image>) -> Void
     }
 
     /// Schedulers used to execute a corresponding steps of the pipeline.
@@ -105,9 +116,12 @@ public final class Loader: Loading {
         public var decoding: Scheduler = DispatchQueueScheduler(queue: DispatchQueue(label: "com.github.kean.Nuke.Decoding"))
         // There is no reason to increase `maxConcurrentOperationCount` for
         // built-in `DataDecoder` that locks globally while decoding.
-        
+
         /// `DispatchQueueScheduler` with a serial queue by default.
         public var processing: Scheduler = DispatchQueueScheduler(queue: DispatchQueue(label: "com.github.kean.Nuke.Processing"))
+
+        /// Creates a default `Schedulers`. instance.
+        public init() {}
     }
 
     /// Error returns by `Loader` class itself. `Loader` might also return

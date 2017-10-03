@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
 import Nuke
@@ -22,32 +22,27 @@ class MockImageLoader: Loading {
         queue.maxConcurrentOperationCount = 1
         return queue
     }()
-    var results = [URL: PromiseResolution<Image>]()
+    var results = [URL: Result<Image>]()
     var ignoreCancellation = false
 
-    func loadImage(with request: Request, token: CancellationToken?) -> Promise<Image> {
-        return Promise() { fulfill, reject in
-            NotificationCenter.default.post(name: MockImageLoader.DidStartTask, object: self)
-            
-            createdTaskCount += 1
-            
-            let operation = BlockOperation() {
-                if let result = self.results[request.urlRequest.url!] {
-                    switch result {
-                    case let .fulfilled(val): fulfill(val)
-                    case let .rejected(err): reject(err)
-                    }
-                } else {
-                    fulfill(image)
-                }
+    func loadImage(with request: Request, token: CancellationToken?, completion: @escaping (Result<Image>) -> Void) {
+        NotificationCenter.default.post(name: MockImageLoader.DidStartTask, object: self)
+        
+        createdTaskCount += 1
+        
+        let operation = BlockOperation() {
+            if let result = self.results[request.urlRequest.url!] {
+                completion(result)
+            } else {
+                completion(.success(image))
             }
-            queue.addOperation(operation)
-            
-            if !ignoreCancellation {
-                token?.register {
-                    operation.cancel()
-                    NotificationCenter.default.post(name: MockImageLoader.DidCancelTask, object: self)
-                }
+        }
+        queue.addOperation(operation)
+        
+        if !ignoreCancellation {
+            token?.register {
+                operation.cancel()
+                NotificationCenter.default.post(name: MockImageLoader.DidCancelTask, object: self)
             }
         }
     }

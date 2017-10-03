@@ -1,7 +1,7 @@
 //
 //  RequestTests.swift
 //
-//  Copyright (c) 2014-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014-2017 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -70,6 +70,104 @@ class RequestInitializationTestCase: BaseTestCase {
         XCTAssertNotEqual(request.request?.url?.absoluteString, urlString)
         XCTAssertEqual(request.request?.url?.query, "foo=bar")
         XCTAssertEqual(request.request?.value(forHTTPHeaderField: "Authorization"), "123456")
+        XCTAssertNil(request.response)
+    }
+}
+
+// MARK: -
+
+class RequestSubclassRequestPropertyTestCase: BaseTestCase {
+    private enum AuthenticationError: Error {
+        case expiredAccessToken
+    }
+
+    private class AuthenticationAdapter: RequestAdapter {
+        func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
+            throw AuthenticationError.expiredAccessToken
+        }
+    }
+
+    private var sessionManager: SessionManager!
+
+    override func setUp() {
+        super.setUp()
+
+        sessionManager = SessionManager()
+        sessionManager.startRequestsImmediately = false
+
+        sessionManager.adapter = AuthenticationAdapter()
+    }
+
+    func testDataRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.request(urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "GET")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testDownloadRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.download(urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "GET")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadDataRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+
+        // When
+        let request = sessionManager.upload(Data(), to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadFileRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+
+        // When
+        let request = sessionManager.upload(imageURL, to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
+        XCTAssertNil(request.response)
+    }
+
+    func testUploadStreamRequestHasURLRequest() {
+        // Given
+        let urlString = "https://httpbin.org/"
+        let imageURL = url(forResource: "rainbow", withExtension: "jpg")
+        let imageStream = InputStream(url: imageURL)!
+
+        // When
+        let request = sessionManager.upload(imageStream, to: urlString)
+
+        // Then
+        XCTAssertNotNil(request.request)
+        XCTAssertEqual(request.request?.httpMethod, "POST")
+        XCTAssertEqual(request.request?.url?.absoluteString, urlString)
         XCTAssertNil(request.response)
     }
 }
@@ -284,7 +382,7 @@ class RequestResponseTestCase: BaseTestCase {
 // MARK: -
 
 extension Request {
-    fileprivate func preValidate(operation: @escaping (Void) -> Void) -> Self {
+    fileprivate func preValidate(operation: @escaping () -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -292,7 +390,7 @@ extension Request {
         return self
     }
 
-    fileprivate func postValidate(operation: @escaping (Void) -> Void) -> Self {
+    fileprivate func postValidate(operation: @escaping () -> Void) -> Self {
         delegate.queue.addOperation {
             operation()
         }
@@ -426,7 +524,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertFalse(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
     }
@@ -441,7 +539,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertFalse(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
 
@@ -460,7 +558,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
         XCTAssertEqual(components.last, "\"\(urlString)\"")
     }
@@ -480,7 +578,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
 
         XCTAssertNotNil(request.debugDescription.range(of: "-H \"Content-Type: application/json\""))
@@ -511,7 +609,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         let components = cURLCommandComponents(for: request)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertEqual(components[3..<5], ["-X", "POST"])
         XCTAssertEqual(components.last, "\"\(urlString)\"")
         XCTAssertEqual(components[5..<6], ["-b"])
@@ -573,7 +671,7 @@ class RequestDebugDescriptionTestCase: BaseTestCase {
         debugPrint(request!)
 
         // Then
-        XCTAssertEqual(components[0..<3], ["$", "curl", "-i"])
+        XCTAssertEqual(components[0..<3], ["$", "curl", "-v"])
         XCTAssertTrue(components.contains("-X"))
         XCTAssertEqual(components.last, "\"\(urlString)\"")
 

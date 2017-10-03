@@ -100,7 +100,7 @@
     expectFailureMessages((@[outerFailureMessage]), ^{
         expectAction(^{ [exception raise]; }).to(raiseException().
                                                  satisfyingBlock(^(NSException *exception) {
-            expect(exception.name).to(equal(NSInvalidArgumentException));
+            expect(exception.name).toNot(equal(NSInvalidArgumentException));
         }));
     });
 
@@ -141,7 +141,7 @@
                                                            userInfo:@{@"key": @"value"}];
     NSString *outerFailureMessage;
 
-    NSString const *innerFailureMessage = @"expected to equal <foo>, got <NSInvalidArgumentException>";
+    NSString *const innerFailureMessage = @"expected to equal <foo>, got <NSInvalidArgumentException>";
     outerFailureMessage = @"expected to raise exception with name <NSInvalidArgumentException> that satisfies block, got NSException { name=NSExceptionName(_rawValue: NSInvalidArgumentException), reason='No food', userInfo=[AnyHashable(\"key\"): value] }";
     expectFailureMessages((@[outerFailureMessage, innerFailureMessage]), ^{
         expectAction(^{ [exception raise]; }).to(raiseException().

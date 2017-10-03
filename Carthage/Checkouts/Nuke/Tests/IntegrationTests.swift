@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 import Nuke
@@ -11,7 +11,7 @@ class IntegrationTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let loader = Loader(loader: MockDataLoader(), decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: MockDataLoader())
         deduplicator = Deduplicator(loader: loader)
     }
 

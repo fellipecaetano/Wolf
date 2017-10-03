@@ -30,13 +30,61 @@ class WhenTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testTuple() {
+    func testDoubleTuple() {
         let e1 = expectation(description: "")
         let p1 = Promise(value: 1)
         let p2 = Promise(value: "abc")
-        when(fulfilled: p1, p2).then{ (x: Int, y: String) -> Void in
+        when(fulfilled: p1, p2).then{ x, y -> Void in
             XCTAssertEqual(x, 1)
             XCTAssertEqual(y, "abc")
+            e1.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testTripleTuple() {
+        let e1 = expectation(description: "")
+        let p1 = Promise(value: 1)
+        let p2 = Promise(value: "abc")
+        let p3 = Promise(value: 1.0)
+        when(fulfilled: p1, p2, p3).then { u, v, w -> Void in
+            XCTAssertEqual(1, u)
+            XCTAssertEqual("abc", v)
+            XCTAssertEqual(1.0, w)
+            e1.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testQuadrupleTuple() {
+        let e1 = expectation(description: "")
+        let p1 = Promise(value: 1)
+        let p2 = Promise(value: "abc")
+        let p3 = Promise(value: 1.0)
+        let p4 = Promise(value: true)
+        when(fulfilled: p1, p2, p3, p4).then { u, v, w, x -> Void in
+            XCTAssertEqual(1, u)
+            XCTAssertEqual("abc", v)
+            XCTAssertEqual(1.0, w)
+            XCTAssertEqual(true, x)
+            e1.fulfill()
+        }
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    func testQuintupleTuple() {
+        let e1 = expectation(description: "")
+        let p1 = Promise(value: 1)
+        let p2 = Promise(value: "abc")
+        let p3 = Promise(value: 1.0)
+        let p4 = Promise(value: true)
+        let p5 = Promise(value: "a" as Character)
+        when(fulfilled: p1, p2, p3, p4, p5).then { u, v, w, x, y -> Void in
+            XCTAssertEqual(1, u)
+            XCTAssertEqual("abc", v)
+            XCTAssertEqual(1.0, w)
+            XCTAssertEqual(true, x)
+            XCTAssertEqual("a" as Character, y)
             e1.fulfill()
         }
         waitForExpectations(timeout: 1, handler: nil)
@@ -58,8 +106,8 @@ class WhenTests: XCTestCase {
         enum Error: Swift.Error { case dummy }
 
         let e1 = expectation(description: "")
-        let p1 = after(interval: 0.1).then{ true }
-        let p2 = after(interval: 0.2).then{ throw Error.dummy }
+        let p1 = after(interval: .milliseconds(100)).then{ true }
+        let p2 = after(interval: .milliseconds(200)).then{ throw Error.dummy }
         let p3 = Promise(value: false)
             
         when(fulfilled: p1, p2, p3).catch { _ in
@@ -74,10 +122,10 @@ class WhenTests: XCTestCase {
 
         XCTAssertNil(Progress.current())
 
-        let p1 = after(interval: 0.01)
-        let p2 = after(interval: 0.02)
-        let p3 = after(interval: 0.03)
-        let p4 = after(interval: 0.04)
+        let p1 = after(interval: .milliseconds(10))
+        let p2 = after(interval: .milliseconds(20))
+        let p3 = after(interval: .milliseconds(30))
+        let p4 = after(interval: .milliseconds(40))
 
         let progress = Progress(totalUnitCount: 1)
         progress.becomeCurrent(withPendingUnitCount: 1)
@@ -98,10 +146,10 @@ class WhenTests: XCTestCase {
 
         XCTAssertNil(Progress.current())
 
-        let p1 = after(interval: 0.01)
-        let p2: Promise<Void> = after(interval: 0.02).then { throw NSError(domain: "a", code: 1, userInfo: nil) }
-        let p3 = after(interval: 0.03)
-        let p4 = after(interval: 0.04)
+        let p1 = after(interval: .milliseconds(10))
+        let p2: Promise<Void> = after(interval: .milliseconds(20)).then { throw NSError(domain: "a", code: 1, userInfo: nil) }
+        let p3 = after(interval: .milliseconds(30))
+        let p4 = after(interval: .milliseconds(40))
 
         let progress = Progress(totalUnitCount: 1)
         progress.becomeCurrent(withPendingUnitCount: 1)
@@ -144,7 +192,7 @@ class WhenTests: XCTestCase {
 
         let ex = expectation(description: "")
         let p1 = Promise<Void>(error: Error.test)
-        let p2 = after(interval: 0.1)
+        let p2 = after(interval: .milliseconds(100))
         when(fulfilled: p1, p2).then{ XCTFail() }.catch { error in
             XCTAssertTrue(error as? Error == Error.test)
             ex.fulfill()
@@ -168,16 +216,16 @@ class WhenTests: XCTestCase {
         let ex3 = expectation(description: "")
 
         let p1 = Promise<Void>(error: Error.test)
-        let p2 = after(interval: 0.1).then { throw Error.straggler }
-        let p3 = after(interval: 0.2).then { throw Error.straggler }
+        let p2 = after(interval: .milliseconds(100)).then { throw Error.straggler }
+        let p3 = after(interval: .milliseconds(200)).then { throw Error.straggler }
 
         when(fulfilled: p1, p2, p3).catch { error -> Void in
             XCTAssertTrue(Error.test == error as? Error)
             ex1.fulfill()
         }
 
-        p2.always { after(interval: 0.1).then(execute: ex2.fulfill) }
-        p3.always { after(interval: 0.1).then(execute: ex3.fulfill) }
+        p2.always { after(interval: .milliseconds(100)).then(execute: ex2.fulfill) }
+        p3.always { after(interval: .milliseconds(100)).then(execute: ex3.fulfill) }
 
         waitForExpectations(timeout: 1, handler: nil)
     }

@@ -1,19 +1,21 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 import Nuke
 
 class PreheaterTests: XCTestCase {
     var loader: MockImageLoader!
+    var manager: Manager!
     var preheater: Preheater!
 
     override func setUp() {
         super.setUp()
 
         loader = MockImageLoader()
-        preheater = Preheater(loader: loader)
+        manager = Manager(loader: loader)
+        preheater = Preheater(manager: manager)
     }
     
     // MARK: Starting and Stoping Preheating
@@ -54,11 +56,11 @@ class PreheaterTests: XCTestCase {
         let request = Request(url: defaultURL)
         _ = expectNotification(MockImageLoader.DidStartTask, object: loader)
         preheater.startPreheating(with: [request])
-        wait(2)
+        wait()
 
         _ = expectNotification(MockImageLoader.DidCancelTask, object: loader)
         preheater.stopPreheating()
-        wait(2)
+        wait()
     }
     
     // MARK: Thread Safety

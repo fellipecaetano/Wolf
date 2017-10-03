@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 import Nuke
@@ -13,7 +13,7 @@ class LoaderTests: XCTestCase {
         super.setUp()
         
         dataLoader = MockDataLoader()
-        loader = Loader(loader: dataLoader, decoder: DataDecoder(), cache: nil)
+        loader = Loader(loader: dataLoader)
     }
     
     func testThreadSafety() {
@@ -25,28 +25,29 @@ class LoaderErrorHandlingTests: XCTestCase {
 
     func testThatLoadingFailedErrorIsReturned() {
         let dataLoader = MockDataLoader()
-        let loader = Loader(loader: dataLoader, decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: dataLoader)
 
         let expectedError = NSError(domain: "t", code: 23, userInfo: nil)
-        dataLoader.results[defaultURL] = .rejected(expectedError)
+        dataLoader.results[defaultURL] = .failure(expectedError)
 
         expect { fulfill in
-            loader.loadImage(with: Request(url: defaultURL))
-                .catch { error in
-                    XCTAssertNotNil(error)
-                    XCTAssertEqual((error as NSError).code, expectedError.code)
-                    XCTAssertEqual((error as NSError).domain, expectedError.domain)
-                    fulfill()
+            loader.loadImage(with: Request(url: defaultURL)) {
+                guard let error = $0.error else { XCTFail(); return }
+                XCTAssertNotNil(error)
+                XCTAssertEqual((error as NSError).code, expectedError.code)
+                XCTAssertEqual((error as NSError).domain, expectedError.domain)
+                fulfill()
             }
         }
         wait()
     }
 
     func testThatDecodingFailedErrorIsReturned() {
-        let loader = Loader(loader: MockDataLoader(), decoder: MockFailingDecoder(), cache: nil)
+        let loader = Loader(loader: MockDataLoader(), decoder: MockFailingDecoder())
 
         expect { fulfill in
-            _ = loader.loadImage(with: Request(url: defaultURL)).catch { error in
+            loader.loadImage(with: Request(url: defaultURL)) {
+                guard let error = $0.error else { XCTFail(); return }
                 XCTAssertTrue((error as! Loader.Error) == Loader.Error.decodingFailed)
                 fulfill()
             }
@@ -55,12 +56,13 @@ class LoaderErrorHandlingTests: XCTestCase {
     }
 
     func testThatProcessingFailedErrorIsReturned() {
-        let loader = Loader(loader: MockDataLoader(), decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: MockDataLoader())
 
         let request = Request(url: defaultURL).processed(with: MockFailingProcessor())
 
         expect { fulfill in
-            _ = loader.loadImage(with: request).catch { error in
+            loader.loadImage(with: request) {
+                guard let error = $0.error else { XCTFail(); return }
                 XCTAssertTrue((error as! Loader.Error) == Loader.Error.processingFailed)
                 fulfill()
             }

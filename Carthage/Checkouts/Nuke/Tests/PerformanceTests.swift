@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
 
 import Nuke
 import XCTest
@@ -19,7 +19,7 @@ class ManagerPerformanceTests: XCTestCase {
     }
 
     func testWithoutMemoryCache() {
-        let loader = Loader(loader: DataLoader(), decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: DataLoader())
         let manager = Manager(loader: Deduplicator(loader: loader))
         
         let view = ImageView()
@@ -34,7 +34,7 @@ class ManagerPerformanceTests: XCTestCase {
     }
     
     func testWithoutDeduplicator() {
-        let loader = Loader(loader: DataLoader(), decoder: DataDecoder(), cache: nil)
+        let loader = Loader(loader: DataLoader())
         let manager = Manager(loader: loader)
 
         let view = ImageView()
@@ -116,7 +116,7 @@ class DeduplicatorPerformanceTests: XCTestCase {
         measure {
             let cts = CancellationTokenSource()
             for _ in (0..<10_000) {
-                _ = deduplicator.loadImage(with: request, token:cts.token)
+                deduplicator.loadImage(with: request, token:cts.token) { _ in return }
             }
         }
     }
@@ -131,16 +131,14 @@ class DeduplicatorPerformanceTests: XCTestCase {
         measure {
             let cts = CancellationTokenSource()
             for request in requests {
-                _ = deduplicator.loadImage(with: request, token:cts.token)
+                deduplicator.loadImage(with: request, token:cts.token) { _ in return }
             }
         }
     }
 }
 
 class MockImageLoader: Loading {
-    func loadImage(with request: Request, token: CancellationToken?) -> Promise<Image> {
-        return Promise() { fulfill, reject in
-            return
-        }
+    func loadImage(with request: Request, token: CancellationToken?, completion: @escaping (Result<Image>) -> Void) {
+        return
     }
 }
