@@ -86,10 +86,10 @@ public extension HTTPResource {
 
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in
-            if let data = data {
-                return self.serialize(response: .success(data)).resultProxy
-            } else if let error = error {
+            if let error = error {
                 return self.serialize(response: .failure(error)).resultProxy
+            } else if let data = data {
+                return self.serialize(response: .success(data)).resultProxy
             } else {
                 return self.serialize(response: .failure(HTTPResourceError.emptyData)).resultProxy
             }
