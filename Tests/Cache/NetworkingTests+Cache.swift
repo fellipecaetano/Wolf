@@ -17,7 +17,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                let cachedResponse = cache.cachedResponseForRequest(response.request!)
+                let cachedResponse = cache.cachedResponse(for: response.request!)
                 expect(cachedResponse?.storagePolicy) == .allowedInMemoryOnly
                 done()
             }
@@ -53,7 +53,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                let cachedResponse = cache.cachedResponseForRequest(response.request!)
+                let cachedResponse = cache.cachedResponse(for: response.request!)
                 expect(cachedResponse?.storagePolicy) == .allowedInMemoryOnly
                 done()
             }
@@ -70,7 +70,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                let cachedResponse = cache.cachedResponseForRequest(response.request!)
+                let cachedResponse = cache.cachedResponse(for: response.request!)
                 expect(cachedResponse).to(beNil())
                 done()
             }
@@ -87,7 +87,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                let cachedResponse = cache.cachedResponseForRequest(response.request!)
+                let cachedResponse = cache.cachedResponse(for: response.request!)
                 expect(cachedResponse).to(beNil())
                 done()
             }
@@ -286,11 +286,11 @@ private extension Song {
 private class TestURLCache: Wolf.URLCache {
     var cachedResponses: [URL: CachedURLResponse] = [:]
 
-    func storeCachedResponse(_ cachedResponse: CachedURLResponse, forRequest request: URLRequest) {
+    func storeCachedResponse(_ cachedResponse: CachedURLResponse, for request: URLRequest) {
         cachedResponses[request.url!] = cachedResponse
     }
 
-    fileprivate func cachedResponseForRequest(_ request: URLRequest) -> CachedURLResponse? {
+    func cachedResponse(for request: URLRequest) -> CachedURLResponse? {
         return cachedResponses[request.url!]
     }
 }

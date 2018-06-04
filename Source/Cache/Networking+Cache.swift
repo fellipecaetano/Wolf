@@ -51,7 +51,7 @@ private extension DataRequest {
 
 private extension CachedResponse {
     init? <R: CacheableResource> (request: Request, resource: R) {
-        if let request = request.request, let response = resource.cache.cachedResponseForRequest(request) {
+        if let request = request.request, let response = resource.cache.cachedResponse(for: request) {
             self.init(cachedResponse: response, duration: resource.cacheDuration)
         } else {
             return nil
