@@ -40,13 +40,13 @@ public struct CachedResponse {
     }
 
     public func store(for request: URLRequest, cache: URLCache) {
-        cache.storeCachedResponse(cachedResponse, forRequest: request)
+        cache.storeCachedResponse(cachedResponse, for: request)
     }
 }
 
 public protocol URLCache {
-    func cachedResponseForRequest(_ request: URLRequest) -> CachedURLResponse?
-    func storeCachedResponse(_ cachedResponse: CachedURLResponse, forRequest request: URLRequest)
+    func cachedResponse(for request: URLRequest) -> CachedURLResponse?
+    func storeCachedResponse(_ cachedResponse: CachedURLResponse, for request: URLRequest)
 }
 
 extension Foundation.URLCache: URLCache {}

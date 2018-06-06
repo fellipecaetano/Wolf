@@ -1,5 +1,31 @@
 # OHHTTPStubs — CHANGELOG
 
+## [6.1.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/6.1.0)
+
+* Updated deployment target for the pod to 7.0 to remove warning for old APIs.  
+  [@AliSoftware](https://github.com/AliSoftware)
+* Fixed HTTP Method retention for 301,302,307,308 status redirects.  
+  [@mikelupo](https://github.com/mikelupo)
+* Added `hasJsonBody(_:)` matcher.  
+  [@pimnijman](https://github.com/pimnijman)
+* Added `onStubMissing` to report missing stubs.  
+  [@c1ira](https://github.com/c1ira)
+  [#264](https://github.com/AliSoftware/OHHTTPStubs/pull/264)
+* Fixed `URLRequest.ohhttpStubs_httpBody` function in Swift 3 and 4.  
+  [@mplorentz](https://github.com/mplorentz)
+* Added absolute url matcher.  
+  [@victorg1991](https://github.com/victorg1991)
+  [#254](https://github.com/AliSoftware/OHHTTPStubs/pull/254)
+* Fixed up empty lines with whitespace inside test case classes.  
+  [@mikelupo](https://github.com/mikelupo)
+  [#251](https://github.com/AliSoftware/OHHTTPStubs/pull/251)
+* Fixed potential memory leaks with use of NSURLSession as detected by our devs.  
+  [@mikelupo](https://github.com/mikelupo)
+  [#250](https://github.com/AliSoftware/OHHTTPStubs/pull/250)
+* Add precondition assertions in `isScheme` and `isHost` matchers and some documentation in `isHost`, `isScheme` and `isPath`.  
+  [@Liquidsoul](https://github.com/Liquidsoul)
+  [#248](https://github.com/AliSoftware/OHHTTPStubs/pull/248)
+
 ## [6.0.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/6.0.0)
 
 * Made Swift 3 the default. `master` is now compatible with 3.0 and 3.1.  

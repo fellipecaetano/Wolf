@@ -75,7 +75,7 @@ class UnboxNetworkingTests: XCTestCase {
             let expected = NSError(domain: "WolfTestErrorDomain", code: 666, userInfo: nil)
 
             self.client.sendRequest(Song.Resource.getValidatedSong(expected)) { response in
-                let actual = response.result.error as? NSError
+                let actual = response.result.error as NSError?
                 expect(actual?.domain) == expected.domain
                 expect(actual?.code) == expected.code
                 done()

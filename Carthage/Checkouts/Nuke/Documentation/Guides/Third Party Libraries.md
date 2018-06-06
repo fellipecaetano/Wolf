@@ -2,7 +2,7 @@
 
 By default, Nuke uses a `Foundation.URLSession` for all the networking. Apps may have their own network layer they may wish to use instead.
 
-Nuke already has an [Alamofire plugin](https://github.com/kean/Nuke-Alamofire-Plugin) that allows you to load image data using [Alamofire.SessionManager](https://github.com/Alamofire/Alamofire).  If you want to use Nuke with Alamofire simply follow the plugin's docs.
+Nuke already has an [Alamofire plugin](https://github.com/kean/Nuke-Alamofire-Plugin) that allows you to load image data using [Alamofire.SessionManager](https://github.com/Alamofire/Alamofire). If you want to use Nuke with Alamofire simply follow the plugin's docs.
 
 If you'd like to use some other networking library or use your own custom code all you need to do is implement `Nuke.DataLoading` protocol which consists of a single method:
 
@@ -10,13 +10,14 @@ If you'd like to use some other networking library or use your own custom code a
 /// Loads data.
 public protocol DataLoading {
     /// Loads data with the given request.
-    func loadData(with request: Request,
+    func loadData(with request: URLRequest,
                   token: CancellationToken?,
+                  progress: ProgressHandler?,
                   completion: @escaping (Result<(Data, URLResponse)>) -> Void)
 }
 ```
 
-You can use [Alamofire plugin](https://github.com/kean/Nuke-Alamofire-Plugin) as a starting point. Here's its slightly simplified implementation:
+You can use [Alamofire plugin](https://github.com/kean/Nuke-Alamofire-Plugin) as a starting point. Here how it's actual implementation:
 
 ```swift
 import Alamofire
@@ -31,18 +32,20 @@ class AlamofireDataLoader: Nuke.DataLoading {
 
     // MARK: Nuke.DataLoading
 
-    func loadData(with request: Nuke.Request, token: CancellationToken?, completion: @escaping (Nuke.Result<(Data, URLResponse)>) -> Void) {
+    /// Loads data using Alamofire.SessionManager.
+    public func loadData(with request: URLRequest, token: CancellationToken?, progress: ProgressHandler?, completion: @escaping (Nuke.Result<(Data, URLResponse)>) -> Void) {
         // Alamofire.SessionManager automatically starts requests as soon as they are created (see `startRequestsImmediately`)
-        let task = self.manager.request(request.urlRequest).response(completionHandler: { (response) in
-            if let data = response.data, let response: URLResponse = response.response {
-                completion(.success((data, response)))
-            } else {
-                completion(.failure(response.error ?? NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: nil)))
-            }
-        })
-        token?.register {
-            task.cancel() // gets called when the token gets cancelled
-        }
+        let task = manager.request(request)
+            .validate()
+            .downloadProgress(closure: { progress?($0.completedUnitCount, $0.totalUnitCount) })
+            .response(completionHandler: { (response) in
+                if let data = response.data, let response: URLResponse = response.response {
+                    completion(.success((data, response)))
+                } else {
+                    completion(.failure(response.error ?? NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: nil)))
+                }
+            })
+        token?.register { task.cancel() }
     }
 }
 ```
@@ -54,31 +57,6 @@ let loader = Nuke.Loader(loader: AlamofireDataLoader())
 let manager = Nuke.Manager(loader: loader, cache: Cache.shared)
 
 manager.loadImage(with: url, into: imageView)
-```
-
-There is one more thing that you may want to consider. Your networking layers might not provide a built-in way to set a hard limit on a maximum number of concurrent requests. In case you do want to add such limit you can use a *Scheduling* infrastructure provided by Nuke, namely `Nuke.OperationQueueScheduler` class:
-
-```swift
-private let scheduler = Nuke.OperationQueueScheduler(maxConcurrentOperationCount: 6)
-
-/// Loads data using Alamofire.SessionManager.
-public func loadData(with request: Nuke.Request, token: CancellationToken?, completion: @escaping (Nuke.Result<(Data, URLResponse)>) -> Void) {
-    scheduler.execute(token: token) { finish in
-        // Alamofire.SessionManager automatically starts requests as soon as they are created (see `startRequestsImmediately`)
-        let task = self.manager.request(request.urlRequest).response(completionHandler: { (response) in
-            if let data = response.data, let response: URLResponse = response.response {
-                completion(.success((data, response)))
-            } else {
-                completion(.failure(response.error ?? NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown, userInfo: nil)))
-            }
-            finish() // finish an underlying concurrent Foundation.Operation
-        })
-        token?.register {
-            task.cancel()
-            finish()
-        }
-    }
-}
 ```
 
 ### Using Other Caching Libraries
@@ -99,37 +77,76 @@ protocol DataCaching {
     func storeResponse(_ response: CachedURLResponse, for request: URLRequest)
 }
 
-class CachingDataLoader: DataLoading {
+final class CachingDataLoader: DataLoading {
     private let loader: DataLoading
     private let cache: DataCaching
     private let queue = DispatchQueue(label: "com.github.kean.Nuke.CachingDataLoader")
+
+    private final class _Task: Cancellable {
+        weak var loader: CachingDataLoader?
+        var data = [Data]()
+        var response: URLResponse?
+        var isCancelled = false
+        weak var dataLoadingTask: Cancellable?
+
+        func cancel() {
+            loader?._cancel(self)
+        }
+    }
 
     public init(loader: DataLoading, cache: DataCaching) {
         self.loader = loader
         self.cache = cache
     }
 
-    public func loadData(with request: Request, token: CancellationToken?, completion: @escaping (Result<(Data, URLResponse)>) -> Void) {
+    func loadData(with request: URLRequest, didReceiveData: @escaping (Data, URLResponse) -> Void, completion: @escaping (Error?) -> Void) -> Cancellable {
+        let task = _Task()
+        task.loader = self
+
         queue.async { [weak self] in
-            if token?.isCancelling == true {
-                return
-            }
-            let urlRequest = request.urlRequest
-            if let response = self?.cache.cachedResponse(for: urlRequest) {
-                completion(.success((response.data, response.response)))
+            guard !task.isCancelled else { return }
+
+            if let response = self?.cache.cachedResponse(for: request) {
+                didReceiveData(response.data, response.response)
+                completion(nil)
             } else {
-                self?.loader.loadData(with: request, token: token) {
-                    $0.value.map { self?.store($0, for: urlRequest) }
-                    completion($0)
-                }
+                task.dataLoadingTask = self?.loader.loadData(
+                    with: request,
+                    didReceiveData: { (data, response) in
+                        self?.queue.async {
+                            task.data.append(data) // store received data
+                            task.response = response
+                            didReceiveData(data, response) // proxy call
+                        }
+                }, completion: { (error) in
+                    self?.queue.async {
+                        if error == nil {
+                            self?._storeResponse(for: task, request: request)
+                        }
+                        completion(error) // proxy call
+                    }
+                })
             }
+        }
+
+        return task
+    }
+
+    private func _cancel(_ task: _Task) {
+        queue.async {
+            guard !task.isCancelled else { return }
+            task.isCancelled = true
+            task.dataLoadingTask?.cancel()
+            task.dataLoadingTask = nil
         }
     }
 
-    private func store(_ val: (Data, URLResponse), for request: URLRequest) {
-        queue.async { [weak self] in
-            self?.cache.storeResponse(CachedURLResponse(response: val.1, data: val.0), for: request)
-        }
+    private func _storeResponse(for task: _Task, request: URLRequest) {
+        guard let response = task.response, !task.data.isEmpty else { return }
+        var buffer = Data()
+        task.data.forEach { buffer.append($0) }
+        task.data.removeAll()
+        cache.storeResponse(CachedURLResponse(response: response, data: buffer), for: request)
     }
 }
 ```

@@ -1,15 +1,17 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2017 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
 
-import Nuke
 import XCTest
+@testable import Nuke
 
-class ManagerPerformanceTests: XCTestCase {
-    func testDefaultManager() {
+class ImageViewPerformanceTests: XCTestCase {
+    // This is the primary use case that we are optimizing for - loading images
+    // into target, the API that majoriy of the apps are going to use.
+    func testImageViewMainThreadPerformance() {
         let view = ImageView()
 
-        let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(5000))")! }
+        let urls = (0..<25_000).map { _ in return URL(string: "http://test.com/\(rnd(5000))")! }
         
         measure {
             for url in urls {
@@ -17,68 +19,77 @@ class ManagerPerformanceTests: XCTestCase {
             }
         }
     }
+}
 
-    func testWithoutMemoryCache() {
-        let loader = Loader(loader: DataLoader())
-        let manager = Manager(loader: Deduplicator(loader: loader))
-        
-        let view = ImageView()
-        
-        let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(5000))")! }
-        
-        measure {
-            for url in urls {
-                manager.loadImage(with: url, into: view)
-            }
+class ImagePipelinePerfomanceTests: XCTestCase {
+    /// A very broad test that establishes how long in general it takes to load
+    /// data, decode, and decomperss 50+ images. It's very useful to get a
+    /// broad picture about how loader options affect perofmance.
+    func testLoaderOverallPerformance() {
+        let dataLoader = MockDataLoader()
+
+        let loader = ImagePipeline {
+            $0.dataLoader = dataLoader
+
+            // This must be off for this test, because rate limiter is optimized for
+            // the actual loading in the apps and not the syntetic tests like this.
+            $0.isRateLimiterEnabled = false
+
+            $0.isDeduplicationEnabled = false
+
+            // Disables processing which takes a bulk of time.
+            $0.imageProcessor = { _ in nil }
         }
-    }
-    
-    func testWithoutDeduplicator() {
-        let loader = Loader(loader: DataLoader())
-        let manager = Manager(loader: loader)
 
-        let view = ImageView()
-
-        let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(5000))")! }
-        
+        let urls = (0...3_000).map { _ in return URL(string: "http://test.com/\(rnd(500))")! }
         measure {
-            for url in urls {
-                manager.loadImage(with: url, into: view)
+            expect { fulfil in
+                var finished: Int = 0
+                for url in urls {
+                    loader.loadImage(with: url) { _,_ in
+                        finished += 1
+                        if finished == urls.count {
+                            fulfil()
+                        }
+                    }
+                }
             }
+            wait(10)
         }
     }
 }
 
-class CachePerformanceTests: XCTestCase {
+class ImageCachePerformanceTests: XCTestCase {
     func testCacheWrite() {
-        let cache = Cache()
-        let image = Image()
+        let cache = ImageCache()
+        let response = ImageResponse(image: Image(), urlResponse: nil)
         
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(500))")! }
+        let requests = urls.map { ImageRequest(url: $0) }
         
         measure {
-            for url in urls {
-                let request = Request(url: url)
-                cache[request] = image
+            for request in requests {
+                cache.storeResponse(response, for: request)
             }
         }
     }
     
     func testCacheHit() {
-        let cache = Cache()
+        let cache = ImageCache()
+        let response = ImageResponse(image: Image(), urlResponse: nil)
         
         for i in 0..<200 {
-            cache[Request(url: URL(string: "http://test.com/\(i))")!)] = Image()
+            cache.storeResponse(response, for: ImageRequest(url: URL(string: "http://test.com/\(i)")!))
         }
         
         var hits = 0
         
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(200))")! }
+        let requests = urls.map { ImageRequest(url: $0) }
         
         measure {
-            for url in urls {
-                let request = Request(url: url)
-                if cache[request] != nil {
+            for request in requests {
+                if cache.cachedResponse(for: request) != nil {
                     hits += 1
                 }
             }
@@ -88,16 +99,16 @@ class CachePerformanceTests: XCTestCase {
     }
     
     func testCacheMiss() {
-        let cache = Cache()
+        let cache = ImageCache()
         
         var misses = 0
         
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(200))")! }
+        let requests = urls.map { ImageRequest(url: $0) }
         
         measure {
-            for url in urls {
-                let request = Request(url: url)
-                if cache[request] == nil {
+            for request in requests {
+                if cache.cachedResponse(for: request) == nil {
                     misses += 1
                 }
             }
@@ -107,38 +118,117 @@ class CachePerformanceTests: XCTestCase {
     }
 }
 
-class DeduplicatorPerformanceTests: XCTestCase {
-    func testDeduplicatorHits() {
-        let deduplicator = Deduplicator(loader: MockImageLoader())
-        
-        let request = Request(url: URL(string: "http://test.com/\(arc4random())")!)
-        
+class RequestPerformanceTests: XCTestCase {
+    func testStoringRequestInCollections() {
+        let urls = (0..<200_000).map { _ in return URL(string: "http://test.com/\(rnd(200))")! }
+        let requests = urls.map { ImageRequest(url: $0) }
+
         measure {
-            let cts = CancellationTokenSource()
-            for _ in (0..<10_000) {
-                deduplicator.loadImage(with: request, token:cts.token) { _ in return }
-            }
-        }
-    }
- 
-    func testDeduplicatorMisses() {
-        let deduplicator = Deduplicator(loader: MockImageLoader())
-        
-        let requests = (0..<10_000)
-            .map { _ in return URL(string: "http://test.com/\(arc4random())")! }
-            .map { return Request(url: $0) }
-        
-        measure {
-            let cts = CancellationTokenSource()
+            var array = [ImageRequest]()
             for request in requests {
-                deduplicator.loadImage(with: request, token:cts.token) { _ in return }
+                array.append(request)
             }
         }
     }
 }
 
-class MockImageLoader: Loading {
-    func loadImage(with request: Request, token: CancellationToken?, completion: @escaping (Result<Image>) -> Void) {
-        return
+class DataCachePeformanceTests: XCTestCase {
+    var cache: DataCache!
+
+    override func setUp() {
+        cache = try! DataCache(name: UUID().uuidString)
+        cache._keyEncoder = {
+            guard let data = $0.cString(using: .utf8) else { return "" }
+            return _nuke_sha1(data, UInt32(data.count))
+        }
+        _ = cache["key"] // Wait till index is loaded.
+    }
+
+    override func tearDown() {
+        try? FileManager.default.removeItem(at: cache.path)
+    }
+
+    func testMissPerformance() {
+        measure {
+            for idx in 0..<10_000 {
+                let _ = self.cache["\(idx)"]
+            }
+        }
+    }
+
+    func testWritePeformance() {
+        cache._test_withSuspendedIO {
+            let dummy = "123".data(using: .utf8)
+
+            // FIXME: This test no just "empty" writes, but also overwrites
+            measure {
+                for idx in 0..<10_000 {
+                    self.cache["\(idx)"] = dummy
+                }
+            }
+        }
+    }
+
+    func testReadPerformance() {
+        cache._test_withSuspendedIO {
+            for idx in 0..<10_000 {
+                cache["\(idx)"] = "123".data(using: .utf8)
+            }
+
+            measure {
+                for idx in 0..<10_000 {
+                    let _ = self.cache["\(idx)"]
+                }
+            }
+        }
+    }
+
+    func testReadFlushedPerformance() {
+        for idx in 0..<200 {
+            cache["\(idx)"] = Data(repeating: 1, count: 256 * 1024)
+        }
+        cache.flush()
+
+        measure {
+            for idx in 0..<200 {
+                let _ = self.cache["\(idx)"]
+            }
+        }
+    }
+
+    func testIndexLoadingPerformance() {
+        for _ in 0..<1_000 {
+            // Create a realistic-looking key
+            let key = "http://example.com/images/" + UUID().uuidString + ".jpeg" + "?width=150&height=300"
+            cache[key] = Data(repeating: 1, count: 64 * 1024)
+        }
+        cache.flush()
+
+        // FIXME: I'm not entirely sure this the measurement is accurate,
+        // filesystem caching might affect performance.
+        measure {
+            let cache = try! DataCache(path: self.cache.path)
+            let _ = cache["1"] // Wait till index is loaded.
+        }
+    }
+
+    func testLRUPerformance() {
+        let items: [DataCache.Entry] = (0..<10_000).map {
+            let filename = cache.filename(for: "\($0)")!
+            let item = DataCache.Entry(filename: filename, payload: .saved(URL(string: "file://\(filename.raw)")!))
+            item.accessDate = Date().addingTimeInterval(TimeInterval(arc4random_uniform(1000)))
+            item.totalFileAllocatedSize = 1
+            return item
+        }
+
+        var lru = CacheAlgorithmLRU()
+        lru.countLimit = 1000 // we test count limit here
+        lru.trimRatio = 0.5 // 1 item should remain after trim
+        lru.sizeLimit = Int.max
+
+        measure {
+            let _ = lru.discarded(items: items)
+        }
     }
 }
+

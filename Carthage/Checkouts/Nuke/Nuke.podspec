@@ -1,11 +1,9 @@
 Pod::Spec.new do |s|
     s.name             = 'Nuke'
-    s.version          = '5.2'
-    s.summary          = 'A powerful image loading and caching framework'
+    s.version          = '7.1'
+    s.summary          = 'A powerful image loading and caching system'
     s.description  = <<-EOS
-    A powerful image loading and caching framework which allows for hassle-free image loading in your app - often in one line of code.
-
-    Nuke pulls together stable, mature libraries from Swift ecosystem into simple, lightweight package that lets you focus on getting things done.
+    A powerful image loading and caching system which makes simple tasks like loading images into views extremely simple, while also supporting more advanced features for more demanding apps.
     EOS
 
     s.homepage         = 'https://github.com/kean/Nuke'
@@ -16,7 +14,7 @@ Pod::Spec.new do |s|
 
     s.ios.deployment_target = '9.0'
     s.watchos.deployment_target = '2.0'
-    s.osx.deployment_target = '10.11'
+    s.osx.deployment_target = '10.10'
     s.tvos.deployment_target = '9.0'
 
     s.source_files  = 'Sources/**/*'

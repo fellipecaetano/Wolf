@@ -11,14 +11,15 @@ There are multiple ways to use Core Image. This guide only covers a case in whic
 Before we create and apply an image filter we need an instance of `CIContext` class:
 
 ```swift
-let sharedCIContext = CIContext(options: [kCIContextPriorityRequestLow: true])
+let sharedCIContext = CIContext()
+// let sharedCIContext = CIContext(options: [kCIContextPriorityRequestLow: true])
 ```
 
 `kCIContextPriorityRequestLow` option is a new addition in iOS 8:
 
-> If this value is true, use of the Core Image context from a background thread takes lower priority than GPU usage from the main thread, allowing your app to perform Core Image rendering without disturbing the frame rate of UI animations.
+> If this value is true, use of the Core Image context from a background thread takes a lower priority than GPU usage from the main thread, allowing your app to perform Core Image rendering without disturbing the frame rate of UI animations.
 
-Also new in iOS 7 is support for [background renders](http://asciiwwdc.com/2014/sessions/514). All background renders automatically use the slower Core Image CPU rendering path. There is no need to manually switch between GPU and CPU rendering paths when application enters background.
+Also new in iOS 7 is support for [background renders](http://asciiwwdc.com/2014/sessions/514). All background renders automatically use the slower Core Image CPU rendering path. There is no need to manually switch between GPU and CPU rendering paths when the application enters background.
 
 ### Applying Filters
 
@@ -26,22 +27,26 @@ And here's a `UIImage` extension that shows one way to use `CIContext` to apply 
 
 ```swift
 extension UIImage {
-    func applyFilter(context context: CIContext = sharedCIContext, closure: CoreImage.CIImage -> CoreImage.CIImage?) -> UIImage? {
-        func inputImageForImage(image: Image) -> CoreImage.CIImage? {
-            if let image = image.CGImage {
-                return CoreImage.CIImage(CGImage: image)
+    func applyFilter(context: CIContext = sharedCIContext, closure: (CoreImage.CIImage) -> CoreImage.CIImage?) -> UIImage? {
+        func inputImageForImage(_ image: Image) -> CoreImage.CIImage? {
+            if let image = image.cgImage {
+                return CoreImage.CIImage(cgImage: image)
             }
-            if let image = image.CIImage {
+            if let image = image.ciImage {
                 return image
             }
             return nil
         }
-        guard let inputImage = inputImageForImage(self), outputImage = closure(inputImage) else {
+        guard let inputImage = inputImageForImage(self),
+            let outputImage = closure(inputImage) else {
             return nil
         }
-        let imageRef = context.createCGImage(outputImage, fromRect: inputImage.extent)
-        return UIImage(CGImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
+        guard let imageRef = context.createCGImage(outputImage, from: inputImage.extent) else {
+            return nil
+        }
+        return UIImage(cgImage: imageRef, scale: self.scale, orientation: self.imageOrientation)
     }
+
 
     func applyFilter(filter: CIFilter?, context: CIContext = sharedCIContext) -> UIImage? {
         guard let filter = filter else {
@@ -68,7 +73,7 @@ Here's an example of a blur filter that implements Nuke's `Processing` protocol 
 
 ```swift
 /// Blurs image using CIGaussianBlur filter.
-struct GaussianBlur: Processing { 
+struct GaussianBlur: ImageProcessing {
     private let radius: Int
 
     /// Initializes the receiver with a blur radius.
@@ -77,12 +82,12 @@ struct GaussianBlur: Processing {
     }
 
     /// Applies CIGaussianBlur filter to the image.
-    func process(image: UIImage) -> UIImage? {
-        return image.applyFilter(CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputRadius" : radius]))
+    func process(_ image: UIImage) -> UIImage? {
+        return image.applyFilter(filter: CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputRadius" : radius]))
     }
 
     /// Compares two filters based on their radius.
-    func ==(lhs: GaussianBlur, rhs: GaussianBlur) -> Bool {
+    static func ==(lhs: GaussianBlur, rhs: GaussianBlur) -> Bool {
         return lhs.radius == rhs.radius
     }
 }
@@ -90,7 +95,7 @@ struct GaussianBlur: Processing {
 
 # Performance Considerations
 
-- Chaining multiple `CIFilter` objects is much more efficient then using `ProcessorComposition` to combine multiple instances of `CoreImageFilter` class.
+- Chaining multiple `CIFilter` objects is much more efficient than using `ProcessorComposition` to combine multiple instances of `CoreImageFilter` class.
 - Don’t create a `CIContext` object every time you render.
 
 # References
