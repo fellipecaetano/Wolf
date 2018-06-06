@@ -24,7 +24,6 @@ DerivedData
 
 # Dependency management
 Carthage/Build
-Carthage/Checkouts
 Pods/
 
 # Emacs

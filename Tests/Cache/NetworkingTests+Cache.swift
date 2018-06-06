@@ -35,7 +35,7 @@ class CacheNetworkingTests: XCTestCase {
 
         waitUntil { done in
             self.client.sendRequest(resource) { response in
-                let actual = response.result.error as? NSError
+                let actual = response.result.error as NSError?
                 expect(actual?.domain) == expected.domain
                 expect(actual?.code) == expected.code
                 done()
