@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -31,10 +31,14 @@ final class AnimatedImageUsingVideoViewController: UICollectionViewController, U
         ]
 
         collectionView?.register(VideoCell.self, forCellWithReuseIdentifier: imageCellReuseID)
-        collectionView?.backgroundColor = UIColor.white
+        if #available(iOS 13.0, *) {
+            collectionView.backgroundColor = UIColor.systemBackground
+        } else {
+            collectionView.backgroundColor = UIColor.white
+        }
 
         let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        layout.sectionInset = UIEdgeInsetsMake(8, 8, 8, 8)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         layout.minimumInteritemSpacing = 8
     }
 
@@ -56,12 +60,13 @@ final class AnimatedImageUsingVideoViewController: UICollectionViewController, U
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
 
         cell.activityIndicator.startAnimating()
-        Nuke.loadImage(
+        loadImage(
             with: imageURLs[indexPath.row],
             into: cell,
-            completion: { [weak cell] _, _ in
+            completion: { [weak cell] _ in
                 cell?.activityIndicator.stopAnimating()
-        })
+            }
+        )
 
         return cell
     }
@@ -76,10 +81,10 @@ final class AnimatedImageUsingVideoViewController: UICollectionViewController, U
 // MARK: - MP4Decoder
 
 final class MP4Decoder: ImageDecoding {
-    func decode(data: Data, isFinal: Bool) -> Image? {
+    func decode(data: Data, isFinal: Bool) -> UIImage? {
         guard isFinal else { return nil }
 
-        let image = Image()
+        let image = UIImage()
         image.animatedImageData = data
         image.mimeType = "video/mp4"
         return image
@@ -87,10 +92,9 @@ final class MP4Decoder: ImageDecoding {
 
     private static func _match(_ data: Data, offset: Int = 0, _ numbers: [UInt8]) -> Bool {
         guard data.count >= numbers.count + offset else { return false }
-        for (i, number) in zip(numbers.indices, numbers) {
-            if data[i + offset] != number { return false }
+        return !zip(numbers.indices, numbers).contains { (index, number) in
+            data[index + offset] != number
         }
-        return true
     }
 
     private static var isRegistered: Bool = false
@@ -113,7 +117,7 @@ final class MP4Decoder: ImageDecoding {
 
 private var _imageFormatAK = "Nuke.ImageFormat.AssociatedKey"
 
-private extension Image {
+private extension UIImage {
     // At some point going to be available in the main repo.
     var mimeType: String? {
         get { return objc_getAssociatedObject(self, &_imageFormatAK) as? String }
@@ -124,7 +128,7 @@ private extension Image {
 // MARK: - VideoCell
 
 /// - warning: This is proof of concept, please don't use in production.
-private final class VideoCell: UICollectionViewCell, Nuke.ImageDisplaying {
+private final class VideoCell: UICollectionViewCell, Nuke.Nuke_ImageDisplaying {
     private var requestId: Int = 0
     private var videoURL: URL?
     var storage: TemporaryVideoStorage!
@@ -140,7 +144,7 @@ private final class VideoCell: UICollectionViewCell, Nuke.ImageDisplaying {
     }
 
     override init(frame: CGRect) {
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator = UIActivityIndicatorView(style: .gray)
 
         super.init(frame: frame)
 
@@ -165,7 +169,7 @@ private final class VideoCell: UICollectionViewCell, Nuke.ImageDisplaying {
         player = nil
     }
 
-    func display(image: Image?) {
+    func nuke_display(image: UIImage?) {
         prepareForReuse()
 
         guard let data = image?.animatedImageData else {
@@ -187,9 +191,7 @@ private final class VideoCell: UICollectionViewCell, Nuke.ImageDisplaying {
         let playerItem = AVPlayerItem(url: url)
         let player = AVQueuePlayer(playerItem: playerItem)
         let playerLayer = AVPlayerLayer(player: player)
-        if #available(iOS 10.0, *) {
-            self.playerLooper = AVPlayerLooper(player: player, templateItem: playerItem)
-        }
+        self.playerLooper = AVPlayerLooper(player: player, templateItem: playerItem)
 
         contentView.layer.addSublayer(playerLayer)
         playerLayer.frame = contentView.bounds

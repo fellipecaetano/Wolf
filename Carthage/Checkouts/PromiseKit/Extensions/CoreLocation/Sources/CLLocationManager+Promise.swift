@@ -1,9 +1,7 @@
 import CoreLocation.CLLocationManager
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
-
-#if !os(tvOS)
 
 /**
  To import the `CLLocationManager` category:
@@ -17,7 +15,7 @@ import PromiseKit
 */
 extension CLLocationManager {
 
-    /// The location authorization type
+    /// The type of location permission we are asking for
     public enum RequestAuthorizationType {
         /// Determine the authorization from the application’s plist
         case automatic
@@ -27,156 +25,287 @@ extension CLLocationManager {
         case whenInUse
     }
 
-    fileprivate class func promiseDoneForLocationManager(_ manager: CLLocationManager) -> Void {
-        manager.delegate = nil
-        manager.stopUpdatingLocation()
-    }
-  
-    /**
-      - Returns: A new promise that fulfills with the most recent CLLocation.
-      - Note: To return all locations call `allResults()`. 
-      - Parameter requestAuthorizationType: We read your Info plist and try to
-      determine the authorization type we should request automatically. If you
-      want to force one or the other, change this parameter from its default
-      value.
-     */
-    public class func promise(_ requestAuthorizationType: RequestAuthorizationType = .automatic) -> LocationPromise {
-        return promise(yielding: auther(requestAuthorizationType))
+    public enum PMKError: Error {
+        case notAuthorized
     }
 
-    private class func promise(yielding yield: (CLLocationManager) -> Void = { _ in }) -> LocationPromise {
-        let manager = LocationManager()
-        manager.delegate = manager
-        yield(manager)
-        manager.startUpdatingLocation()
-        _ = manager.promise.always {
-            CLLocationManager.promiseDoneForLocationManager(manager)
+    /**
+     Request the current location.
+     - Note: to obtain a single location use `Promise.lastValue`
+     - Parameters:
+       - authorizationType: requestAuthorizationType: We read your Info plist and try to
+         determine the authorization type we should request automatically. If you
+         want to force one or the other, change this parameter from its default
+         value.
+       - block: A block by which to perform any filtering of the locations that are
+         returned. In order to only retrieve accurate locations, only return true if the
+         locations horizontal accuracy < 50
+     - Returns: A new promise that fulfills with the most recent CLLocation that satisfies
+       the provided block if it exists. If the block does not exist, simply return the
+       last location.
+     */
+    public class func requestLocation(authorizationType: RequestAuthorizationType = .automatic, satisfying block: ((CLLocation) -> Bool)? = nil) -> Promise<[CLLocation]> {
+
+        func std() -> Promise<[CLLocation]> {
+            return LocationManager(satisfying: block).promise
         }
-        return manager.promise
+
+        func auth() -> Promise<Void> {
+        #if os(macOS)
+            return Promise()
+        #else
+            func auth(type: PMKCLAuthorizationType) -> Promise<Void> {
+                return AuthorizationCatcher(type: type).promise.done(on: nil) {
+                    switch $0 {
+                    case .restricted, .denied:
+                        throw PMKError.notAuthorized
+                    default:
+                        break
+                    }
+                }
+            }
+
+            switch authorizationType {
+            case .automatic:
+                switch Bundle.main.permissionType {
+                case .always, .both:
+                    return auth(type: .always)
+                case .whenInUse:
+                    return auth(type: .whenInUse)
+                }
+            case .whenInUse:
+                return auth(type: .whenInUse)
+            case .always:
+                return auth(type: .always)
+            }
+        #endif
+        }
+
+        switch CLLocationManager.authorizationStatus() {
+        case .authorizedAlways, .authorizedWhenInUse:
+            return std()
+        case .notDetermined:
+            return auth().then(std)
+        case .denied, .restricted:
+            return Promise(error: PMKError.notAuthorized)
+      #if swift(>=5)
+        @unknown default:
+            fatalError()
+      #endif
+        }
+    }
+
+    @available(*, deprecated, renamed: "requestLocation")
+    public class func promise(_ requestAuthorizationType: RequestAuthorizationType = .automatic, satisfying block: ((CLLocation) -> Bool)? = nil) -> Promise<[CLLocation]> {
+        return requestLocation(authorizationType: requestAuthorizationType, satisfying: block)
     }
 }
 
 private class LocationManager: CLLocationManager, CLLocationManagerDelegate {
-    let (promise, fulfill, reject) = LocationPromise.foo()
+    let (promise, seal) = Promise<[CLLocation]>.pending()
+    let satisfyingBlock: ((CLLocation) -> Bool)?
 
-    @objc fileprivate func locationManager(_ manager: CLLocationManager, didUpdateLocations ll: [CLLocation]) {
-        let locations = ll 
-        fulfill(locations)
-        CLLocationManager.promiseDoneForLocationManager(manager)
+    @objc fileprivate func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let block = satisfyingBlock {
+            let satisfiedLocations = locations.filter(block)
+            if !satisfiedLocations.isEmpty {
+                seal.fulfill(satisfiedLocations)
+            } else {
+            #if os(tvOS)
+                requestLocation()
+            #endif
+            }
+        } else {
+            seal.fulfill(locations)
+        }
+    }
+
+    init(satisfying block: ((CLLocation) -> Bool)? = nil) {
+        satisfyingBlock = block
+        super.init()
+        delegate = self
+    #if !os(tvOS)
+        startUpdatingLocation()
+    #else
+        requestLocation()
+    #endif
+        _ = self.promise.ensure {
+            self.stopUpdatingLocation()
+        }
     }
 
     @objc func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        let error = error as NSError
-        if error.code == CLError.locationUnknown.rawValue && error.domain == kCLErrorDomain {
+        let (domain, code) = { ($0.domain, $0.code) }(error as NSError)
+        if code == CLError.locationUnknown.rawValue && domain == kCLErrorDomain {
             // Apple docs say you should just ignore this error
         } else {
-            reject(error)
-            CLLocationManager.promiseDoneForLocationManager(manager)
+            seal.reject(error)
         }
     }
 }
 
 
-#if os(iOS)
+#if !os(macOS)
 
 extension CLLocationManager {
     /**
-     Cannot error, despite the fact this might be more useful in some
-     circumstances, we stick with our decision that errors are errors
-     and errors only. Thus your catch handler is always catching failures
-     and not being abused for logic.
-    */
-    @available(iOS 8, *)
-    public class func requestAuthorization(type: RequestAuthorizationType = .automatic) -> Promise<CLAuthorizationStatus> {
-        return AuthorizationCatcher(auther: auther(type), type: type).promise
+      Request CoreLocation authorization from the user
+      - Note: By default we try to determine the authorization type you want by inspecting your Info.plist
+      - Note: This method will not perform upgrades from “when-in-use” to “always” unless you specify `.always` for the value of `type`.
+     */
+    @available(iOS 8, tvOS 9, watchOS 2, *)
+    public class func requestAuthorization(type requestedAuthorizationType: RequestAuthorizationType = .automatic) -> Guarantee<CLAuthorizationStatus> {
+
+        let currentStatus = CLLocationManager.authorizationStatus()
+
+        func std(type: PMKCLAuthorizationType) -> Guarantee<CLAuthorizationStatus> {
+            if currentStatus == .notDetermined {
+                return AuthorizationCatcher(type: type).promise
+            } else {
+                return .value(currentStatus)
+            }
+        }
+
+        switch requestedAuthorizationType {
+        case .always:
+            func iOS11Check() -> Guarantee<CLAuthorizationStatus> {
+                switch currentStatus {
+                case .notDetermined, .authorizedWhenInUse:
+                    return AuthorizationCatcher(type: .always).promise
+                default:
+                    return .value(currentStatus)
+                }
+            }
+        #if PMKiOS11
+            // ^^ define PMKiOS11 if you deploy against the iOS 11 SDK
+            // otherwise the warning you get below cannot be removed
+            return iOS11Check()
+        #else
+            if #available(iOS 11, *) {
+                return iOS11Check()
+            } else {
+                return std(type: .always)
+            }
+        #endif
+
+        case .whenInUse:
+            return std(type: .whenInUse)
+
+        case .automatic:
+            if currentStatus == .notDetermined {
+                switch Bundle.main.permissionType {
+                case .both, .whenInUse:
+                    return AuthorizationCatcher(type: .whenInUse).promise
+                case .always:
+                    return AuthorizationCatcher(type: .always).promise
+                }
+            } else {
+                return .value(currentStatus)
+            }
+        }
     }
 }
 
 @available(iOS 8, *)
 private class AuthorizationCatcher: CLLocationManager, CLLocationManagerDelegate {
-    let (promise, fulfill, _) = Promise<CLAuthorizationStatus>.pending()
-    var retainCycle: AnyObject?
+    let (promise, fulfill) = Guarantee<CLAuthorizationStatus>.pending()
+    var retainCycle: AuthorizationCatcher?
+    let initialAuthorizationState = CLLocationManager.authorizationStatus()
 
-    init(auther: (CLLocationManager) -> Void, type: CLLocationManager.RequestAuthorizationType) {
+    init(type: PMKCLAuthorizationType) {
         super.init()
-        let status = CLLocationManager.authorizationStatus()
-        switch (status, type) {
-        case (.notDetermined, _), (.authorizedWhenInUse, .always), (.authorizedWhenInUse, .automatic):
+
+        func ask(type: PMKCLAuthorizationType) {
             delegate = self
-            auther(self)
             retainCycle = self
-        default:
-            fulfill(status)
+
+            switch type {
+            case .always:
+            #if os(tvOS)
+                fallthrough
+            #else
+                requestAlwaysAuthorization()
+            #endif
+            case .whenInUse:
+                requestWhenInUseAuthorization()
+            }
+
+            promise.done { _ in
+                self.retainCycle = nil
+            }
         }
+
+        func iOS11Check() {
+            switch (initialAuthorizationState, type) {
+            case (.notDetermined, .always), (.authorizedWhenInUse, .always), (.notDetermined, .whenInUse):
+                ask(type: type)
+            default:
+                fulfill(initialAuthorizationState)
+            }
+        }
+
+    #if PMKiOS11
+        // ^^ define PMKiOS11 if you deploy against the iOS 11 SDK
+        // otherwise the warning you get below cannot be removed
+        iOS11Check()
+    #else
+        if #available(iOS 11, *) {
+            iOS11Check()
+        } else {
+            if initialAuthorizationState == .notDetermined {
+                ask(type: type)
+            } else {
+                fulfill(initialAuthorizationState)
+            }
+        }
+    #endif
     }
 
     @objc fileprivate func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status != .notDetermined {
+        // `didChange` is a lie; it fires this immediately with the current status.
+        if status != initialAuthorizationState {
             fulfill(status)
-            retainCycle = nil
         }
     }
 }
 
-private func auther(_ requestAuthorizationType: CLLocationManager.RequestAuthorizationType) -> ((CLLocationManager) -> Void) {
+#endif
 
-    //PMKiOS7 guard #available(iOS 8, *) else { return }
-    return { manager in
+private extension Bundle {
+    enum PermissionType {
+        case both
+        case always
+        case whenInUse
+    }
+
+    var permissionType: PermissionType {
         func hasInfoPlistKey(_ key: String) -> Bool {
-            let value = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
+            let value = object(forInfoDictionaryKey: key) as? String ?? ""
             return !value.isEmpty
         }
 
-        switch requestAuthorizationType {
-        case .automatic:
-            let always = hasInfoPlistKey("NSLocationAlwaysUsageDescription") || hasInfoPlistKey("NSLocationAlwaysAndWhenInUsageDescription")
-            let whenInUse = { hasInfoPlistKey("NSLocationWhenInUseUsageDescription") }
-            if always {
-                manager.requestAlwaysAuthorization()
-            } else {
-                if !whenInUse() { NSLog("PromiseKit: Warning: `NSLocationWhenInUseUsageDescription` key not set") }
-                manager.requestWhenInUseAuthorization()
-            }
-        case .whenInUse:
-            manager.requestWhenInUseAuthorization()
-            break
-        case .always:
-            manager.requestAlwaysAuthorization()
-            break
-
+        if hasInfoPlistKey("NSLocationAlwaysAndWhenInUseUsageDescription") {
+            return .both
         }
+        if hasInfoPlistKey("NSLocationAlwaysUsageDescription") {
+            return .always
+        }
+        if hasInfoPlistKey("NSLocationWhenInUseUsageDescription") {
+            return .whenInUse
+        }
+
+        if #available(iOS 11, *) {
+            NSLog("PromiseKit: warning: `NSLocationAlwaysAndWhenInUseUsageDescription` key not set")
+        } else {
+            NSLog("PromiseKit: warning: `NSLocationWhenInUseUsageDescription` key not set")
+        }
+
+        // won't work, but we warned the user above at least
+        return .whenInUse
     }
 }
 
-#else
-
-private func auther(_ requestAuthorizationType: CLLocationManager.RequestAuthorizationType) -> (CLLocationManager) -> Void {
-    return { _ in }
+private enum PMKCLAuthorizationType {
+    case always
+    case whenInUse
 }
-
-#endif
-
-
-/// The promise returned by CLLocationManager.promise()
-public class LocationPromise: Promise<CLLocation> {
-    // convoluted for concurrency guarantees
-    private let (parentPromise, fulfill, reject) = Promise<[CLLocation]>.pending()
-
-    /// Convert the promise so that all Location results are returned
-    public func asArray() -> Promise<[CLLocation]> {
-        return parentPromise
-    }
-
-    fileprivate class func foo() -> (LocationPromise, ([CLLocation]) -> Void, (Error) -> Void) {
-        var fulfill: ((CLLocation) -> Void)!
-        var reject: ((Error) -> Void)!
-        let promise = LocationPromise { fulfill = $0; reject = $1 }
-
-        _ = promise.parentPromise.then(on: zalgo) { fulfill($0.last!) }
-        promise.parentPromise.catch(on: zalgo, execute: reject)
-
-        return (promise, promise.fulfill, promise.reject)
-    }
-}
-
-#endif

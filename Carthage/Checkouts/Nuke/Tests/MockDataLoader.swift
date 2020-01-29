@@ -1,9 +1,9 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
-@testable import Nuke
+import Nuke
 
 private let data: Data = Test.data(name: "fixture", extension: "jpeg")
 
@@ -29,7 +29,7 @@ class MockDataLoader: DataLoading {
 
         createdTaskCount += 1
 
-        let operation = BlockOperation() {
+        let operation = BlockOperation {
             if let result = self.results[request.url!] {
                 switch result {
                 case let .success(val):
@@ -54,5 +54,22 @@ class MockDataLoader: DataLoading {
         }
 
         return task
+    }
+}
+
+// MARK: - Result
+
+// we're still using Result internally, but don't pollute user's space
+enum _Result<T, Error: Swift.Error> {
+    case success(T), failure(Error)
+
+    /// Returns a `value` if the result is success.
+    var value: T? {
+        if case let .success(val) = self { return val } else { return nil }
+    }
+
+    /// Returns an `error` if the result is failure.
+    var error: Error? {
+        if case let .failure(err) = self { return err } else { return nil }
     }
 }

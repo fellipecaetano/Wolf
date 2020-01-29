@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -32,7 +32,7 @@ let sharedCIContext = CIContext()
 
 extension UIImage {
     func applyFilter(context: CIContext = sharedCIContext, closure: (CoreImage.CIImage) -> CoreImage.CIImage?) -> UIImage? {
-        func inputImageForImage(_ image: Image) -> CoreImage.CIImage? {
+        func inputImageForImage(_ image: UIImage) -> CoreImage.CIImage? {
             if let image = image.cgImage {
                 return CoreImage.CIImage(cgImage: image)
             }
@@ -64,10 +64,12 @@ extension UIImage {
 
 /// Blurs image using CIGaussianBlur filter. Only blurs first scans of the
 /// progressive JPEG.
-struct _ProgressiveBlurImageProcessor: ImageProcessing {
-    func process(image: Image, context: ImageProcessingContext) -> Image? {
+struct _ProgressiveBlurImageProcessor: ImageProcessing, Hashable {
+    func process(image: UIImage, context: ImageProcessingContext?) -> UIImage? {
         // CoreImage is too slow on simulator.
-
+        #if targetEnvironment(simulator)
+        return image
+        #else
         guard !context.isFinal else {
             return image // No processing.
         }
@@ -80,15 +82,17 @@ struct _ProgressiveBlurImageProcessor: ImageProcessing {
         if scanNumber < 5 {
             // Progressively reduce blur as we load more scans.
             let radius = max(2, 14 - scanNumber * 4)
-            return image.applyFilter(filter: CIFilter(name: "CIGaussianBlur", withInputParameters: ["inputRadius" : radius]))
+            return image.applyFilter(filter: CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius" : radius]))
         }
 
         // Scans 5+ are already good enough not to blur them.
         return image
-
+        #endif
     }
 
-    static func == (lhs: _ProgressiveBlurImageProcessor, rhs: _ProgressiveBlurImageProcessor) -> Bool {
-        return true
+    let identifier: String = "_ProgressiveBlurImageProcessor"
+
+    var hashableIdentifier: AnyHashable {
+        return self
     }
 }

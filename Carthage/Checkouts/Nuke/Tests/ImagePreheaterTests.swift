@@ -1,31 +1,32 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
-import Nuke
+@testable import Nuke
 
 class ImagePreheaterTests: XCTestCase {
     var pipeline: MockImagePipeline!
     var preheater: ImagePreheater!
-    var observations = [NSKeyValueObservation]()
 
     override func setUp() {
         super.setUp()
 
-        pipeline = MockImagePipeline()
+        pipeline = MockImagePipeline {
+            $0.imageCache = nil
+        }
         preheater = ImagePreheater(pipeline: pipeline)
     }
 
-    // MARK: Starting Preheating
+    // MARK: - Starting Preheating
 
     func testStartPreheatingWithTheSameRequests() {
         pipeline.queue.isSuspended = true
 
         // When starting preheating for the same requests (same cacheKey, loadKey).
-        self.expectPerformedOperationCount(1, on: pipeline.queue)
+        expect(pipeline.queue).toFinishWithEnqueuedOperationCount(1)
 
-        let request = ImageRequest(url: defaultURL)
+        let request = Test.request
         preheater.startPreheating(with: [request])
         preheater.startPreheating(with: [request])
 
@@ -37,10 +38,10 @@ class ImagePreheaterTests: XCTestCase {
 
         // When starting preheating for the requests with the same URL (same loadKey)
         // but different processors (different cacheKey).
-        self.expectPerformedOperationCount(2, on: pipeline.queue)
+        expect(pipeline.queue).toFinishWithEnqueuedOperationCount(2)
 
-        preheater.startPreheating(with: [Test.request.processed(key: "1") { $0 }])
-        preheater.startPreheating(with: [Test.request.processed(key: "2") { $0 }])
+        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessor.Anonymous(id: "1", { $0 })])])
+        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessor.Anonymous(id: "2", { $0 })])])
 
         wait()
     }
@@ -51,20 +52,30 @@ class ImagePreheaterTests: XCTestCase {
         // When starting preheating for the requests with the same URL, but
         // different URL requests (different loadKey) but the same processors
         // (same cacheKey).
-        self.expectPerformedOperationCount(2, on: pipeline.queue)
+        expect(pipeline.queue).toFinishWithEnqueuedOperationCount(2)
 
-        preheater.startPreheating(with: [ImageRequest(urlRequest: URLRequest(url: defaultURL, cachePolicy: .returnCacheDataDontLoad, timeoutInterval: 100))])
-        preheater.startPreheating(with: [ImageRequest(urlRequest: URLRequest(url: defaultURL, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 100))])
+        preheater.startPreheating(with: [ImageRequest(urlRequest: URLRequest(url: Test.url, cachePolicy: .returnCacheDataDontLoad, timeoutInterval: 100))])
+        preheater.startPreheating(with: [ImageRequest(urlRequest: URLRequest(url: Test.url, cachePolicy: .useProtocolCachePolicy, timeoutInterval: 100))])
 
         wait()
     }
 
-    // MARK: Stoping Preheating
+    func testStartingPreheatingWithURLS() {
+        pipeline.queue.isSuspended = true
+
+        expect(pipeline.queue).toFinishWithEnqueuedOperationCount(1)
+
+        preheater.startPreheating(with: [Test.url])
+
+        wait()
+    }
+
+    // MARK: - Stoping Preheating
 
     func testThatPreheatingRequestsAreStopped() {
         pipeline.queue.isSuspended = true
 
-        let request = ImageRequest(url: defaultURL)
+        let request = Test.request
         _ = expectNotification(MockImagePipeline.DidStartTask, object: pipeline)
         preheater.startPreheating(with: [request])
         wait()
@@ -77,7 +88,7 @@ class ImagePreheaterTests: XCTestCase {
     func testThatEquaivalentRequestsAreStoppedWithSingleStopCall() {
         pipeline.queue.isSuspended = true
 
-        let request = ImageRequest(url: defaultURL)
+        let request = Test.request
         _ = expectNotification(MockImagePipeline.DidStartTask, object: pipeline)
         preheater.startPreheating(with: [request, request])
         wait()
@@ -93,7 +104,7 @@ class ImagePreheaterTests: XCTestCase {
     func testThatAllPreheatingRequestsAreStopped() {
         pipeline.queue.isSuspended = true
 
-        let request = ImageRequest(url: defaultURL)
+        let request = Test.request
         _ = expectNotification(MockImagePipeline.DidStartTask, object: pipeline)
         preheater.startPreheating(with: [request])
         wait()

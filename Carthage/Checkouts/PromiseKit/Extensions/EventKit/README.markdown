@@ -5,7 +5,7 @@ This project adds promises to Apple’s EventKit framework.
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/EventKit" ~> 4.0
+pod "PromiseKit/EventKit" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/EventKit" ~> 1.0
+github "PromiseKit/PMKEventKit" ~> 4.0
 ```
 
 The extensions are built into their own framework:
@@ -31,4 +31,4 @@ import PMKEventKit
 ```
 
 
-[Build Status]: https://travis-ci.org/PromiseKit/EventKit.svg?branch=master
+[Build Status]: https://travis-ci.org/PromiseKit/PMKEventKit.svg?branch=master

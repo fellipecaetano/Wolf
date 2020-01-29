@@ -1,46 +1,49 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import Nuke
 import XCTest
 
 private final class BundleToken {}
 
-let defaultURL = Test.url
-let defaultImage = Test.image
-
 // Test data.
 enum Test {
-    static func data(name: String, extension ext: String) -> Data {
+    static func url(forResource name: String, extension ext: String) -> URL {
         let bundle = Bundle(for: BundleToken.self)
-        let URL = bundle.url(forResource: name, withExtension: ext)
-        return try! Data(contentsOf: URL!)
+        return bundle.url(forResource: name, withExtension: ext)!
+    }
+
+    static func data(name: String, extension ext: String) -> Data {
+        let url = self.url(forResource: name, extension: ext)
+        return try! Data(contentsOf: url)
     }
 
     static let url = URL(string: "http://test.com")!
 
-    static let image: Image = {
-        let bundle = Bundle(for: BundleToken.self)
-        let URL = bundle.url(forResource: "fixture", withExtension: "jpeg")
-        let data = try! Data(contentsOf: URL!)
-        return Nuke.ImageDecoder().decode(data: data, isFinal: true)!
-    }()
+    static let data: Data = Test.data(name: "fixture", extension: "jpeg")
+
+    // Test.image size is 640 x 480 pixels
+    static var image: PlatformImage {
+        let data = Test.data(name: "fixture", extension: "jpeg")
+        return Nuke.ImageDecoder().decode(data: data)!
+    }
 
     static let request = ImageRequest(
-        url: defaultURL
+        url: Test.url
     )
 
     static let urlResponse = HTTPURLResponse(
-        url: defaultURL,
+        url: Test.url,
         mimeType: "jpeg",
         expectedContentLength: 22_789,
         textEncodingName: nil
     )
 
     static let response = ImageResponse(
-        image: defaultImage,
-        urlResponse: urlResponse
+        image: Test.image,
+        urlResponse: urlResponse,
+        scanNumber: nil
     )
 }
 
@@ -71,4 +74,34 @@ func _createChunks(for data: Data, size: Int) -> [Data] {
         chunks.append(chunk)
     }
     return chunks
+}
+
+// MARK: - Result extension
+
+extension Result {
+    var isSuccess: Bool {
+        return value != nil
+    }
+
+    var isFailure: Bool {
+        return error != nil
+    }
+
+    var value: Success? {
+        switch self {
+        case let .success(value):
+            return value
+        case .failure:
+            return nil
+        }
+    }
+
+    var error: Failure? {
+        switch self {
+        case .success:
+            return nil
+        case let .failure(error):
+            return error
+        }
+    }
 }

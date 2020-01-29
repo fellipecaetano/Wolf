@@ -6,10 +6,6 @@
 
 @implementation CLGeocoder (PromiseKit)
 
-+ (void)load {
-    [NSError registerCancelledErrorDomain:kCLErrorDomain code:kCLErrorGeocodeCanceled];
-}
-
 - (AnyPromise *)reverseGeocode:(CLLocation *)location {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
        [self reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -24,7 +20,10 @@
             resolve(error ?: PMKManifold(placemarks.firstObject, placemarks));
         };
         if ([address isKindOfClass:[NSDictionary class]]) {
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             [self geocodeAddressDictionary:address completionHandler:handler];
+        #pragma clang diagnostic pop
         } else {
             [self geocodeAddressString:address completionHandler:handler];
         }

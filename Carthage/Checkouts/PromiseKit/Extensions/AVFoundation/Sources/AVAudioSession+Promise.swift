@@ -1,6 +1,6 @@
 import AVFoundation
 import Foundation
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -15,9 +15,7 @@ import PromiseKit
     import PromiseKit
 */
 extension AVAudioSession {
-    public func requestRecordPermission() -> Promise<Bool> {
-        return Promise { fulfill, _ in
-            requestRecordPermission(fulfill)
-        }
+    public func requestRecordPermission() -> Guarantee<Bool> {
+        return Guarantee(resolver: requestRecordPermission)
     }
 }

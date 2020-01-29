@@ -14,7 +14,7 @@
 #if !COCOAPODS
 #import <PMKFoundation/NSURLSession+AnyPromise.h>
 #else
-#import <PromiseKit/NSURLSession+AnyPromise.h>
+#import "NSURLSession+AnyPromise.h"
 #endif
 
 static id PMKURLRequestFromURLFormat(NSError **err, id urlFormat, ...);

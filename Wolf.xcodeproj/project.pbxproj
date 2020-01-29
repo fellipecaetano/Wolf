@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16F8E8A823E23B5000BA8EAD /* Networking+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F8E8A723E23B5000BA8EAD /* Networking+Decoding.swift */; };
+		16F8E8AB23E2456E00BA8EAD /* NetworkingTests+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F8E8AA23E2456E00BA8EAD /* NetworkingTests+Decoding.swift */; };
+		16F8E8AD23E245DC00BA8EAD /* Band.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F8E8AC23E245DC00BA8EAD /* Band.swift */; };
 		5500E9FE1DDD290D00DC6880 /* Wolf.h in Headers */ = {isa = PBXBuildFile; fileRef = 5500E9F01DDD290C00DC6880 /* Wolf.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA081DDD2A9200DC6880 /* CachedResponse.swift */; };
 		5500EA131DDD2A9200DC6880 /* Networking+Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA091DDD2A9200DC6880 /* Networking+Cache.swift */; };
@@ -51,6 +54,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		16F8E8A723E23B5000BA8EAD /* Networking+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Networking+Decoding.swift"; sourceTree = "<group>"; };
+		16F8E8AA23E2456E00BA8EAD /* NetworkingTests+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Decoding.swift"; sourceTree = "<group>"; };
+		16F8E8AC23E245DC00BA8EAD /* Band.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Band.swift; sourceTree = "<group>"; };
 		5500E9ED1DDD290C00DC6880 /* Wolf.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Wolf.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5500E9F01DDD290C00DC6880 /* Wolf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Wolf.h; sourceTree = "<group>"; };
 		5500E9F11DDD290C00DC6880 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -116,6 +122,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16F8E8A623E23B3C00BA8EAD /* Decoding */ = {
+			isa = PBXGroup;
+			children = (
+				16F8E8A723E23B5000BA8EAD /* Networking+Decoding.swift */,
+			);
+			path = Decoding;
+			sourceTree = "<group>";
+		};
+		16F8E8A923E2455E00BA8EAD /* Decoding */ = {
+			isa = PBXGroup;
+			children = (
+				16F8E8AA23E2456E00BA8EAD /* NetworkingTests+Decoding.swift */,
+			);
+			path = Decoding;
+			sourceTree = "<group>";
+		};
 		5500E9E31DDD290C00DC6880 = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +163,7 @@
 				5500EA071DDD2A9200DC6880 /* Cache */,
 				5500EA0A1DDD2A9200DC6880 /* Networking */,
 				5500EA0D1DDD2A9200DC6880 /* PromiseKit */,
+				16F8E8A623E23B3C00BA8EAD /* Decoding */,
 				5500EA101DDD2A9200DC6880 /* Unbox */,
 				5500E9F11DDD290C00DC6880 /* Info.plist */,
 				5500E9F01DDD290C00DC6880 /* Wolf.h */,
@@ -154,6 +177,7 @@
 				5500EA201DDD2DBA00DC6880 /* Cache */,
 				5500EA231DDD2DBA00DC6880 /* Fakes */,
 				5500EA261DDD2DBA00DC6880 /* Fixtures */,
+				16F8E8A923E2455E00BA8EAD /* Decoding */,
 				5500EA331DDD2DBA00DC6880 /* Unbox */,
 				5500E9FD1DDD290D00DC6880 /* Info.plist */,
 			);
@@ -226,6 +250,7 @@
 			children = (
 				5500EA241DDD2DBA00DC6880 /* Song.swift */,
 				5500EA251DDD2DBA00DC6880 /* TestClient.swift */,
+				16F8E8AC23E245DC00BA8EAD /* Band.swift */,
 			);
 			path = Fakes;
 			sourceTree = "<group>";
@@ -350,6 +375,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 5500E9E31DDD290C00DC6880;
@@ -397,8 +423,11 @@
 			files = (
 				5500EA161DDD2A9200DC6880 /* CacheNetworking+PromiseKit.swift in Sources */,
 				5500EA131DDD2A9200DC6880 /* Networking+Cache.swift in Sources */,
+				16F8E8AD23E245DC00BA8EAD /* Band.swift in Sources */,
 				5500EA151DDD2A9200DC6880 /* JSONEnvelope.swift in Sources */,
 				5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */,
+				16F8E8AB23E2456E00BA8EAD /* NetworkingTests+Decoding.swift in Sources */,
+				16F8E8A823E23B5000BA8EAD /* Networking+Decoding.swift in Sources */,
 				5500EA171DDD2A9200DC6880 /* Networking+PromiseKit.swift in Sources */,
 				5500EA141DDD2A9200DC6880 /* HTTPClient.swift in Sources */,
 				5500EA181DDD2A9200DC6880 /* Networking+Unbox.swift in Sources */,

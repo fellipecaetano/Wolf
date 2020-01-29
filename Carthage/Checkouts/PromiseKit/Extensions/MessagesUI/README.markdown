@@ -7,7 +7,7 @@ The Objective-C equivalents of this repo are in the UIKit extensions.
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/MessagesUI" ~> 4.0
+pod "PromiseKit/MessageUI", "~> 6.0"
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -15,7 +15,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/MessagesUI" ~> 1.0
+github "PromiseKit/MessagesUI" ~> 3.0
 ```
 
 The extensions are built into their own framework:

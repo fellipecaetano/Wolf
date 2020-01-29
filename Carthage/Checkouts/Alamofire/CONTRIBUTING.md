@@ -28,7 +28,7 @@ If you discover a security issue, please bring it to our attention right away!
 Please **DO NOT** file a public issue,
 instead send your report privately to <security@alamofire.org>.
 This will help ensure that any vulnerabilities that _are_ found
-can be [disclosed responsibly](http://en.wikipedia.org/wiki/Responsible_disclosure)
+can be [disclosed responsibly](https://en.wikipedia.org/wiki/Responsible_disclosure)
 to any affected parties.
 
 ## Reporting Other Issues
@@ -51,6 +51,10 @@ When reporting issues, please include the following:
 * Any other details that would be useful in understanding the problem
 
 This information will help us review and fix your issue faster.
+
+## Triage Issues [![Open Source Helpers](https://www.codetriage.com/alamofire/alamofire/badges/users.svg)](https://www.codetriage.com/alamofire/alamofire)
+
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to alamofire on CodeTriage](https://www.codetriage.com/alamofire/alamofire).
 
 ## Developer's Certificate of Origin 1.1
 
@@ -88,4 +92,4 @@ See [CONDUCT.md](https://github.com/Alamofire/Foundation/blob/master/CONDUCT.md)
 
 ---
 
-*Some of the ideas and wording for the statements above were based on work by the [Docker](https://github.com/docker/docker/blob/master/CONTRIBUTING.md) and [Linux](http://elinux.org/Developer_Certificate_Of_Origin) communities. We commend them for their efforts to facilitate collaboration in their projects.*
+*Some of the ideas and wording for the statements above were based on work by the [Docker](https://github.com/docker/docker/blob/master/CONTRIBUTING.md) and [Linux](https://elinux.org/Developer_Certificate_Of_Origin) communities. We commend them for their efforts to facilitate collaboration in their projects.*

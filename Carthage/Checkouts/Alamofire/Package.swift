@@ -1,3 +1,4 @@
+// swift-tools-version:5.0
 //
 //  Package.swift
 //
@@ -24,4 +25,13 @@
 
 import PackageDescription
 
-let package = Package(name: "Alamofire", dependencies : [], exclude: ["Tests"])
+let package = Package(name: "Alamofire",
+                      platforms: [.macOS(.v10_12),
+                                  .iOS(.v10),
+                                  .tvOS(.v10),
+                                  .watchOS(.v3)],
+                      products: [.library(name: "Alamofire",
+                                          targets: ["Alamofire"])],
+                      targets: [.target(name: "Alamofire",
+                                        path: "Source")],
+                      swiftLanguageVersions: [.v5])

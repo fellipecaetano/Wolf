@@ -5,7 +5,7 @@ This project adds promises to Apple’s Accounts framework.
 ## CococaPods
 
 ```ruby
-pod "PromiseKit/Accounts" ~> 4.0
+pod "PromiseKit/Accounts" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/Accounts" ~> 1.0
+github "PromiseKit/Accounts" ~> 3.0
 ```
 
 The extensions are built into their own framework:

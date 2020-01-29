@@ -1,7 +1,7 @@
 import Foundation
 import MessageUI.MFMessageComposeViewController
 import UIKit.UIViewController
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -22,7 +22,7 @@ extension UIViewController {
         proxy.retainCycle = proxy
         vc.messageComposeDelegate = proxy
         present(vc, animated: animated, completion: completion)
-        _ = proxy.promise.always {
+        _ = proxy.promise.ensure {
             vc.dismiss(animated: animated, completion: nil)
         }
         return proxy.promise
@@ -60,7 +60,7 @@ extension MFMessageComposeViewController {
 
 private class PMKMessageComposeViewControllerDelegate: NSObject, MFMessageComposeViewControllerDelegate, UINavigationControllerDelegate {
 
-    let (promise, fulfill, reject) = Promise<Void>.pending()
+    let (promise, seal) = Promise<Void>.pending()
     var retainCycle: NSObject?
 
     @objc func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
@@ -68,11 +68,15 @@ private class PMKMessageComposeViewControllerDelegate: NSObject, MFMessageCompos
 
         switch result {
         case .sent:
-            fulfill(())
+            seal.fulfill(())
         case .failed:
-            reject(MFMessageComposeViewController.PMKError.failed)
+            seal.reject(MFMessageComposeViewController.PMKError.failed)
         case .cancelled:
-            reject(MFMessageComposeViewController.PMKError.cancelled)
+            seal.reject(MFMessageComposeViewController.PMKError.cancelled)
+      #if swift(>=5)
+        @unknown default:
+            seal.reject(MFMessageComposeViewController.PMKError.cancelled)
+      #endif
         }
     }
 }

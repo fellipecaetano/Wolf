@@ -11,7 +11,8 @@ class NSTaskTests: XCTestCase {
         let task = Process()
         task.launchPath = "/usr/bin/basename"
         task.arguments = ["/foo/doe/bar"]
-        task.promise().asStandardOutput(encoding: .utf8).then { stdout -> Void in
+        task.launch(.promise).done { stdout, _ in
+            let stdout = String(data: stdout.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
             XCTAssertEqual(stdout, "bar\n")
             ex.fulfill()
         }
@@ -26,17 +27,21 @@ class NSTaskTests: XCTestCase {
         task.launchPath = "/bin/ls"
         task.arguments = [dir]
 
-        task.promise().then { _ -> Void in
+        task.launch(.promise).done { _ in
             XCTFail()
         }.catch { err in
-            if let err = err as? Process.Error, err.code == .execution {
-                let expectedStderrData = "ls: \(dir): No such file or directory\n".data(using: .utf8, allowLossyConversion: false)!
+            do {
+                throw err
+            } catch Process.PMKError.execution(let proc, let stdout, let stderr) {
+                let expectedStderr = "ls: \(dir): No such file or directory\n"
 
-                XCTAssertEqual(err.stderr, expectedStderrData)
-                XCTAssertEqual(err.exitStatus, 1)
-                XCTAssertEqual(err.stdout.count, 0)
-                ex.fulfill()
+                XCTAssertEqual(stderr, expectedStderr)
+                XCTAssertEqual(proc.terminationStatus, 1)
+                XCTAssertEqual(stdout?.count ?? 0, 0)
+            } catch {
+                XCTFail()
             }
+            ex.fulfill()
         }
         waitForExpectations(timeout: 10)
     }

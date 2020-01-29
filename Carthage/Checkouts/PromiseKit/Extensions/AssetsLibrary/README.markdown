@@ -5,7 +5,7 @@ This project adds promises to Apple’s AssetsLibrary framework.
 ## CococaPods
 
 ```ruby
-pod "PromiseKit/AssetsLibrary" ~> 4.0
+pod "PromiseKit/AssetsLibrary" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/AssetsLibrary" ~> 1.0
+github "PromiseKit/AssetsLibrary" ~> 3.0
 ```
 
 The extensions are built into their own framework:

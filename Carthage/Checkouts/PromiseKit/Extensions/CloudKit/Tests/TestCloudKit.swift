@@ -17,11 +17,11 @@ class Test_CKContainer_Swift: XCTestCase {
         }
 
         let ex = expectation(description: "")
-        MockContainer().accountStatus().then { status -> Void in
+        MockContainer().accountStatus().done { status in
             XCTAssertEqual(status, CKAccountStatus.couldNotDetermine)
             ex.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     func test_requestApplicationPermission() {
@@ -36,11 +36,11 @@ class Test_CKContainer_Swift: XCTestCase {
 
         let ex = expectation(description: "")
         let pp = CKApplicationPermissions.userDiscoverability
-        MockContainer().requestApplicationPermission(pp).then { perms -> Void in
+        MockContainer().requestApplicationPermission(pp).done { perms in
             XCTAssertEqual(perms, CKApplicationPermissionStatus.granted)
             ex.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 1)
     }
 
     func test_statusForApplicationPermission() {
@@ -55,10 +55,11 @@ class Test_CKContainer_Swift: XCTestCase {
 
         let ex = expectation(description: "")
         let pp = CKApplicationPermissions.userDiscoverability
-        MockContainer().status(forApplicationPermission: pp).then {
+        MockContainer().status(forApplicationPermission: pp).done {
             XCTAssertEqual($0, CKApplicationPermissionStatus.granted)
-        }.then(execute: ex.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1)
     }
 
 #if !os(tvOS)
@@ -67,16 +68,17 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            override func discoverAllContactUserInfos(completionHandler: @escaping ([CKDiscoveredUserInfo]?, Error?) -> Void) {
+            override func discoverAllIdentities(completionHandler: @escaping ([CKUserIdentity]?, Error?) -> Void) {
                 completionHandler([PMKDiscoveredUserInfo()], nil)
             }
         }
 
         let ex = expectation(description: "")
-        MockContainer().discoverAllContactUserInfos().then {
+        MockContainer().discoverAllIdentities().done {
             XCTAssertEqual($0, [PMKDiscoveredUserInfo()])
-        }.then(execute: ex.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1)
     }
 #endif
 
@@ -85,15 +87,16 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            override func discoverUserInfo(withEmailAddress email: String, completionHandler: @escaping (CKDiscoveredUserInfo?, Error?) -> Void) {
+            override func discoverUserIdentity(withEmailAddress email: String, completionHandler: @escaping (CKUserIdentity?, Error?) -> Void) {
                 completionHandler(PMKDiscoveredUserInfo(), nil)
             }
         }
 
         let ex = expectation(description: "")
-        MockContainer().discoverUserInfo(withEmailAddress: "mxcl@me.com").then {
+        MockContainer().discoverUserIdentity(withEmailAddress: "mxcl@me.com").done {
             XCTAssertEqual($0, PMKDiscoveredUserInfo())
-        }.then(execute: ex.fulfill)
+            ex.fulfill()
+        }
         waitForExpectations(timeout: 1, handler: nil)
     }
 
@@ -102,16 +105,17 @@ class Test_CKContainer_Swift: XCTestCase {
             init(_: Bool = false)
             {}
 
-            override func discoverUserInfo(withUserRecordID userRecordID: CKRecordID, completionHandler: @escaping (CKDiscoveredUserInfo?, Error?) -> Void) {
+            override func discoverUserIdentity(withUserRecordID userRecordID: CKRecord.ID, completionHandler: @escaping (CKUserIdentity?, Error?) -> Void) {
                 completionHandler(PMKDiscoveredUserInfo(), nil)
             }
         }
 
         let ex = expectation(description: "")
-        MockContainer().discoverUserInfo(withUserRecordID: dummy()).then {
+        MockContainer().discoverUserIdentity(withUserRecordID: dummy()).done {
             XCTAssertEqual($0, PMKDiscoveredUserInfo())
-        }.then(execute: ex.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1)
     }
 
     func test_fetchUserRecordID() {
@@ -125,10 +129,11 @@ class Test_CKContainer_Swift: XCTestCase {
         }
 
         let ex = expectation(description: "")
-        MockContainer().fetchUserRecordID().then {
+        MockContainer().fetchUserRecordID().done {
             XCTAssertEqual($0, dummy())
-        }.then(execute: ex.fulfill)
-        waitForExpectations(timeout: 1, handler: nil)
+            ex.fulfill()
+        }
+        waitForExpectations(timeout: 1)
     }
 }
 

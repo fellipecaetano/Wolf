@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
 
@@ -14,117 +14,170 @@ import Foundation
 /// All `Preheater` methods are thread-safe.
 public final class ImagePreheater {
     private let pipeline: ImagePipeline
-    private let queue = DispatchQueue(label: "com.github.kean.Nuke.Preheater")
+    private let queue = DispatchQueue(label: "com.github.kean.Nuke.Preheater", target: .global(qos: .userInitiated))
     private let preheatQueue = OperationQueue()
-    private var tasks = [PreheatKey: Task]()
+    private var tasks = [AnyHashable: Task]()
+    private let destination: Destination
+
+    /// Prefetching destination.
+    public enum Destination {
+        /// Prefetches the image and stores it both in memory and disk caches
+        /// (in case they are enabled, naturally, there is no reason to prefetch
+        /// unless they are).
+        case memoryCache
+
+        /// Prefetches image data and stores in disk cache. Will no decode
+        /// the image data and will therefore use less CPU.
+        case diskCache
+    }
 
     /// Initializes the `Preheater` instance.
     /// - parameter manager: `Loader.shared` by default.
     /// - parameter `maxConcurrentRequestCount`: 2 by default.
-    public init(pipeline: ImagePipeline = ImagePipeline.shared, maxConcurrentRequestCount: Int = 2) {
+    /// - parameter destination: `.memoryCache` by default.
+    public init(pipeline: ImagePipeline = ImagePipeline.shared,
+                destination: Destination = .memoryCache,
+                maxConcurrentRequestCount: Int = 2) {
         self.pipeline = pipeline
+        self.destination = destination
         self.preheatQueue.maxConcurrentOperationCount = maxConcurrentRequestCount
     }
 
-    /// Preheats images for the given requests.
+    /// Starte preheating images for the given urls.
+    /// - note: See `func startPreheating(with requests: [ImageRequest])` for more info
+    public func startPreheating(with urls: [URL]) {
+        startPreheating(with: _requests(for: urls))
+    }
+
+    /// Starts preheating images for the given requests.
     ///
     /// When you call this method, `Preheater` starts to load and cache images
     /// for the given requests. At any time afterward, you can create tasks
     /// for individual images with equivalent requests.
     public func startPreheating(with requests: [ImageRequest]) {
         queue.async {
-            requests.forEach(self._startPreheating)
+            for request in requests {
+                self._startPreheating(with: request)
+            }
         }
     }
 
     private func _startPreheating(with request: ImageRequest) {
-        let key = PreheatKey(request: request)
+        let key = request.makeLoadKeyForProcessedImage()
 
-        // Check if we we've already started preheating.
-        guard tasks[key] == nil else { return }
+        guard tasks[key] == nil else {
+            return // Already started prefetching
+        }
 
-        // Check if the image is already in memory cache.
         guard pipeline.configuration.imageCache?.cachedResponse(for: request) == nil else {
-            return // already in memory cache
+            return // The image is already in memory cache
         }
 
         let task = Task(request: request, key: key)
-        let token = task.cts.token
 
-        let operation = Operation(starter: { [weak self] finish in
-            let task = self?.pipeline.loadImage(with: request) { [weak self] _, _  in
-                self?._remove(task)
-                finish()
+        // Use `Operation` to limit maximum number of concurrent preheating jobs
+        let operation = Operation(starter: { [weak self, weak task] finish in
+            guard let self = self, let task = task else {
+                return finish()
             }
-            token.register {
-                task?.cancel()
-                finish()
+            self.queue.async {
+                self.loadImage(with: request, task: task, finish: finish)
             }
         })
         preheatQueue.addOperation(operation)
-        token.register { [weak operation] in operation?.cancel() }
-
         tasks[key] = task
+    }
+
+    private func loadImage(with request: ImageRequest, task: Task, finish: @escaping () -> Void) {
+        guard !task.isCancelled else {
+            return finish()
+        }
+
+        let imageTask: ImageTask
+        switch destination {
+        case .diskCache:
+            imageTask = pipeline.loadData(with: request) { [weak self] _ in
+                self?._remove(task)
+                finish()
+            }
+        case .memoryCache:
+            imageTask = pipeline.loadImage(with: request) { [weak self] _ in
+                self?._remove(task)
+                finish()
+            }
+        }
+        task.onCancelled = {
+            imageTask.cancel()
+            finish()
+        }
     }
 
     private func _remove(_ task: Task) {
         queue.async {
-            guard self.tasks[task.key] === task else { return }
+            guard self.tasks[task.key] === task else {
+                return
+            }
             self.tasks[task.key] = nil
         }
     }
 
+    /// Stops preheating images for the given urls.
+    public func stopPreheating(with urls: [URL]) {
+        stopPreheating(with: _requests(for: urls))
+    }
+
     /// Stops preheating images for the given requests and cancels outstanding
     /// requests.
+    ///
+    /// - parameter destination: `.memoryCache` by default.
     public func stopPreheating(with requests: [ImageRequest]) {
         queue.async {
-            requests.forEach(self._stopPreheating)
+            for request in requests {
+                self._stopPreheating(with: request)
+            }
         }
     }
 
     private func _stopPreheating(with request: ImageRequest) {
-        if let task = tasks[PreheatKey(request: request)] {
+        if let task = tasks[request.makeLoadKeyForProcessedImage()] {
             tasks[task.key] = nil
-            task.cts.cancel()
+            task.cancel()
         }
     }
 
     /// Stops all preheating tasks.
     public func stopPreheating() {
         queue.async {
-            self.tasks.forEach { $0.1.cts.cancel() }
+            self.tasks.values.forEach { $0.cancel() }
             self.tasks.removeAll()
         }
     }
 
-    private final class Task {
-        let key: PreheatKey
-        let request: ImageRequest
-        let cts = _CancellationTokenSource()
-
-        init(request: ImageRequest, key: PreheatKey) {
-            self.request = request
-            self.key = key
+    private func _requests(for urls: [URL]) -> [ImageRequest] {
+        return urls.map {
+            var request = ImageRequest(url: $0)
+            request.priority = .low
+            return request
         }
     }
 
-    private struct PreheatKey: Hashable {
-        let cacheKey: ImageRequest.CacheKey
-        let loadKey: ImageRequest.LoadKey
+    private final class Task {
+        let key: AnyHashable
+        let request: ImageRequest
+        var isCancelled = false
+        var onCancelled: (() -> Void)?
+        weak var operation: Operation?
 
-        init(request: ImageRequest) {
-            self.cacheKey = ImageRequest.CacheKey(request: request)
-            self.loadKey = ImageRequest.LoadKey(request: request)
+        init(request: ImageRequest, key: AnyHashable) {
+            self.request = request
+            self.key = key
         }
 
-        #if !swift(>=4.1)
-        var hashValue: Int {
-            return cacheKey.hashValue
+        func cancel() {
+            guard !isCancelled else { return }
+            isCancelled = true
+            operation?.cancel()
+            onCancelled?()
         }
-
-        static func == (lhs: PreheatKey, rhs: PreheatKey) -> Bool {
-            return lhs.cacheKey == rhs.cacheKey && lhs.loadKey == rhs.loadKey
-        }
-        #endif
     }
 }

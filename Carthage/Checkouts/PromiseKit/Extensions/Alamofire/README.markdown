@@ -2,14 +2,14 @@
 
 This project adds promises to [Alamofire](https://github.com/Alamofire/Alamofire).
 
-This project supports Swift 3.1, 3.2 and 4.0.
+This project supports Swift 3.1, 3.2, 4.0 and 4.1.
 
 ## Usage
 
 ```swift
-Alamofire.request("https://httpbin.org/get", withMethod: .GET)
-    .responseJSON().then { json in
-        //…
+Alamofire.request("https://httpbin.org/get", method: .GET)
+    .responseJSON().then { json, rsp in
+        // 
     }.catch{ error in
         //…
     }
@@ -24,27 +24,27 @@ func login() -> Promise<User> {
 
     return firstly { in
         Alamofire.request(url, method: .get).responseData()
-    }.then(on: q) { data in
+    }.map(on: q) { data, rsp in
         convertToUser(data)
-    }.always {
+    }.ensure {
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
 }
 
 firstly {
     login()
-}.then { user in
+}.done { user in
     //…
 }.catch { error in
    UIAlertController(/*…*/).show() 
 }
 ```
 
-## CococaPods
+## CocoaPods
 
 ```ruby
 # Podfile
-pod 'PromiseKit/Alamofire', '~> 4.0'
+pod 'PromiseKit/Alamofire', '~> 6.0'
 ```
 
 ```swift
@@ -62,7 +62,7 @@ import Alamofire
 ## Carthage
 
 ```ruby
-github "PromiseKit/Alamofire-" ~> 1.0
+github "PromiseKit/PMKAlamofire" ~> 3.0
 ```
 
 The extensions are built into their own framework:
@@ -84,10 +84,10 @@ import PMKAlamofire
 ```swift
 let package = Package(
     dependencies: [
-        .Target(url: "https://github.com/PromiseKit/Alamofire", majorVersion: 1)
+        .Target(url: "https://github.com/PromiseKit/PMKAlamofire", majorVersion: 3)
     ]
 )
 ```
 
 
-[Build Status]: https://travis-ci.org/PromiseKit/Alamofire.svg?branch=master
+[Build Status]: https://travis-ci.org/PromiseKit/PMKAlamofire.svg?branch=master

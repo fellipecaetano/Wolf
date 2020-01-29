@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 @testable import Nuke
@@ -31,13 +31,15 @@ class ImageDecoderTests: XCTestCase {
         // Found the second Start of Scan
         let scan1 = decoder.decode(data: data[0...2952], isFinal: false)
         XCTAssertNotNil(scan1)
-        #if os(macOS)
-        XCTAssertEqual(scan1!.size.width, 450)
-        XCTAssertEqual(scan1!.size.height, 300)
-        #else
-        XCTAssertEqual(scan1!.size.width * scan1!.scale, 450)
-        XCTAssertEqual(scan1!.size.height * scan1!.scale, 300)
-        #endif
+        if let scan1 = scan1 {
+            #if os(macOS)
+            XCTAssertEqual(scan1.size.width, 450)
+            XCTAssertEqual(scan1.size.height, 300)
+            #else
+            XCTAssertEqual(scan1.size.width * scan1.scale, 450)
+            XCTAssertEqual(scan1.size.height * scan1.scale, 300)
+            #endif
+        }
         XCTAssertEqual(decoder.numberOfScans, 2)
 
         // Feed all data and see how many scans are there
@@ -53,10 +55,10 @@ class ImageDecoderTests: XCTestCase {
         XCTAssertFalse(ImagePipeline.Configuration.isAnimatedImageDataEnabled)
 
         let data = Test.data(name: "cat", extension: "gif")
-        XCTAssertNil(ImageDecoder().decode(data: data, isFinal: true)?.animatedImageData)
+        XCTAssertNil(ImageDecoder().decode(data: data)?.animatedImageData)
 
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
-        XCTAssertNotNil(ImageDecoder().decode(data: data, isFinal: true)?.animatedImageData)
+        XCTAssertNotNil(ImageDecoder().decode(data: data)?.animatedImageData)
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = false
     }
 }

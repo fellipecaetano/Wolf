@@ -32,7 +32,7 @@ class App: UITableViewController, UIApplicationDelegate {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        _ = promise(UIImagePickerController()).then { (data: NSData) in
+        _ = promise(UIImagePickerController()).done { (data: NSData) in
             self.testSuceededSwitch.isOn = true
         }
     }

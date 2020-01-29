@@ -28,13 +28,23 @@
 }
 
 #if !(TARGET_OS_TV && (TARGET_OS_EMBEDDED || TARGET_OS_SIMULATOR))
-- (AnyPromise *)discoverAllContactUserInfos {
+#if TARGET_OS_WATCH
+- (AnyPromise *)discoverAllIdentities {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
-        [self discoverAllContactUserInfosWithCompletionHandler:^(NSArray *userInfos, NSError *error) {
+        [self discoverAllIdentitiesWithCompletionHandler:^(NSArray *userInfos, NSError *error) {
             resolve(error ?: userInfos);
         }];
     }];
 }
+#else
+- (AnyPromise *)discoverAllContactUserInfos {
+    return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
+        [self discoverAllIdentitiesWithCompletionHandler:^(NSArray *userInfos, NSError *error) {
+            resolve(error ?: userInfos);
+        }];
+    }];
+}
+#endif
 #endif
 
 - (AnyPromise *)discoverUserInfo:(id)input {
@@ -43,9 +53,9 @@
             resolve(error ?: error);
         };
         if ([input isKindOfClass:[CKRecordID class]]) {
-            [self discoverUserInfoWithUserRecordID:input completionHandler:adapter];
+            [self discoverUserIdentityWithUserRecordID:input completionHandler:adapter];
         } else {
-            [self discoverUserInfoWithEmailAddress:input completionHandler:adapter];
+            [self discoverUserIdentityWithEmailAddress:input completionHandler:adapter];
         }
     }];
 }

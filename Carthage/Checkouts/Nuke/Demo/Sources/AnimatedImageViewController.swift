@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -25,10 +25,15 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
 
         collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: textViewCellReuseID)
         collectionView?.register(AnimatedImageCell.self, forCellWithReuseIdentifier: imageCellReuseID)
-        collectionView?.backgroundColor = UIColor.white
+
+        if #available(iOS 13.0, *) {
+            collectionView?.backgroundColor = UIColor.systemBackground
+        } else {
+            collectionView?.backgroundColor = UIColor.white
+        }
 
         let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        layout.sectionInset = UIEdgeInsetsMake(8, 8, 8, 8)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         layout.minimumInteritemSpacing = 8
 
         let root = "https://cloud.githubusercontent.com/assets"
@@ -60,7 +65,11 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
             var textView: UITextView! = cell.viewWithTag(14) as? UITextView
             if textView == nil {
                 textView = UITextView()
-                textView.textColor = UIColor.black
+                if #available(iOS 13.0, *) {
+                    textView.textColor = UIColor.label
+                } else {
+                    textView.textColor = UIColor.black
+                }
                 textView.font = UIFont.systemFont(ofSize: 16)
                 textView.isEditable = false
                 textView.textAlignment = .center
@@ -80,13 +89,14 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
             ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
 
             cell.activityIndicator.startAnimating()
-            Nuke.loadImage(
+            loadImage(
                 with: imageURLs[indexPath.row],
                 options: ImageLoadingOptions(transition: .fadeIn(duration: 0.33)),
                 into: cell.imageView,
-                completion: { [weak cell] _, _ in
+                completion: { [weak cell] _ in
                     cell?.activityIndicator.stopAnimating()
-            })
+                }
+            )
 
             return cell
         }
@@ -109,7 +119,7 @@ final class AnimatedImageCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         imageView = FLAnimatedImageView()
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        activityIndicator = UIActivityIndicatorView(style: .gray)
 
         super.init(frame: frame)
 
@@ -130,7 +140,7 @@ final class AnimatedImageCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.display(image: nil)
+        imageView.nuke_display(image: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -139,7 +149,7 @@ final class AnimatedImageCell: UICollectionViewCell {
 }
 
 extension FLAnimatedImageView {
-    @objc open override func display(image: Image?) {
+    @objc open override func nuke_display(image: UIImage?) {
         guard image != nil else {
             self.animatedImage = nil
             self.image = nil

@@ -15,7 +15,7 @@ someBoltsTask().then { anyObject in
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/Bolts" ~> 4.0
+pod "PromiseKit/Bolts" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -23,7 +23,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/Bolts" ~> 1.0
+github "PromiseKit/Bolts" ~> 3.0
 ```
 
 The extensions are built into their own framework:

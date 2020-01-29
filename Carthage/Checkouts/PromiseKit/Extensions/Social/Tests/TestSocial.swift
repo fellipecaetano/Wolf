@@ -15,9 +15,11 @@ class SLRequestTests: XCTestCase {
             let rq = SLRequest(forServiceType: SLServiceTypeTwitter, requestMethod: .GET, url: url, parameters: params)!
 
             let ex = expectation(description: "")
-            rq.perform().then { x -> Void in
-                XCTAssertEqual(x, Data())
+            rq.perform().done {
+                XCTAssertEqual($0.data, Data())
                 ex.fulfill()
+            }.catch {
+                XCTFail("\($0)")
             }
             waitForExpectations(timeout: 1, handler: nil)
         }
@@ -26,7 +28,7 @@ class SLRequestTests: XCTestCase {
 
 extension SLRequest {
     @objc private func pmk_performRequestWithHandler(_ handler: @escaping SLRequestHandler) {
-        after(interval: 0.0).then { _ -> Void in
+        after(seconds: 0).done { _ in
             let rsp = HTTPURLResponse(url: URL(string: "http://example.com")!, statusCode: 200, httpVersion: "2.0", headerFields: [:])
             handler(Data(), rsp, nil)
         }
@@ -37,8 +39,8 @@ extension SLRequest {
 import ObjectiveC
 
 func swizzle(_ foo: AnyClass, _ from: Selector, isClassMethod: Bool = false, body: () -> Void) {
-    let originalMethod: Method
-    let swizzledMethod: Method
+    let originalMethod: Method!
+    let swizzledMethod: Method!
 
     if isClassMethod {
         originalMethod = class_getClassMethod(foo, from)

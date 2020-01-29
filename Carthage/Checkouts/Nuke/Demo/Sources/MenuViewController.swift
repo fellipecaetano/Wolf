@@ -1,17 +1,17 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
 
-fileprivate struct MenuItem {
+private struct MenuItem {
     typealias Action = ((MenuItem) -> Void)
-    
+
     var title: String?
     var subtitle: String?
     var action: Action?
-    
+
     init(title: String?, subtitle: String? = nil, action: Action?) {
         self.title = title
         self.subtitle = subtitle
@@ -19,7 +19,7 @@ fileprivate struct MenuItem {
     }
 }
 
-fileprivate struct MenuSection {
+private struct MenuSection {
     var title: String
     var items: [MenuItem]
     
@@ -31,7 +31,7 @@ fileprivate struct MenuSection {
 
 final class MenuViewController: UITableViewController {
     fileprivate var sections = [MenuSection]()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,32 +42,41 @@ final class MenuViewController: UITableViewController {
             navigationItem.largeTitleDisplayMode = .automatic
         }
 
-        sections.append(MenuSection(title: "Basic", items: {
+        sections.append(MenuSection(title: "General", items: {
             var items = [MenuItem]()
-            
+
             items.append(MenuItem(
-                title: "Basic",
-                subtitle: "Zero config",
-                action: { [weak self] in
+                title: "Image Pipeline",
+                subtitle: "The default pipeline, configurable at runtime",
+                action: { [weak self] _ in
                     let controller = BasicDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
+                    controller.title = "Image Pipeline"
+                    self?.push(controller)
+            }))
+
+            items.append(MenuItem(
+                title: "Image Processing",
+                subtitle: "Showcases some of the built-in image processors",
+                action: { [weak self] in
+                    let controller = ImageProcessingDemoViewController()
                     controller.title = $0.title
                     self?.push(controller)
             }))
 
             items.append(MenuItem(
-                title: "Progressive Decoding",
-                subtitle: "Progressive and baseline JPEG",
-                action: { [weak self] _ in
-                    let controller = ProgressiveDecodingDemoViewController()
-                    controller.title = "Progressive JPEG"
+                title: "Disk Cache",
+                subtitle: "Aggressive disk caching enabled",
+                action: { [weak self] in
+                    let controller = DataCachingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
+                    controller.title = $0.title
                     self?.push(controller)
             }))
 
             items.append(MenuItem(
-                title: "Preheating",
-                subtitle: "Uses Preheat library",
+                title: "Prefetching",
+                subtitle: "UICollectionView Prefetching",
                 action: { [weak self] in
-                    let controller = PreheatingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
+                    let controller = PrefetchingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
                     controller.title = $0.title
                     self?.push(controller)
             }))
@@ -112,20 +121,11 @@ final class MenuViewController: UITableViewController {
             var items = [MenuItem]()
 
             items.append(MenuItem(
-                title: "MP4 (Experimental)",
-                subtitle: "Replaces GIFs with MP4",
-                action: { [weak self] in
-                    let controller = AnimatedImageUsingVideoViewController(nibName: nil, bundle: nil)
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            items.append(MenuItem(
-                title: "Disk Cache (Experimental)",
-                subtitle: "Enables aggressive disk caching",
-                action: { [weak self] in
-                    let controller = DataCachingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
+                title: "Progressive Decoding",
+                subtitle: "Progressive vs baseline JPEG",
+                action: { [weak self] _ in
+                    let controller = ProgressiveDecodingDemoViewController()
+                    controller.title = "Progressive JPEG"
                     self?.push(controller)
             }))
 
@@ -138,28 +138,37 @@ final class MenuViewController: UITableViewController {
                     self?.push(controller)
             }))
 
+            items.append(MenuItem(
+                title: "MP4 (Experimental)",
+                subtitle: "Replaces GIFs with MP4",
+                action: { [weak self] in
+                    let controller = AnimatedImageUsingVideoViewController(nibName: nil, bundle: nil)
+                    controller.title = $0.title
+                    self?.push(controller)
+            }))
+
             return items
         }()))
     }
-    
+
     func push(_ controller: UIViewController) {
         self.navigationController?.pushViewController(controller, animated: true)
     }
-    
+
     // MARK: Table View
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sections[section].items.count
     }
-    
+
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sections[section].title
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuItemCell", for: indexPath)
         let item = sections[indexPath.section].items[indexPath.row]
@@ -167,7 +176,7 @@ final class MenuViewController: UITableViewController {
         cell.detailTextLabel?.text = item.subtitle
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = sections[indexPath.section].items[indexPath.row]
         item.action?(item)

@@ -1,15 +1,9 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 @testable import Nuke
-
-private let _data = Data(count: 1000)
-
-private func _makeResponse(statusCode: Int = 200, headers: [String: String]? = nil) -> HTTPURLResponse {
-    return HTTPURLResponse(url: defaultURL, statusCode: statusCode, httpVersion: "HTTP/1.2", headerFields: headers)!
-}
 
 class ImagePipelineResumableDataTests: XCTestCase {
     private var dataLoader: _MockResumableDataLoader!
@@ -17,178 +11,34 @@ class ImagePipelineResumableDataTests: XCTestCase {
 
     override func setUp() {
         dataLoader = _MockResumableDataLoader()
-        ResumableData._cache.removeAll()
+        ResumableData.cache.removeAll()
         pipeline = ImagePipeline {
             $0.dataLoader = dataLoader
             $0.imageCache = nil
         }
     }
 
-    // Make sure that ResumableData works correctly in integration with ImagePipeline
-    func testRangeSupported() {
-        expect { fulfil in
-            let _ = pipeline.loadImage(with: defaultURL) { _, error in
-                XCTAssertNotNil(error)
-                fulfil()
-            }
-        }
+    func testThatProgressIsReported() {
+        // Given an initial request failed mid download
+
+        // Expect the progress for the first part of the download to be reported.
+        let expectedProgressInitial = expectProgress(
+            [(3799, 22789), (7598, 22789), (11397, 22789)]
+        )
+        expect(pipeline).toFailRequest(Test.request, progress: { _, completed, total in
+            expectedProgressInitial.received((completed, total))
+        })
         wait()
 
-        expect { fulfil in
-            pipeline.didFinishCollectingMetrics = { _, metrics in
-                // Test that the metrics are collected correctly.
-                XCTAssertEqual(metrics.session!.wasResumed, true)
-                XCTAssertTrue(metrics.session!.resumedDataCount! > 0)
-                XCTAssertEqual(metrics.session!.totalDownloadedDataCount, self.dataLoader.data.count)
-                fulfil()
-            }
-        }
-
-        expect { fulfil in
-            pipeline.loadImage(with: defaultURL) { response, _ in
-                XCTAssertNotNil(response)
-                fulfil()
-            }
-        }
+        // Expect progress closure to continue reporting the progress of the
+        // entire download
+        let expectedProgersRemaining = expectProgress(
+            [(15196, 22789), (18995, 22789), (22789, 22789)]
+        )
+        expect(pipeline).toLoadImage(with: Test.request, progress: { _, completed, total in
+            expectedProgersRemaining.received((completed, total))
+        })
         wait()
-    }
-}
-
-// Test ResumableData directly to make sure it makes the right decisions based
-// on HTTP flows.
-class ResumableDataTests: XCTestCase {
-    func testResumingRequst() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)!
-        var request = URLRequest(url: defaultURL)
-        data.resume(request: &request)
-
-        // Check that we've set both required "range" filed
-        XCTAssertEqual(request.allHTTPHeaderFields?["Range"], "bytes=1000-")
-        XCTAssertEqual(request.allHTTPHeaderFields?["If-Range"], "1234")
-    }
-
-    func testCheckingResumedResponse() {
-        XCTAssertTrue(ResumableData.isResumedResponse(_makeResponse(statusCode: 206)))
-
-        // Need to load new data
-        XCTAssertFalse(ResumableData.isResumedResponse(_makeResponse(statusCode: 200)))
-
-        XCTAssertFalse(ResumableData.isResumedResponse(_makeResponse(statusCode: 404)))
-    }
-
-    // MARK: - Creation (Positive)
-
-    func testCreateWithETag() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNotNil(data)
-        XCTAssertEqual(data?.data.count, 1000)
-        XCTAssertEqual(data?.validator, "1234")
-    }
-
-    func testCreateWithETagSpelledIncorrectly() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "Etag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNotNil(data)
-        XCTAssertEqual(data?.data.count, 1000)
-        XCTAssertEqual(data?.validator, "1234")
-    }
-
-    func testCreateWithLastModified() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "Last-Modified": "Wed, 21 Oct 2015 07:28:00 GMT"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNotNil(data)
-        XCTAssertEqual(data?.data.count, 1000)
-        XCTAssertEqual(data?.validator, "Wed, 21 Oct 2015 07:28:00 GMT")
-    }
-
-    func testCreateWithBothValidators() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234",
-            "Last-Modified": "Wed, 21 Oct 2015 07:28:00 GMT"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNotNil(data)
-        XCTAssertEqual(data?.data.count, 1000)
-        XCTAssertEqual(data?.validator, "1234")
-    }
-
-    // We should store resumable data not just for statuc code "200 OK", but also
-    // for "206 Partial Content" in case the resumed download fails.
-    func testCreateWithStatusCodePartialContent() {
-        let response = _makeResponse(statusCode: 206, headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNotNil(data)
-        XCTAssertEqual(data?.data.count, 1000)
-        XCTAssertEqual(data?.validator, "1234")
-    }
-
-    // MARK: - Creation (Negative)
-
-    func testCreateWithEmptyData() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: Data())
-        XCTAssertNil(data)
-    }
-
-    func testCreateWithNotHTTPResponse() {
-        let response = URLResponse(url: defaultURL, mimeType: "jpeg", expectedContentLength: 10000, textEncodingName: nil)
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNil(data)
-    }
-
-    func testCreateWithInvalidStatusCode() {
-        let response = _makeResponse(statusCode: 304, headers: [
-            "Accept-Ranges": "bytes",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNil(data)
-    }
-
-    func testCreateWithMissingValidator() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "bytes"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNil(data)
-    }
-
-    func testCreateWithMissingAcceptRanges() {
-        let response = _makeResponse(headers: [
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNil(data)
-    }
-
-    func testCreateWithAcceptRangesNone() {
-        let response = _makeResponse(headers: [
-            "Accept-Ranges": "none",
-            "ETag": "1234"]
-        )
-        let data = ResumableData(response: response, data: _data)
-        XCTAssertNil(data)
     }
 }
 
@@ -201,49 +51,57 @@ private class _MockResumableDataLoader: DataLoading {
     func loadData(with request: URLRequest, didReceiveData: @escaping (Data, URLResponse) -> Void, completion: @escaping (Error?) -> Void) -> Cancellable {
         let headers = request.allHTTPHeaderFields
 
+        func sendChunks(_ chunks: [Data], of data: Data, statusCode: Int) {
+            func sendChunk(_ chunk: Data) {
+                let response = HTTPURLResponse(
+                    url: request.url!,
+                    statusCode: statusCode,
+                    httpVersion: "HTTP/1.2",
+                    headerFields: [
+                        "Accept-Ranges": "bytes",
+                        "ETag": eTag,
+                        "Content-Range": "bytes \(chunk.startIndex)-\(chunk.endIndex)/\(data.count)",
+                        "Content-Length": "\(data.count)"
+                    ]
+                )!
+
+                didReceiveData(chunk, response)
+            }
+
+            var chunks = chunks
+            while let chunk = chunks.first {
+                chunks.removeFirst()
+                queue.async {
+                    sendChunk(chunk)
+                }
+            }
+        }
+
+
         // Check if the client already has some resumable data available.
         if let range = headers?["Range"], let validator = headers?["If-Range"] {
             let offset = _groups(regex: "bytes=(\\d*)-", in: range)[0]
             XCTAssertNotNil(offset)
 
-            XCTAssertEqual(validator, eTag)
+            XCTAssertEqual(validator, eTag, "Expected validator to be equal to ETag")
             guard validator == eTag else { // Expected ETag
-                XCTFail()
                 return _Task()
             }
 
-            // Ideally the server must also respond with  "Content-Range" and
-            // "Content-Length" but we don't use those fields
-
-            let response = HTTPURLResponse(url: request.url!, statusCode: 206, httpVersion: "HTTP/1.2", headerFields: [:])!
             // Send remaining data in chunks
-            var chunks = Array(_createChunks(for: data[Int(offset)!...], size: data.count / 10))
+            let remainingData = data[Int(offset)!...]
+            let chunks = Array(_createChunks(for: remainingData, size: data.count / 6 + 1))
 
-            // Send half of chunks away.
-            while let chunk = chunks.first {
-                chunks.removeFirst()
-                queue.async {
-                    didReceiveData(chunk, response)
-                }
-            }
+            sendChunks(chunks, of: remainingData, statusCode: 206)
             queue.async {
                 completion(nil)
             }
         } else {
-            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: "HTTP/1.2", headerFields: [
-                "Accept-Ranges": "bytes",
-                "ETag": eTag
-                ])!
-
-            var chunks = Array(_createChunks(for: data, size: data.count / 10))
+            // Send half of chunks.
+            var chunks = Array(_createChunks(for: data, size: data.count / 6 + 1))
             chunks.removeLast(chunks.count / 2)
 
-            while let chunk = chunks.first {
-                chunks.removeFirst()
-                queue.async {
-                    didReceiveData(chunk, response)
-                }
-            }
+            sendChunks(chunks, of: data, statusCode: 200)
             queue.async {
                 completion(NSError(domain: NSURLErrorDomain, code: URLError.networkConnectionLost.rawValue, userInfo: [:]))
             }

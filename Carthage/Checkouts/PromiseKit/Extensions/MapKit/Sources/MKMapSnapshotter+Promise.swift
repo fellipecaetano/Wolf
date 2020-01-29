@@ -1,5 +1,5 @@
 import MapKit
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -14,8 +14,15 @@ import PromiseKit
     import PromiseKit
 */
 extension MKMapSnapshotter {
+#if swift(>=4.2)
+    /// Starts generating the snapshot using the options set in this object.
+    public func start() -> Promise<Snapshot> {
+        return Promise { start(completionHandler: $0.resolve) }
+    }
+#else
     /// Starts generating the snapshot using the options set in this object.
     public func start() -> Promise<MKMapSnapshot> {
-        return PromiseKit.wrap(start)
+        return Promise { start(completionHandler: $0.resolve) }
     }
+#endif
 }
