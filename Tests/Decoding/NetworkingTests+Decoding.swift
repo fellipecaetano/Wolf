@@ -1,7 +1,11 @@
 import XCTest
-import OHHTTPStubs
+import Foundation
 import Nimble
 import Wolf
+import OHHTTPStubs
+#if canImport(OHHTTPStubsSwift)
+import OHHTTPStubsSwift
+#endif
 
 class UnboxNetworkingTests: XCTestCase {
     private let client = TestClient()

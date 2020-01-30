@@ -1,8 +1,11 @@
 import XCTest
 import Nimble
-import OHHTTPStubs
 import Wolf
 import Alamofire
+import OHHTTPStubs
+#if canImport(OHHTTPStubsSwift)
+import OHHTTPStubsSwift
+#endif
 
 class CacheNetworkingTests: XCTestCase {
     private let client = TestClient()
