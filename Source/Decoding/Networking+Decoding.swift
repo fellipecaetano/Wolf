@@ -1,4 +1,5 @@
 import Alamofire
+import Foundation
 
 public extension HTTPResource where Value: Decodable {
     func serialize(response: Result<Data>) -> SerializationResult<Value> {
