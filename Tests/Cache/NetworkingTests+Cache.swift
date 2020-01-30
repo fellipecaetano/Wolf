@@ -12,7 +12,7 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatObjectRequestsAreCached() {
         _ = stub(condition: isPath("/get/song")) { _ in
-            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("song.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
@@ -29,7 +29,7 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatCacheableResourcesValidateRequests() {
         _ = stub(condition: isPath("/get/song")) { _ in
-            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("song.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
@@ -48,7 +48,7 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatArrayRequestsAreCached() {
         _ = stub(condition: isPath("/get/songs")) { _ in
-            return fixture(filePath: OHPathForFile("songs.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("songs.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
@@ -65,7 +65,11 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatFailedObjectRequestsAreNotCached() {
         _ = stub(condition: isPath("/get/song")) { _ in
+            #if SWIFT_PACKAGE
+            return HTTPStubsResponse(data: Data() as Data, statusCode: 500, headers: nil)
+            #else
             return OHHTTPStubsResponse(data: Data() as Data, statusCode: 500, headers: nil)
+            #endif
         }
 
         let cache = TestURLCache()
@@ -82,7 +86,7 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatFailedArrayRequestsAreNotCached() {
         _ = stub(condition: isPath("/get/songs")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_json.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_json.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
@@ -99,12 +103,12 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatNonExpiredCachedObjectRequestsAreReturned() {
         _ = stub(condition: isPath("/get/song")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_json.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_json.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
         let resource = Song.CacheableResource.getCachedSong(cache: cache)
-        let validJSON = try? Data(contentsOf: Bundle(for: type(of: self)).url(forResource: "song", withExtension: "json")!)
+        let validJSON = try? Data(contentsOf: systemPath("song", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(), data: validJSON!, duration: 30)
 
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
@@ -125,10 +129,10 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatNonExpiredCachedArrayRequestsAreReturned() {
         _ = stub(condition: isPath("/get/songs")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_user.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_user.json", type(of: self)), headers: nil)
         }
 
-        let validJSON = try? Data(contentsOf: Bundle(for: type(of: self)).url(forResource: "songs", withExtension: "json")!)
+        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(), data: validJSON!, duration: 30)
         let cache = TestURLCache()
         let resource = Song.CacheableArrayResource.getCachedSongs(cache: cache)
@@ -151,12 +155,12 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatExpiredCachedObjectRequestsAreSkipped() {
         _ = stub(condition: isPath("/get/song")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_json.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_json.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
         let resource = Song.CacheableResource.getCachedSong(cache: cache)
-        let validJSON = try? Data(contentsOf: Bundle(for: type(of: self)).url(forResource: "songs", withExtension: "json")!)
+        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(),
                                             data: validJSON!,
                                             duration: resource.cacheDuration,
@@ -179,12 +183,12 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatExpiredCachedArrayRequestsAreSkipped() {
         _ = stub(condition: isPath("/get/songs")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_user.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_user.json", type(of: self)), headers: nil)
         }
 
         let cache = TestURLCache()
         let resource = Song.CacheableArrayResource.getCachedSongs(cache: cache)
-        let validJSON = try? Data(contentsOf: Bundle(for: type(of: self)).url(forResource: "songs", withExtension: "json")!)
+        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(),
                                             data: validJSON!,
                                             duration: resource.cacheDuration,
@@ -203,6 +207,15 @@ class CacheNetworkingTests: XCTestCase {
                 }
             }
         }
+    }
+
+
+    private func systemPath(_ resource: String, extension ext: String) -> URL? {
+        #if SWIFT_PACKAGE
+        return UrlForFile("\(resource).\(ext)")
+        #else
+        return Bundle(for: type(of: self)).url(forResource: resource, withExtension: ext)
+        #endif
     }
 }
 
