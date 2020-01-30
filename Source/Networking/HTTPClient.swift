@@ -64,10 +64,13 @@ public protocol HTTPResource {
     var parameterEncoding: ParameterEncoding { get }
 
     func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult
-    func serialize(response: Result<Data>) -> SerializationResult<Value>
+    func serialize(response result: Result<Data>) -> SerializationResult<Value>
 }
 
 public extension HTTPResource {
+
+    var rootKey: String? { return nil }
+    
     var method: HTTPMethod {
         return .get
     }

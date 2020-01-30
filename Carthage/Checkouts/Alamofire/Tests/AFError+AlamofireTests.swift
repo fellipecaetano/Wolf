@@ -1,7 +1,7 @@
 //
 //  AFError+AlamofireTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 import Alamofire
 
 extension AFError {
+
     // ParameterEncodingFailureReason
 
     var isMissingURLFailed: Bool {
@@ -34,6 +35,11 @@ extension AFError {
 
     var isJSONEncodingFailed: Bool {
         if case let .parameterEncodingFailed(reason) = self, reason.isJSONEncodingFailed { return true }
+        return false
+    }
+
+    var isPropertyListEncodingFailed: Bool {
+        if case let .parameterEncodingFailed(reason) = self, reason.isPropertyListEncodingFailed { return true }
         return false
     }
 
@@ -106,6 +112,11 @@ extension AFError {
 
     // ResponseSerializationFailureReason
 
+    var isInputDataNil: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isInputDataNil { return true }
+        return false
+    }
+
     var isInputDataNilOrZeroLength: Bool {
         if case let .responseSerializationFailed(reason) = self, reason.isInputDataNilOrZeroLength { return true }
         return false
@@ -131,13 +142,8 @@ extension AFError {
         return false
     }
 
-    var isJSONDecodingFailed: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isDecodingFailed { return true }
-        return false
-    }
-
-    var isInvalidEmptyResponse: Bool {
-        if case let .responseSerializationFailed(reason) = self, reason.isInvalidEmptyResponse { return true }
+    var isPropertyListSerializationFailed: Bool {
+        if case let .responseSerializationFailed(reason) = self, reason.isPropertyListSerializationFailed { return true }
         return false
     }
 
@@ -167,13 +173,6 @@ extension AFError {
         if case let .responseValidationFailed(reason) = self, reason.isUnacceptableStatusCode { return true }
         return false
     }
-
-    // URLRequestValidationFailure
-
-    var isBodyDataInGETRequest: Bool {
-        if case let .urlRequestValidationFailed(reason) = self, reason.isBodyDataInGETRequest { return true }
-        return false
-    }
 }
 
 // MARK: -
@@ -186,6 +185,11 @@ extension AFError.ParameterEncodingFailureReason {
 
     var isJSONEncodingFailed: Bool {
         if case .jsonEncodingFailed = self { return true }
+        return false
+    }
+
+    var isPropertyListEncodingFailed: Bool {
+        if case .propertyListEncodingFailed = self { return true }
         return false
     }
 }
@@ -262,6 +266,11 @@ extension AFError.MultipartEncodingFailureReason {
 // MARK: -
 
 extension AFError.ResponseSerializationFailureReason {
+    var isInputDataNil: Bool {
+        if case .inputDataNil = self { return true }
+        return false
+    }
+
     var isInputDataNilOrZeroLength: Bool {
         if case .inputDataNilOrZeroLength = self { return true }
         return false
@@ -287,13 +296,8 @@ extension AFError.ResponseSerializationFailureReason {
         return false
     }
 
-    var isDecodingFailed: Bool {
-        if case .decodingFailed = self { return true }
-        return false
-    }
-
-    var isInvalidEmptyResponse: Bool {
-        if case .invalidEmptyResponse = self { return true }
+    var isPropertyListSerializationFailed: Bool {
+        if case .propertyListSerializationFailed = self { return true }
         return false
     }
 }
@@ -323,72 +327,6 @@ extension AFError.ResponseValidationFailureReason {
 
     var isUnacceptableStatusCode: Bool {
         if case .unacceptableStatusCode = self { return true }
-        return false
-    }
-}
-
-// MARK: -
-
-extension AFError.ServerTrustFailureReason {
-    var isNoRequiredEvaluator: Bool {
-        if case .noRequiredEvaluator = self { return true }
-        return false
-    }
-
-    var isNoCertificatesFound: Bool {
-        if case .noCertificatesFound = self { return true }
-        return false
-    }
-
-    var isNoPublicKeysFound: Bool {
-        if case .noPublicKeysFound = self { return true }
-        return false
-    }
-
-    var isPolicyApplicationFailed: Bool {
-        if case .policyApplicationFailed = self { return true }
-        return false
-    }
-
-    var isRevocationPolicyCreationFailed: Bool {
-        if case .revocationPolicyCreationFailed = self { return true }
-        return false
-    }
-
-    var isTrustEvaluationFailed: Bool {
-        if case .trustEvaluationFailed = self { return true }
-        return false
-    }
-
-    var isDefaultEvaluationFailed: Bool {
-        if case .defaultEvaluationFailed = self { return true }
-        return false
-    }
-
-    var isHostValidationFailed: Bool {
-        if case .hostValidationFailed = self { return true }
-        return false
-    }
-
-    var isRevocationCheckFailed: Bool {
-        if case .revocationCheckFailed = self { return true }
-        return false
-    }
-
-    var isCertificatePinningFailed: Bool {
-        if case .certificatePinningFailed = self { return true }
-        return false
-    }
-
-    var isPublicKeyPinningFailed: Bool {
-        if case .publicKeyPinningFailed = self { return true }
-        return false
-    }
-}
-
-extension AFError.URLRequestValidationFailureReason {
-    var isBodyDataInGETRequest: Bool {
-        if case .bodyDataInGETRequest = self { return true }
         return false
     }
 }

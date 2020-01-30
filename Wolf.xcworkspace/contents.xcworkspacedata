@@ -8,16 +8,10 @@
       location = "group:Carthage/Checkouts/Nimble/Nimble.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Carthage/Checkouts/Unbox/Unbox.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:Carthage/Checkouts/PromiseKit/PromiseKit.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Carthage/Checkouts/Alamofire/Alamofire.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Carthage/Checkouts/IBentifiers/IBentifiers.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Carthage/Checkouts/Nuke/Nuke.xcodeproj">

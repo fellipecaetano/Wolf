@@ -1,7 +1,7 @@
 //
 //  MasterViewController.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,12 @@ import Alamofire
 import UIKit
 
 class MasterViewController: UITableViewController {
+
     // MARK: - Properties
 
-    @IBOutlet var titleImageView: UIImageView!
+    @IBOutlet weak var titleImageView: UIImageView!
 
-    var detailViewController: DetailViewController?
+    var detailViewController: DetailViewController? = nil
     var objects = NSMutableArray()
 
     private var reachability: NetworkReachabilityManager!
@@ -51,26 +52,29 @@ class MasterViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if
             let navigationController = segue.destination as? UINavigationController,
-            let detailViewController = navigationController.topViewController as? DetailViewController {
+            let detailViewController = navigationController.topViewController as? DetailViewController
+        {
             func requestForSegue(_ segue: UIStoryboardSegue) -> Request? {
                 switch segue.identifier! {
                 case "GET":
                     detailViewController.segueIdentifier = "GET"
-                    return AF.request("https://httpbin.org/get")
+                    return Alamofire.request("https://httpbin.org/get")
                 case "POST":
                     detailViewController.segueIdentifier = "POST"
-                    return AF.request("https://httpbin.org/post", method: .post)
+                    return Alamofire.request("https://httpbin.org/post", method: .post)
                 case "PUT":
                     detailViewController.segueIdentifier = "PUT"
-                    return AF.request("https://httpbin.org/put", method: .put)
+                    return Alamofire.request("https://httpbin.org/put", method: .put)
                 case "DELETE":
                     detailViewController.segueIdentifier = "DELETE"
-                    return AF.request("https://httpbin.org/delete", method: .delete)
+                    return Alamofire.request("https://httpbin.org/delete", method: .delete)
                 case "DOWNLOAD":
                     detailViewController.segueIdentifier = "DOWNLOAD"
-                    let destination = DownloadRequest.suggestedDownloadDestination(for: .cachesDirectory,
-                                                                                   in: .userDomainMask)
-                    return AF.download("https://httpbin.org/stream/1", to: destination)
+                    let destination = DownloadRequest.suggestedDownloadDestination(
+                        for: .cachesDirectory,
+                        in: .userDomainMask
+                    )
+                    return Alamofire.download("https://httpbin.org/stream/1", to: destination)
                 default:
                     return nil
                 }
@@ -86,7 +90,7 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
-            print("Reachability Status: \(reachability.status)")
+            print("Reachability Status: \(reachability.networkReachabilityStatus)")
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
@@ -94,8 +98,12 @@ class MasterViewController: UITableViewController {
     // MARK: - Private - Reachability
 
     private func monitorReachability() {
-        NetworkReachabilityManager.default?.startListening { status in
+        reachability = NetworkReachabilityManager(host: "www.apple.com")
+
+        reachability.listener = { status in
             print("Reachability Status Changed: \(status)")
         }
+
+        reachability.startListening()
     }
 }

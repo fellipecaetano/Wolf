@@ -1,7 +1,7 @@
 //
 //  TLSEvaluationTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,14 @@ import Foundation
 import XCTest
 
 private struct TestCertificates {
-    static let rootCA = TestCertificates.certificate(filename: "expired.badssl.com-root-ca")
-    static let intermediateCA1 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-1")
-    static let intermediateCA2 = TestCertificates.certificate(filename: "expired.badssl.com-intermediate-ca-2")
-    static let leaf = TestCertificates.certificate(filename: "expired.badssl.com-leaf")
+    static let rootCA = TestCertificates.certificate(withFileName: "expired.badssl.com-root-ca")
+    static let intermediateCA1 = TestCertificates.certificate(withFileName: "expired.badssl.com-intermediate-ca-1")
+    static let intermediateCA2 = TestCertificates.certificate(withFileName: "expired.badssl.com-intermediate-ca-2")
+    static let leaf = TestCertificates.certificate(withFileName: "expired.badssl.com-leaf")
 
-    static func certificate(filename: String) -> SecCertificate {
-        class Locator {}
-        let filePath = Bundle(for: Locator.self).path(forResource: filename, ofType: "cer")!
+    static func certificate(withFileName fileName: String) -> SecCertificate {
+        class Locater {}
+        let filePath = Bundle(for: Locater.self).path(forResource: fileName, ofType: "cer")!
         let data = try! Data(contentsOf: URL(fileURLWithPath: filePath))
         let certificate = SecCertificateCreateWithData(nil, data as CFData)!
 
@@ -44,7 +44,26 @@ private struct TestCertificates {
 
 // MARK: -
 
-final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
+private struct TestPublicKeys {
+    static let rootCA = TestPublicKeys.publicKey(for: TestCertificates.rootCA)
+    static let intermediateCA1 = TestPublicKeys.publicKey(for: TestCertificates.intermediateCA1)
+    static let intermediateCA2 = TestPublicKeys.publicKey(for: TestCertificates.intermediateCA2)
+    static let leaf = TestPublicKeys.publicKey(for: TestCertificates.leaf)
+
+    static func publicKey(for certificate: SecCertificate) -> SecKey {
+        let policy = SecPolicyCreateBasicX509()
+        var trust: SecTrust?
+        SecTrustCreateWithCertificates(certificate, policy, &trust)
+
+        let publicKey = SecTrustCopyPublicKey(trust!)!
+
+        return publicKey
+    }
+}
+
+// MARK: -
+
+class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     private let expiredURLString = "https://expired.badssl.com/"
     private let expiredHost = "expired.badssl.com"
 
@@ -66,10 +85,15 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     // MARK: Default Behavior Tests
 
     func testThatExpiredCertificateRequestFailsWithNoServerTrustPolicy() {
+        // On iOS 8.0 - 8.4, this test passes by itself, but fails for no explanable reason when run with the rest of
+        // the suite. Because of this, there's no reliable way to run all these tests together pre iOS 9, so let's
+        // disable this one when run against the entire test suite.
+        guard #available(iOS 9.0, *) else { return }
+
         // Given
         let expectation = self.expectation(description: "\(expiredURLString)")
-        let manager = Session(configuration: configuration)
-        var error: AFError?
+        let manager = SessionManager(configuration: configuration)
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -83,9 +107,9 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error)
 
-        if let error = error?.underlyingError as? URLError {
+        if let error = error as? URLError {
             XCTAssertEqual(error.code, .serverCertificateUntrusted)
-        } else if let error = error?.underlyingError as NSError? {
+        } else if let error = error as NSError? {
             XCTAssertEqual(error.domain, kCFErrorDomainCFNetwork as String)
             XCTAssertEqual(error.code, Int(CFNetworkErrors.cfErrorHTTPSProxyConnectionFailure.rawValue))
         } else {
@@ -99,7 +123,7 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Given
         let expectation = self.expectation(description: "\(revokedURLString)")
-        let manager = Session(configuration: configuration)
+        let manager = SessionManager(configuration: configuration)
 
         var error: Error?
 
@@ -125,12 +149,14 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithDefaultServerTrustPolicy() {
         // Given
-        let evaluators = [expiredHost: DefaultTrustEvaluator(validateHost: true)]
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let policies = [expiredHost: ServerTrustPolicy.performDefaultEvaluation(validateHost: true)]
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -144,15 +170,10 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // Then
         XCTAssertNotNil(error, "error should not be nil")
 
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                XCTAssertTrue(reason.isHostValidationFailed, "should be .hostValidationFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
@@ -161,11 +182,13 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         // test is left for debugging purposes only. Should not be committed into the test suite while enabled.
 
         // Given
-        let defaultPolicy = DefaultTrustEvaluator()
-        let evaluators = [revokedHost: defaultPolicy]
+        let defaultPolicy = ServerTrustPolicy.performDefaultEvaluation(validateHost: true)
+        let policies = [revokedHost: defaultPolicy]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(revokedURLString)")
         var error: Error?
@@ -192,15 +215,20 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = RevocationTrustEvaluator()
+        let policy = ServerTrustPolicy.performRevokedEvaluation(
+            validateHost: true,
+            revocationFlags: kSecRevocationUseAnyAvailableMethod
+        )
 
-        let evaluators = [expiredHost: policy]
+        let policies = [expiredHost: policy]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -213,30 +241,30 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
     func testThatRevokedCertificateRequestFailsWithRevokedServerTrustPolicy() {
         // Given
-        let policy = RevocationTrustEvaluator()
+        let policy = ServerTrustPolicy.performRevokedEvaluation(
+            validateHost: true,
+            revocationFlags: kSecRevocationUseAnyAvailableMethod
+        )
 
-        let evaluators = [revokedHost: policy]
+        let policies = [revokedHost: policy]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(revokedURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(revokedURLString)
@@ -249,18 +277,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                // Test seems flaky and can result in either of these failures, perhaps due to the OS actually checking?
-                XCTAssertTrue(reason.isDefaultEvaluationFailed || reason.isRevocationCheckFailed,
-                              "should be .defaultEvaluationFailed or .revocationCheckFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
@@ -269,13 +290,17 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestFailsWhenPinningLeafCertificateWithCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
-        let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -288,33 +313,34 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
     func testThatExpiredCertificateRequestFailsWhenPinningAllCertificatesWithCertificateChainValidation() {
         // Given
-        let certificates = [TestCertificates.leaf,
-                            TestCertificates.intermediateCA1,
-                            TestCertificates.intermediateCA2,
-                            TestCertificates.rootCA]
+        let certificates = [
+            TestCertificates.leaf,
+            TestCertificates.intermediateCA1,
+            TestCertificates.intermediateCA2,
+            TestCertificates.rootCA
+        ]
 
-        let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates)]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: true, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -327,26 +353,25 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainOrHostValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafCertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.leaf]
-        let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -364,13 +389,17 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainOrHostValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCACertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.intermediateCA2]
-        let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false, validateHost: false)]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -391,10 +420,14 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCACertificateWithoutCertificateChainValidation() {
         // Given
         let certificates = [TestCertificates.rootCA]
-        let evaluators = [expiredHost: PinnedCertificatesTrustEvaluator(certificates: certificates, performDefaultValidation: false)]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinCertificates(certificates: certificates, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -420,14 +453,18 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestFailsWhenPinningLeafPublicKeyWithCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.leaf].af.publicKeys
-        let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys)]
+        let publicKeys = [TestPublicKeys.leaf]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: true, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
-        var error: AFError?
+        var error: Error?
 
         // When
         manager.request(expiredURLString)
@@ -440,26 +477,25 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNotNil(error, "error should not be nil")
-        XCTAssertEqual(error?.isServerTrustEvaluationError, true)
 
-        if case let .serverTrustEvaluationFailed(reason)? = error {
-            if #available(iOS 12, macOS 10.14, tvOS 12, watchOS 5, *) {
-                XCTAssertTrue(reason.isTrustEvaluationFailed, "should be .trustEvaluationFailed")
-            } else {
-                XCTAssertTrue(reason.isDefaultEvaluationFailed, "should be .defaultEvaluationFailed")
-            }
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
         } else {
-            XCTFail("error should be .serverTrustEvaluationFailed")
+            XCTFail("error should be an URLError")
         }
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainOrHostValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningLeafPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.leaf].af.publicKeys
-        let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
+        let publicKeys = [TestPublicKeys.leaf]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -477,13 +513,17 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
         XCTAssertNil(error, "error should be nil")
     }
 
-    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainOrHostValidation() {
+    func testThatExpiredCertificateRequestSucceedsWhenPinningIntermediateCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.intermediateCA2].af.publicKeys
-        let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
+        let publicKeys = [TestPublicKeys.intermediateCA2]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -503,11 +543,15 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenPinningRootCAPublicKeyWithoutCertificateChainValidation() {
         // Given
-        let keys = [TestCertificates.rootCA].af.publicKeys
-        let evaluators = [expiredHost: PublicKeysTrustEvaluator(keys: keys, performDefaultValidation: false, validateHost: false)]
+        let publicKeys = [TestPublicKeys.rootCA]
+        let policies: [String: ServerTrustPolicy] = [
+            expiredHost: .pinPublicKeys(publicKeys: publicKeys, validateCertificateChain: false, validateHost: true)
+        ]
 
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -533,9 +577,11 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
     func testThatExpiredCertificateRequestSucceedsWhenDisablingEvaluation() {
         // Given
-        let evaluators = [expiredHost: DisabledEvaluator()]
-        let manager = Session(configuration: configuration,
-                              serverTrustManager: ServerTrustManager(evaluators: evaluators))
+        let policies = [expiredHost: ServerTrustPolicy.disableEvaluation]
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
 
         let expectation = self.expectation(description: "\(expiredURLString)")
         var error: Error?
@@ -551,5 +597,73 @@ final class TLSEvaluationExpiredLeafCertificateTestCase: BaseTestCase {
 
         // Then
         XCTAssertNil(error, "error should be nil")
+    }
+
+    // MARK: Server Trust Policy - Custom Evaluation Tests
+
+    func testThatExpiredCertificateRequestSucceedsWhenCustomEvaluationReturnsTrue() {
+        // Given
+        let policies = [
+            expiredHost: ServerTrustPolicy.customEvaluation { _, _ in
+                // Implement a custom evaluation routine here...
+                return true
+            }
+        ]
+
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = self.expectation(description: "\(expiredURLString)")
+        var error: Error?
+
+        // When
+        manager.request(expiredURLString)
+            .response { resp in
+                error = resp.error
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNil(error, "error should be nil")
+    }
+
+    func testThatExpiredCertificateRequestFailsWhenCustomEvaluationReturnsFalse() {
+        // Given
+        let policies = [
+            expiredHost: ServerTrustPolicy.customEvaluation { _, _ in
+                // Implement a custom evaluation routine here...
+                return false
+            }
+        ]
+
+        let manager = SessionManager(
+            configuration: configuration,
+            serverTrustPolicyManager: ServerTrustPolicyManager(policies: policies)
+        )
+
+        let expectation = self.expectation(description: "\(expiredURLString)")
+        var error: Error?
+
+        // When
+        manager.request(expiredURLString)
+            .response { resp in
+                error = resp.error
+                expectation.fulfill()
+            }
+
+        waitForExpectations(timeout: timeout, handler: nil)
+
+        // Then
+        XCTAssertNotNil(error, "error should not be nil")
+
+        if let error = error as? URLError {
+            XCTAssertEqual(error.code, .cancelled, "code should be cancelled")
+        } else {
+            XCTFail("error should be an URLError")
+        }
     }
 }

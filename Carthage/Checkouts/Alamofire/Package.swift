@@ -2,7 +2,7 @@
 //
 //  Package.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,17 @@
 
 import PackageDescription
 
-let package = Package(name: "Alamofire",
-                      platforms: [.macOS(.v10_12),
-                                  .iOS(.v10),
-                                  .tvOS(.v10),
-                                  .watchOS(.v3)],
-                      products: [.library(name: "Alamofire",
-                                          targets: ["Alamofire"])],
-                      targets: [.target(name: "Alamofire",
-                                        path: "Source")],
-                      swiftLanguageVersions: [.v5])
+let package = Package(
+    name: "Alamofire",
+    products: [
+        .library(
+            name: "Alamofire",
+            targets: ["Alamofire"])
+    ],
+    targets: [
+        .target(
+            name: "Alamofire",
+            path: "Source")
+    ],
+    swiftLanguageVersions: [.v4, .v5]
+)

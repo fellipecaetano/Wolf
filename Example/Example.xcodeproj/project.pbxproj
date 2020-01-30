@@ -26,8 +26,6 @@
 		B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D81DE208610058787F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667DC1DE208610058787F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; };
 		B3F667DD1DE208610058787F /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; };
-		B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667E21DE208610058787F /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; };
 		B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667E51DE208610058787F /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E41DE208610058787F /* Wolf.framework */; };
@@ -43,7 +41,6 @@
 			files = (
 				B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */,
 				B3F667D41DE208610058787F /* OHHTTPStubs.framework in Embed Frameworks */,
-				B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */,
 				B3F667E61DE208610058787F /* Wolf.framework in Embed Frameworks */,
 				B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */,
 				B3F667D71DE208610058787F /* Unbox.framework in Embed Frameworks */,
@@ -84,7 +81,6 @@
 			files = (
 				B3F667D91DE208610058787F /* PromiseKit.framework in Frameworks */,
 				B3F667D31DE208610058787F /* OHHTTPStubs.framework in Frameworks */,
-				B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */,
 				B3F667E51DE208610058787F /* Wolf.framework in Frameworks */,
 				B3F667E21DE208610058787F /* Nuke.framework in Frameworks */,
 				B3F667D61DE208610058787F /* Unbox.framework in Frameworks */,
@@ -212,6 +208,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -371,11 +368,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -390,11 +387,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

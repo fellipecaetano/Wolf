@@ -64,4 +64,3 @@ jobs:
       - uses: actions/checkout@v1
       - name: SPM Build
         run: swift build
-

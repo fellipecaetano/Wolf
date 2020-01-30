@@ -1,7 +1,7 @@
 //
 //  CacheTests.swift
 //
-//  Copyright (c) 2014-2018 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2014 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ import XCTest
 ///
 /// For information about `Cache-Control` HTTP headers, please refer to RFC 2616 - Section 14.9.
 class CacheTestCase: BaseTestCase {
+
     // MARK: -
 
     struct CacheControl {
@@ -56,19 +57,21 @@ class CacheTestCase: BaseTestCase {
         static let noStore = "no-store"
 
         static var allValues: [String] {
-            return [CacheControl.publicControl,
-                    CacheControl.privateControl,
-                    CacheControl.maxAgeNonExpired,
-                    CacheControl.maxAgeExpired,
-                    CacheControl.noCache,
-                    CacheControl.noStore]
+            return [
+                CacheControl.publicControl,
+                CacheControl.privateControl,
+                CacheControl.maxAgeNonExpired,
+                CacheControl.maxAgeExpired,
+                CacheControl.noCache,
+                CacheControl.noStore
+            ]
         }
     }
 
     // MARK: - Properties
 
     var urlCache: URLCache!
-    var manager: Session!
+    var manager: SessionManager!
 
     let urlString = "https://httpbin.org/response-headers"
     let requestTimeout: TimeInterval = 30
@@ -83,30 +86,22 @@ class CacheTestCase: BaseTestCase {
 
         urlCache = {
             let capacity = 50 * 1024 * 1024 // MBs
-            // swiftformat:disable indent
-            #if swift(>=5.1)
-            if #available(OSX 10.15, iOS 13.0, watchOS 6.0, tvOS 13.0, *) {
-                return URLCache(memoryCapacity: capacity, diskCapacity: capacity)
-            } else {
-                return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
-            }
-            #else
-            return URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
-            #endif
-            // swiftformat:enable indent
+            let urlCache = URLCache(memoryCapacity: capacity, diskCapacity: capacity, diskPath: nil)
+
+            return urlCache
         }()
 
         manager = {
             let configuration: URLSessionConfiguration = {
                 let configuration = URLSessionConfiguration.default
-                configuration.headers = HTTPHeaders.default
+                configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
                 configuration.requestCachePolicy = .useProtocolCachePolicy
                 configuration.urlCache = urlCache
 
                 return configuration
             }()
 
-            let manager = Session(configuration: configuration)
+            let manager = SessionManager(configuration: configuration)
 
             return manager
         }()
@@ -126,13 +121,13 @@ class CacheTestCase: BaseTestCase {
     // MARK: - Cache Priming Methods
 
     /**
-     Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
+        Executes a request for all `Cache-Control` header values to load the response into the `URLCache`.
 
-     This implementation leverages dispatch groups to execute all the requests as well as wait an additional
-     second before returning. This ensures the cache contains responses for all requests that are at least
-     one second old. This allows the tests to distinguish whether the subsequent responses come from the cache
-     or the network based on the timestamp of the response.
-     */
+        This implementation leverages dispatch groups to execute all the requests as well as wait an additional
+        second before returning. This ensures the cache contains responses for all requests that are at least
+        one second old. This allows the tests to distinguish whether the subsequent responses come from the cache
+        or the network based on the timestamp of the response.
+    */
     func primeCachedResponses() {
         let dispatchGroup = DispatchGroup()
         let serialQueue = DispatchQueue(label: "org.alamofire.cache-tests")
@@ -140,34 +135,36 @@ class CacheTestCase: BaseTestCase {
         for cacheControl in CacheControl.allValues {
             dispatchGroup.enter()
 
-            let request = startRequest(cacheControl: cacheControl,
-                                       queue: serialQueue,
-                                       completion: { _, response in
-                                           let timestamp = response!.allHeaderFields["Date"] as! String
-                                           self.timestamps[cacheControl] = timestamp
+            let request = startRequest(
+                cacheControl: cacheControl,
+                queue: serialQueue,
+                completion: { _, response in
+                    let timestamp = response!.allHeaderFields["Date"] as! String
+                    self.timestamps[cacheControl] = timestamp
 
-                                           dispatchGroup.leave()
-            })
+                    dispatchGroup.leave()
+                }
+            )
 
             requests[cacheControl] = request
         }
 
         // Wait for all requests to complete
-        _ = dispatchGroup.wait(timeout: .now() + 30)
+        _ = dispatchGroup.wait(timeout: DispatchTime.now() + Double(Int64(30.0 * Float(NSEC_PER_SEC))) / Double(NSEC_PER_SEC))
 
-        // Pause for 1 additional second to ensure all timestamps will be different
+        // Pause for 2 additional seconds to ensure all timestamps will be different
         dispatchGroup.enter()
-        serialQueue.asyncAfter(deadline: .now() + 1) {
+        serialQueue.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2.0 * Float(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
             dispatchGroup.leave()
         }
 
-        // Wait for our 1 second pause to complete
-        _ = dispatchGroup.wait(timeout: .now() + 1.25)
+        // Wait for our 2 second pause to complete
+        _ = dispatchGroup.wait(timeout: DispatchTime.now() + Double(Int64(10.0 * Float(NSEC_PER_SEC))) / Double(NSEC_PER_SEC))
     }
 
     // MARK: - Request Helper Methods
 
-    func urlRequest(cacheControl: String, cachePolicy: URLRequest.CachePolicy) -> URLRequest {
+    func urlRequest(cacheControl: String, cachePolicy: NSURLRequest.CachePolicy) -> URLRequest {
         let parameters = ["Cache-Control": cacheControl]
         let url = URL(string: urlString)!
 
@@ -182,27 +179,33 @@ class CacheTestCase: BaseTestCase {
     }
 
     @discardableResult
-    func startRequest(cacheControl: String,
-                      cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy,
-                      queue: DispatchQueue = .main,
-                      completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
-        -> URLRequest {
+    func startRequest(
+        cacheControl: String,
+        cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy,
+        queue: DispatchQueue = DispatchQueue.main,
+        completion: @escaping (URLRequest?, HTTPURLResponse?) -> Void)
+        -> URLRequest
+    {
         let urlRequest = self.urlRequest(cacheControl: cacheControl, cachePolicy: cachePolicy)
         let request = manager.request(urlRequest)
 
-        request.response(queue: queue,
-                         completionHandler: { response in
-                             completion(response.request, response.response)
-        })
+        request.response(
+            queue: queue,
+            completionHandler: { response in
+                completion(response.request, response.response)
+            }
+        )
 
         return urlRequest
     }
 
     // MARK: - Test Execution and Verification
 
-    func executeTest(cachePolicy: URLRequest.CachePolicy,
-                     cacheControl: String,
-                     shouldReturnCachedResponse: Bool) {
+    func executeTest(
+        cachePolicy: NSURLRequest.CachePolicy,
+        cacheControl: String,
+        shouldReturnCachedResponse: Bool)
+    {
         // Given
         let expectation = self.expectation(description: "GET request to httpbin")
         var response: HTTPURLResponse?
@@ -236,6 +239,20 @@ class CacheTestCase: BaseTestCase {
         }
     }
 
+    // MARK: - Cache Helper Methods
+
+    private func isCachedResponseForNoStoreHeaderExpected() -> Bool {
+    #if os(iOS)
+        if #available(iOS 8.3, *) {
+            return false
+        } else {
+            return true
+        }
+    #else
+        return false
+    #endif
+    }
+
     // MARK: - Tests
 
     func testURLCacheContainsCachedResponsesForAllRequests() {
@@ -261,11 +278,16 @@ class CacheTestCase: BaseTestCase {
         XCTAssertNotNil(maxAgeNonExpiredResponse, "\(CacheControl.maxAgeNonExpired) response should not be nil")
         XCTAssertNotNil(maxAgeExpiredResponse, "\(CacheControl.maxAgeExpired) response should not be nil")
         XCTAssertNotNil(noCacheResponse, "\(CacheControl.noCache) response should not be nil")
-        XCTAssertNil(noStoreResponse, "\(CacheControl.noStore) response should be nil")
+
+        if isCachedResponseForNoStoreHeaderExpected() {
+            XCTAssertNotNil(noStoreResponse, "\(CacheControl.noStore) response should not be nil")
+        } else {
+            XCTAssertNil(noStoreResponse, "\(CacheControl.noStore) response should be nil")
+        }
     }
 
     func testDefaultCachePolicy() {
-        let cachePolicy: URLRequest.CachePolicy = .useProtocolCachePolicy
+        let cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy
 
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.publicControl, shouldReturnCachedResponse: false)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.privateControl, shouldReturnCachedResponse: false)
@@ -276,7 +298,7 @@ class CacheTestCase: BaseTestCase {
     }
 
     func testIgnoreLocalCacheDataPolicy() {
-        let cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData
+        let cachePolicy: NSURLRequest.CachePolicy = .reloadIgnoringLocalCacheData
 
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.publicControl, shouldReturnCachedResponse: false)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.privateControl, shouldReturnCachedResponse: false)
@@ -287,18 +309,23 @@ class CacheTestCase: BaseTestCase {
     }
 
     func testUseLocalCacheDataIfExistsOtherwiseLoadFromNetworkPolicy() {
-        let cachePolicy: URLRequest.CachePolicy = .returnCacheDataElseLoad
+        let cachePolicy: NSURLRequest.CachePolicy = .returnCacheDataElseLoad
 
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.publicControl, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.privateControl, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.maxAgeNonExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.maxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noCache, shouldReturnCachedResponse: true)
-        executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noStore, shouldReturnCachedResponse: false)
+
+        if isCachedResponseForNoStoreHeaderExpected() {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noStore, shouldReturnCachedResponse: true)
+        } else {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noStore, shouldReturnCachedResponse: false)
+        }
     }
 
     func testUseLocalCacheDataAndDontLoadFromNetworkPolicy() {
-        let cachePolicy: URLRequest.CachePolicy = .returnCacheDataDontLoad
+        let cachePolicy: NSURLRequest.CachePolicy = .returnCacheDataDontLoad
 
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.publicControl, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.privateControl, shouldReturnCachedResponse: true)
@@ -306,19 +333,23 @@ class CacheTestCase: BaseTestCase {
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.maxAgeExpired, shouldReturnCachedResponse: true)
         executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noCache, shouldReturnCachedResponse: true)
 
-        // Given
-        let expectation = self.expectation(description: "GET request to httpbin")
-        var response: HTTPURLResponse?
+        if isCachedResponseForNoStoreHeaderExpected() {
+            executeTest(cachePolicy: cachePolicy, cacheControl: CacheControl.noStore, shouldReturnCachedResponse: true)
+        } else {
+            // Given
+            let expectation = self.expectation(description: "GET request to httpbin")
+            var response: HTTPURLResponse?
 
-        // When
-        startRequest(cacheControl: CacheControl.noStore, cachePolicy: cachePolicy) { _, responseResponse in
-            response = responseResponse
-            expectation.fulfill()
+            // When
+            startRequest(cacheControl: CacheControl.noStore, cachePolicy: cachePolicy) { _, responseResponse in
+                response = responseResponse
+                expectation.fulfill()
+            }
+
+            waitForExpectations(timeout: timeout, handler: nil)
+
+            // Then
+            XCTAssertNil(response, "response should be nil")
         }
-
-        waitForExpectations(timeout: timeout, handler: nil)
-
-        // Then
-        XCTAssertNil(response, "response should be nil")
     }
 }
