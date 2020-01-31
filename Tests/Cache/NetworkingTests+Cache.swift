@@ -108,7 +108,7 @@ class CacheNetworkingTests: XCTestCase {
 
         let cache = TestURLCache()
         let resource = Song.CacheableResource.getCachedSong(cache: cache)
-        let validJSON = try? Data(contentsOf: systemPath("song", extension: "json")!)
+        let validJSON = try? Data(contentsOf: resourcePath("song", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(), data: validJSON!, duration: 30)
 
         cachedResponse.store(for: client.request(resource).request!, cache: cache)
@@ -132,7 +132,7 @@ class CacheNetworkingTests: XCTestCase {
             return fixture(filePath: GetPathForFile("invalid_user.json", type(of: self)), headers: nil)
         }
 
-        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
+        let validJSON = try? Data(contentsOf: resourcePath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(), data: validJSON!, duration: 30)
         let cache = TestURLCache()
         let resource = Song.CacheableArrayResource.getCachedSongs(cache: cache)
@@ -160,7 +160,7 @@ class CacheNetworkingTests: XCTestCase {
 
         let cache = TestURLCache()
         let resource = Song.CacheableResource.getCachedSong(cache: cache)
-        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
+        let validJSON = try? Data(contentsOf: resourcePath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(),
                                             data: validJSON!,
                                             duration: resource.cacheDuration,
@@ -188,7 +188,7 @@ class CacheNetworkingTests: XCTestCase {
 
         let cache = TestURLCache()
         let resource = Song.CacheableArrayResource.getCachedSongs(cache: cache)
-        let validJSON = try? Data(contentsOf: systemPath("songs", extension: "json")!)
+        let validJSON = try? Data(contentsOf: resourcePath("songs", extension: "json")!)
         let cachedResponse = CachedResponse(response: URLResponse(),
                                             data: validJSON!,
                                             duration: resource.cacheDuration,
@@ -209,8 +209,7 @@ class CacheNetworkingTests: XCTestCase {
         }
     }
 
-
-    private func systemPath(_ resource: String, extension ext: String) -> URL? {
+    private func resourcePath(_ resource: String, extension ext: String) -> URL? {
         #if SWIFT_PACKAGE
         return UrlForFile("\(resource).\(ext)")
         #else

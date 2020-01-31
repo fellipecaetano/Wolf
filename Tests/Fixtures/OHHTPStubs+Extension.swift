@@ -5,7 +5,6 @@ import OHHTTPStubs
     import OHHTTPStubsSwift
 #endif
 
-
 public func UrlForFile(_ fileName: String) -> URL {
     let baseURL = localURLForTest()
     guard let enumerator = FileManager.default.enumerator(
