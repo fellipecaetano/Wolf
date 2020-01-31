@@ -21,7 +21,6 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testSuccessfulRequestForObject() {
         _ = stub(condition: isPath("/song")) { _ in
-
             return fixture(filePath: GetPathForFile("song.json", type(of: self)), headers: nil)
         }
 
