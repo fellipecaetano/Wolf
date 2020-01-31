@@ -58,6 +58,7 @@ public protocol HTTPResource {
     associatedtype Value
 
     var path: String { get }
+    var rootKey: String? { get }
     var method: HTTPMethod { get }
     var parameters: Parameters? { get }
     var headers: [String: String]? { get }
@@ -69,23 +70,15 @@ public protocol HTTPResource {
 
 public extension HTTPResource {
 
-    var rootKey: String? { return nil }
+    var rootKey: String? { nil }
     
-    var method: HTTPMethod {
-        return .get
-    }
+    var method: HTTPMethod { .get }
 
-    var parameters: Parameters? {
-        return nil
-    }
+    var parameters: Parameters? { nil }
 
-    var headers: [String: String]? {
-        return nil
-    }
+    var headers: [String: String]? { nil }
 
-    var parameterEncoding: ParameterEncoding {
-        return URLEncoding()
-    }
+    var parameterEncoding: ParameterEncoding { URLEncoding() }
 
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in

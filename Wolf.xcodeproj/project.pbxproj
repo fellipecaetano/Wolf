@@ -32,11 +32,6 @@
 		5500EA411DDD2DBA00DC6880 /* users.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA301DDD2DBA00DC6880 /* users.json */; };
 		5500EA421DDD2DBA00DC6880 /* Test.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA321DDD2DBA00DC6880 /* Test.storyboard */; };
 		5500EA431DDD2DBA00DC6880 /* NetworkingTests+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA341DDD2DBA00DC6880 /* NetworkingTests+Decoding.swift */; };
-		5524612223E2726500C39AF4 /* enveloped_bands.json in Resources */ = {isa = PBXBuildFile; fileRef = 5524612123E2726500C39AF4 /* enveloped_bands.json */; };
-		5524612423E272E400C39AF4 /* invalid_band.json in Resources */ = {isa = PBXBuildFile; fileRef = 5524612323E272E400C39AF4 /* invalid_band.json */; };
-		5524612623E2731E00C39AF4 /* band.json in Resources */ = {isa = PBXBuildFile; fileRef = 5524612523E2731E00C39AF4 /* band.json */; };
-		5524612823E2733700C39AF4 /* bands.json in Resources */ = {isa = PBXBuildFile; fileRef = 5524612723E2733700C39AF4 /* bands.json */; };
-		5524612A23E28D7600C39AF4 /* JSONEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5524612923E28D7600C39AF4 /* JSONEnvelope.swift */; };
 		B312D7301EBB7E2800770DA6 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B312D72F1EBB7E2800770DA6 /* Alamofire.framework */; };
 		B312D7321EBB7E2C00770DA6 /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B312D7311EBB7E2C00770DA6 /* PromiseKit.framework */; };
 		B352102C1E1C316C005EA2EF /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B352102B1E1C316C005EA2EF /* Nimble.framework */; };
@@ -84,11 +79,6 @@
 		5500EA301DDD2DBA00DC6880 /* users.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = users.json; sourceTree = "<group>"; };
 		5500EA321DDD2DBA00DC6880 /* Test.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Test.storyboard; sourceTree = "<group>"; };
 		5500EA341DDD2DBA00DC6880 /* NetworkingTests+Decoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkingTests+Decoding.swift"; sourceTree = "<group>"; };
-		5524612123E2726500C39AF4 /* enveloped_bands.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = enveloped_bands.json; sourceTree = "<group>"; };
-		5524612323E272E400C39AF4 /* invalid_band.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = invalid_band.json; sourceTree = "<group>"; };
-		5524612523E2731E00C39AF4 /* band.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = band.json; sourceTree = "<group>"; };
-		5524612723E2733700C39AF4 /* bands.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bands.json; sourceTree = "<group>"; };
-		5524612923E28D7600C39AF4 /* JSONEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEnvelope.swift; sourceTree = "<group>"; };
 		B312D72F1EBB7E2800770DA6 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-cezsfokhtfuvvzcmzznursokyuvs/Build/Products/Debug-iphonesimulator/Alamofire.framework"; sourceTree = "<group>"; };
 		B312D7311EBB7E2C00770DA6 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-cezsfokhtfuvvzcmzznursokyuvs/Build/Products/Debug-iphonesimulator/PromiseKit.framework"; sourceTree = "<group>"; };
 		B312D7331EBB7E3500770DA6 /* Unbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Unbox.framework; path = "../../../Library/Developer/Xcode/DerivedData/Wolf-cezsfokhtfuvvzcmzznursokyuvs/Build/Products/Debug-iphonesimulator/Unbox.framework"; sourceTree = "<group>"; };
@@ -195,7 +185,6 @@
 			isa = PBXGroup;
 			children = (
 				5500EA0B1DDD2A9200DC6880 /* HTTPClient.swift */,
-				5524612923E28D7600C39AF4 /* JSONEnvelope.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -257,12 +246,8 @@
 		5500EA271DDD2DBA00DC6880 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				5524612523E2731E00C39AF4 /* band.json */,
-				5524612723E2733700C39AF4 /* bands.json */,
-				5524612123E2726500C39AF4 /* enveloped_bands.json */,
 				5500EA281DDD2DBA00DC6880 /* enveloped_songs.json */,
 				5500EA291DDD2DBA00DC6880 /* enveloped_users.json */,
-				5524612323E272E400C39AF4 /* invalid_band.json */,
 				5500EA2A1DDD2DBA00DC6880 /* invalid_json.json */,
 				5500EA2B1DDD2DBA00DC6880 /* invalid_song.json */,
 				5500EA2C1DDD2DBA00DC6880 /* invalid_user.json */,
@@ -380,10 +365,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5524612623E2731E00C39AF4 /* band.json in Resources */,
-				5524612423E272E400C39AF4 /* invalid_band.json in Resources */,
-				5524612823E2733700C39AF4 /* bands.json in Resources */,
-				5524612223E2726500C39AF4 /* enveloped_bands.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,7 +397,6 @@
 				5500EA121DDD2A9200DC6880 /* CachedResponse.swift in Sources */,
 				16F8E8A823E23B5000BA8EAD /* Networking+Decoding.swift in Sources */,
 				5500EA171DDD2A9200DC6880 /* Networking+PromiseKit.swift in Sources */,
-				5524612A23E28D7600C39AF4 /* JSONEnvelope.swift in Sources */,
 				5500EA141DDD2A9200DC6880 /* HTTPClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
