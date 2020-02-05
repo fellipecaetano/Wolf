@@ -9,14 +9,19 @@ import OHHTTPStubsSwift
 
 class UnboxNetworkingTests: XCTestCase {
     private let client = TestClient()
+    private var cache: [String: URL] = [:]
 
     override func tearDown() {
-        OHHTTPStubs.removeAllStubs()
+        #if SWIFT_PACKAGE
+            HTTPStubs.removeAllStubs()
+        #else
+            OHHTTPStubs.removeAllStubs()
+        #endif
     }
 
     func testSuccessfulRequestForObject() {
         _ = stub(condition: isPath("/song")) { _ in
-            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("song.json", type(of: self)), headers: nil)
         }
 
         waitUntil { done in
@@ -29,7 +34,7 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testSuccessfulRequestForFlatArray() {
         _ = stub(condition: isPath("/songs")) { _ in
-            return fixture(filePath: OHPathForFile("songs.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("songs.json", type(of: self)), headers: nil)
         }
 
         waitUntil { done in
@@ -43,7 +48,7 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testSuccessfulRequestForEnvelopedArray() {
         _ = stub(condition: isPath("/songs/enveloped")) { _ in
-            return fixture(filePath: OHPathForFile("enveloped_songs.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("enveloped_songs.json", type(of: self)), headers: nil)
         }
 
         waitUntil { done in
@@ -57,7 +62,11 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testResponseWithInvalidStatusCode() {
         _ = stub(condition: isPath("/song")) { _ in
+            #if SWIFT_PACKAGE
+            return HTTPStubsResponse(jsonObject: [:], statusCode: 403, headers: nil)
+            #else
             return OHHTTPStubsResponse(jsonObject: [:], statusCode: 403, headers: nil)
+            #endif
         }
 
         waitUntil { done in
@@ -71,7 +80,7 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testRequestThatFailsCustomValidation() {
         _ = stub(condition: isPath("/song")) { _ in
-            return fixture(filePath: OHPathForFile("song.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("song.json", type(of: self)), headers: nil)
         }
 
         waitUntil { done in
@@ -88,7 +97,7 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testInvalidSchemaObjectRequest() {
         _ = stub(condition: isPath("/songs/invalid_schema")) { _ in
-            return fixture(filePath: OHPathForFile("invalid_song.json", type(of: self))!, headers: nil)
+            return fixture(filePath: GetPathForFile("invalid_song.json", type(of: self)), headers: nil)
         }
 
         waitUntil { done in

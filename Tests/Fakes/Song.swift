@@ -52,7 +52,7 @@ extension Song {
         }
     }
 
-    enum EnvelopedArrayResource: HTTPResource, JSONEnvelope {
+    enum EnvelopedArrayResource: HTTPResource {
         typealias Value = [Song]
 
         case getEnvelopedSongs
@@ -64,27 +64,10 @@ extension Song {
             }
         }
 
-        var rootKey: String {
+        var rootKey: String? {
             switch self {
             case .getEnvelopedSongs:
                 return "songs"
-            }
-        }
-
-        func serialize(response: Result<Data>) -> SerializationResult<[Song]> {
-            switch response {
-            case let .success(data):
-                do {
-                    let object = try JSONDecoder().decode([String: [Song]].self, from: data)
-                    guard let result = object[rootKey] else {
-                        return .serializationFailure(reason: "Empty Data")
-                    }
-                    return .success(result)
-                } catch {
-                    return .failure(error)
-                }
-            case let .failure(error):
-                return .failure(error)
             }
         }
     }

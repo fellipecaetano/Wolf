@@ -7,7 +7,7 @@ public extension HTTPResource where Value: Decodable {
         case let .failure(error):
             return .failure(error)
         case let .success(data):
-            return decode(data: data)
+            return decode(data: data, withRootKey: rootKey)
         }
     }
 }
@@ -21,12 +21,17 @@ private func decode<T: Decodable>(data: Data) -> SerializationResult<T> {
     }
 }
 
-private extension JSONSerialization {
-    static func JSONObject<T>(with data: Data, options: JSONSerialization.ReadingOptions) throws -> T {
-        let JSONObject = try JSONSerialization.jsonObject(with: data, options: options)
-        guard let typedObject = JSONObject as? T else {
-            throw NSError(domain: NSCocoaErrorDomain, code: 3840, userInfo: ["dirtyObject": JSONObject])
+private func decode<T: Decodable>(data: Data, withRootKey key: String?) -> SerializationResult<T> {
+    do {
+        if let rootKey = key {
+            let decodedDictionary: [String: T] = try JSONDecoder().decode([String: T].self, from: data)
+            guard let value = decodedDictionary[rootKey] else {
+                return .failure(HTTPResourceError.emptyData)
+            }
+            return .success(value)
         }
-        return typedObject
+        return decode(data: data)
+    } catch {
+        return .failure(error)
     }
 }
