@@ -2,8 +2,8 @@
 .DS_Store
 
 # Xcode
-.build/
-build/
+.build
+build
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -24,7 +24,7 @@ DerivedData
 .bundle
 
 # Dependency management
-Carthage/Build
+Carthage
 Pods/
 
 # Emacs
