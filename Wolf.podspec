@@ -15,13 +15,6 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
     ss.source_files = ['Source/**/*.swift']
     ss.dependency 'Alamofire', '~> 4.1'
     ss.dependency 'PromiseKit', '~> 4.0'
-    ss.exclude_files = ['Source/Unbox/**/*']
-  end
-  s.subspec 'Unbox' do |ss|
-    ss.source_files = ['Source/**/*.swift']
-    ss.dependency 'Alamofire', '~> 4.1'
-    ss.dependency 'PromiseKit', '~> 4.0'
-    ss.dependency 'Unbox', '~> 2.2'
   end
   s.default_subspec = 'Basic'
 end
