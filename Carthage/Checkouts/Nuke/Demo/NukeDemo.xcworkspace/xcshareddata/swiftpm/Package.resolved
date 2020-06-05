@@ -6,8 +6,17 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire",
         "state": {
           "branch": null,
-          "revision": "747c8db8d57b68d5e35275f10c92d55f982adbd4",
-          "version": "4.9.1"
+          "revision": "2777659076fda38bd4e487739ee331c7a65b5924",
+          "version": "5.2.1"
+        }
+      },
+      {
+        "package": "Gifu",
+        "repositoryURL": "https://github.com/kaishin/Gifu.git",
+        "state": {
+          "branch": null,
+          "revision": "b6fc594b30d0949a788338c54b07c26ae40c3444",
+          "version": "3.2.2"
         }
       },
       {
@@ -17,6 +26,15 @@
           "branch": "master",
           "revision": "2b2a116ec0adcbde8948ea6cf12a8e08acaa381f",
           "version": null
+        }
+      },
+      {
+        "package": "SwiftSVG",
+        "repositoryURL": "https://github.com/mchoe/SwiftSVG.git",
+        "state": {
+          "branch": null,
+          "revision": "c3a8866a25ace169ee8e5c037670ba14aa59606f",
+          "version": "2.3.2"
         }
       }
     ]

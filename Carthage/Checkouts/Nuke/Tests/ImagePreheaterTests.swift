@@ -40,8 +40,8 @@ class ImagePreheaterTests: XCTestCase {
         // but different processors (different cacheKey).
         expect(pipeline.queue).toFinishWithEnqueuedOperationCount(2)
 
-        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessor.Anonymous(id: "1", { $0 })])])
-        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessor.Anonymous(id: "2", { $0 })])])
+        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessors.Anonymous(id: "1", { $0 })])])
+        preheater.startPreheating(with: [ImageRequest(url: Test.url, processors: [ImageProcessors.Anonymous(id: "2", { $0 })])])
 
         wait()
     }
@@ -111,6 +111,21 @@ class ImagePreheaterTests: XCTestCase {
 
         _ = expectNotification(MockImagePipeline.DidCancelTask, object: pipeline)
         preheater.stopPreheating()
+        wait()
+    }
+
+    func testThatAllPreheatingRequestsAreStoppedWhenPreheaterIsDeallocated() {
+        pipeline.queue.isSuspended = true
+
+        let request = Test.request
+        _ = expectNotification(MockImagePipeline.DidStartTask, object: pipeline)
+        preheater.startPreheating(with: [request])
+        wait()
+
+        _ = expectNotification(MockImagePipeline.DidCancelTask, object: pipeline)
+        autoreleasepool {
+            preheater = nil
+        }
         wait()
     }
 }

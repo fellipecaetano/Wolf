@@ -29,7 +29,7 @@ class ImageRequestTests: XCTestCase {
         request.options.memoryCacheOptions.isReadAllowed = false
         request.options.loadKey = "1"
         request.options.cacheKey = "2"
-        request.options.userInfo = "3"
+        request.options.userInfo["key"] = "3"
         request.options.filteredURL = "4"
         request.processors = [MockImageProcessor(id: "4")]
         request.priority = .high
@@ -43,7 +43,7 @@ class ImageRequestTests: XCTestCase {
         XCTAssertEqual(copy.options.memoryCacheOptions.isReadAllowed, false)
         XCTAssertEqual(copy.options.loadKey, "1")
         XCTAssertEqual(copy.options.cacheKey, "2")
-        XCTAssertEqual(copy.options.userInfo as? String, "3")
+        XCTAssertEqual(copy.options.userInfo["key"] as? String, "3")
         XCTAssertEqual(copy.options.filteredURL, "4")
         XCTAssertEqual((copy.processors.first as? MockImageProcessor)?.identifier, "4")
         XCTAssertEqual(copy.priority, .high)
@@ -216,25 +216,25 @@ class ImageRequestFilteredURLTests: XCTestCase {
     func testThatCacheKeyUsesAbsoluteURLByDefault() {
         let lhs = ImageRequest(url: Test.url)
         let rhs = ImageRequest(url: Test.url.appendingPathComponent("?token=1"))
-        XCTAssertNotEqual(lhs.makeCacheKeyForProcessedImage(), rhs.makeCacheKeyForProcessedImage())
+        XCTAssertNotEqual(lhs.makeCacheKeyForFinalImage(), rhs.makeCacheKeyForFinalImage())
     }
 
     func testThatCacheKeyUsesFilteredURLWhenSet() {
         let lhs = ImageRequest(url: Test.url, options: .init(filteredURL: Test.url.absoluteString))
         let rhs = ImageRequest(url: Test.url.appendingPathComponent("?token=1"), options: .init(filteredURL: Test.url.absoluteString))
-        AssertHashableEqual(lhs.makeCacheKeyForProcessedImage(), rhs.makeCacheKeyForProcessedImage())
+        AssertHashableEqual(lhs.makeCacheKeyForFinalImage(), rhs.makeCacheKeyForFinalImage())
     }
 
     func testThatCacheKeyForProcessedImageDataUsesAbsoluteURLByDefault() {
         let lhs = ImageRequest(url: Test.url)
         let rhs = ImageRequest(url: Test.url.appendingPathComponent("?token=1"))
-        XCTAssertNotEqual(lhs.makeCacheKeyForProcessedImageData(), rhs.makeCacheKeyForProcessedImageData())
+        XCTAssertNotEqual(lhs.makeCacheKeyForFinalImage(), rhs.makeCacheKeyForFinalImage())
     }
 
     func testThatCacheKeyForProcessedImageDataUsesFilteredURLWhenSet() {
         let lhs = ImageRequest(url: Test.url, options: .init(filteredURL: Test.url.absoluteString))
         let rhs = ImageRequest(url: Test.url.appendingPathComponent("?token=1"), options: .init(filteredURL: Test.url.absoluteString))
-        AssertHashableEqual(lhs.makeCacheKeyForProcessedImageData(), rhs.makeCacheKeyForProcessedImageData())
+        AssertHashableEqual(lhs.makeCacheKeyForFinalImage(), rhs.makeCacheKeyForFinalImage())
     }
 
     func testThatCacheKeyForOriginalImageDataUsesAbsoluteURLByDefault() {
@@ -252,7 +252,7 @@ class ImageRequestFilteredURLTests: XCTestCase {
     func testThatLoadKeyForProcessedImageDoesntUseFilteredURL() {
         let lhs = ImageRequest(url: Test.url, options: .init(filteredURL: Test.url.absoluteString))
         let rhs = ImageRequest(url: Test.url.appendingPathComponent("?token=1"), options: .init(filteredURL: Test.url.absoluteString))
-        XCTAssertNotEqual(lhs.makeLoadKeyForProcessedImage(), rhs.makeLoadKeyForProcessedImage())
+        XCTAssertNotEqual(lhs.makeLoadKeyForFinalImage(), rhs.makeLoadKeyForFinalImage())
     }
 
     func testThatLoadKeyForOriginalImageDoesntUseFilteredURL() {

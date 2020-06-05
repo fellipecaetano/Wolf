@@ -1,3 +1,232 @@
+# Nuke 9
+
+## Nuke 9.1
+
+*June 1, 2020*
+
+### Enhancements
+
+- `ImageCache` now uses `DispatchSourceMemoryPressure` instead `UIApplication.didReceiveMemoryWarningNotification` to improve watchOS support - [#370](https://github.com/kean/Nuke/pull/370), by [Dennis Oberhoff](https://github.com/docterd)
+- Add `tintColor` option to `ImageLoadingOptions` - [#371](https://github.com/kean/Nuke/pull/371) by [Basem Emara](https://github.com/basememara)
+- Minor documentation fixes and improvements
+
+## Nuke 9.0
+
+*May 20, 2020*
+
+**Nuke 9** is the best release so far with refinements across the entire framework and some exciting new additions.
+
+> **SwiftUI** · **Combine** · **Task builder API** · **New advanced set of core protocols for power-users** · **HEIF** · **Transcoding images in disk cache** · **Progressive decoding performance improvements** · **Improved resizing APIs** · **Automatic registering of decoders** · **SVG** · **And More**
+
+Most of the Nuke APIs are source compatible with Nuke 8. There is also a [Nuke 9 Migration Guide](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Migrations/Nuke%209%20Migration%20Guide.md) to help with migration.
+
+### Overview
+
+The primary focus of this release was to build on top the infrastructure introduced in Nuke 8 to deliver more **advanced features** while keeping the easy things easy. To achieve this, in Nuke 9, all core protocols, like `ImageProcessing`, `ImageEncoding`, `ImageDecoding`, now have a  basic subset of methods that you _must_ implement, and then there are new _advanced_ methods which are optional and give you full control over the pipeline.
+
+Along with Nuke 9, **three new amazing Swift packages** were introduced:
+
+- [**FetchImage**](https://github.com/kean/FetchImage) which makes it easy to use Nuke with SwiftUI
+- [**ImagePublisher**](https://github.com/kean/ImagePublisher) with Combine publishers for Nuke
+- And finally [**ImageTaskBuilder**](https://github.com/kean/ImageTaskBuilder) which introduces a new fun and convenient way to use Nuke. I really love this package. Just look at these APIs:
+
+```swift
+ImagePipeline.shared.image(with: URL(string: "https://")!)
+    .resize(width: 320)
+    .blur(radius: 10)
+    .priority(.high)
+    .load { result in
+        print(result)
+    }
+```
+
+I would also like to highlight a few other changes to **improve documentation**.
+
+First, there is a completely new [**API Reference**](https://kean-org.github.io/docs/nuke/reference/9.0.0/) available generated using [SwiftDoc](https://github.com/SwiftDocOrg/swift-doc), a new package for generating documentation for Swift projects.
+
+There is a completely new [**README**](https://github.com/kean/Nuke/tree/9.0.0) and two new guides:
+
+- [**Image Pipeline Guide**](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Guides/image-pipeline.md) with a detailed description of how the pipeline delivers images
+- [**Image Formats Guide**](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Guides/image-formats.md) with an overview of the improved decoding/encoding infrastructure and information how to support variety of image formats: GIF, HEIF, SVG, WeP, and more.
+
+There is also a new [**Troubleshooting Guide**](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Guides/troubleshooting.md).
+
+Another small but delightful change the demo project which can now be run by simply clicking on the project and running it, all thanks to Swift Package Manager magic.
+
+### Changelog
+
+#### General Improvements
+
+- Bump minimum platform version requirements. The minimum iOS version is now iOS 11 which is a 64-bit only system. This is great news if you are installing your dependencies using Carthage as Nuke is now going to compile twice as fast: no need to compile for `i386` and `armv7` anymore.
+
+#### Documentation Improvements
+
+- Rewrite most of the README
+- Add a completely new [**API Reference**](https://kean-org.github.io/docs/nuke/reference/9.0.0/) available generated using [SwiftDoc](https://github.com/SwiftDocOrg/swift-doc), a new package for generating documentation for Swift projects
+- Add a completely new [**Image Pipeline Guide**](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Guides/image-pipeline.md) which describes in detail how the pipeline works.
+- Add a new [**Image Formats Guide**](https://github.com/kean/Nuke/blob/9.0.0/Documentation/Guides/image-formats.md)
+
+#### `ImageProcessing` improvements
+
+There are now two levels of image processing APIs. For the basic processing needs, implement the following method:
+
+```swift
+func process(_ image: UIImage) -> UIImage? // NSImage on macOS
+```
+
+If your processor needs to manipulate image metadata (`ImageContainer`), or get access to more information via the context (`ImageProcessingContext`), there is now an additional method that allows you to do that:
+
+ ```swift
+func process(_ container: ImageContainer, context: ImageProcessingContext) -> ImageContainer?
+```
+
+- All image processors are now available `ImageProcessors` namespace so it is now easier to find the ones you are looking for. Unrelated types were moved to `ImageProcessingOption`.
+- Add `ImageResponse` to `ImageProcessingContext`
+- New convenience `ImageProcessors.Resize.init(width:)` and `ImageProcessors.Resize.init(height:)` initializers
+
+#### `ImageDecoding` Improvements
+
+- Add a new way to register the decoders in `ImageDecoderRegistry` with `ImageDecoderRegistering` protocol. `public func register<Decoder: ImageDecoderRegistering>(_ decoder: Decoder.Type)` - [#354](https://github.com/kean/Nuke/pull/354)
+
+```swift
+/// An image decoder which supports automatically registering in the decoder register.
+public protocol ImageDecoderRegistering: ImageDecoding {
+    init?(data: Data, context: ImageDecodingContext)
+    // Optional
+    init?(partiallyDownloadedData data: Data, context: ImageDecodingContext)
+}
+```
+
+- The default decoder now implements `ImageDecoderRegistering` protocol
+- Update the way decoders are created. Now if the decoder registry can't create a decoder for the partially downloaded data, the pipeline will no longer create (failing) decoding operation reducing the pressure on the decoding queue
+- Rework `ImageDecoding` protocol
+- Nuke now supports decompression and processing of images that require image data to work
+- Deprecate `ImageResponse.scanNumber`, the scan number is now passed in `ImageContainer.userInfo[ImageDecodert.scanNumberKey]` (this is a format-specific feature and that's why I made it non-type safe and somewhat hidden). Previously, it was also only working for the default `ImageDecoders.Default`. Now any decoder can pass scan number, or any other information using `ImageContainer.userInfo`
+- All decoders are now defined in `ImageDecoders` namespace
+- Add `ImageDecoders.Empty`
+- Add `ImageType` struct 
+
+#### `ImageEncoding` Improvements
+
+[#353](https://github.com/kean/Nuke/pull/353) - There are now two levels of image encoding APIs. For the basic encoding needs, implement the following method:
+
+```swift
+func encode(_ image: UIImage) -> UIImage? // NSImage on macOS
+```
+
+If your encoders needs to manipulate image metadata (`ImageContainer`), or get access to more information via the context (`ImageEncodingContext`), there is now an additional method that allows you to do that:
+
+ ```swift
+func encode(_ container: ImageContainer, context: ImageEncodingContext) -> Data?
+```
+
+- All image encoders are now available `ImageEncoders` namespace so it is now easier to find the ones you are looking for.
+- Add `ImageEncoders.ImageIO` with HEIF support - [#344](https://github.com/kean/Nuke/pull/344)
+- The default adaptive encoder now uses `ImageEncoders.ImageIO` under the hood and can be configured to support HEIF
+
+#### Progressive Decoding Improvements
+
+- You can now opt-in to store progressively generated previews in the memory cache by setting the pipeline option `isStoringPreviewsInMemoryCache` to `true`. All of the previews have `isPreview` flag set to `true`. - [$352](https://github.com/kean/Nuke/pull/352)
+
+#### Improved Cache For Processed Images - [#345](https://github.com/kean/Nuke/pull/345)
+
+Nuke 9 revisits data cache for processed images feature introduced in [Nuke 8.0](https://github.com/kean/Nuke/releases/tag/8.0) and fixes all the rough edges around it.
+
+There are two primary changes.
+
+#### 1. Deprecate `isDataCachingForOriginalImageDataEnabled` and `isDataCachingForProcessedImagesEnabled` properties.
+
+These properties were replaced with a new `DataCacheOptions`.
+
+```swift
+public struct DataCacheOptions {
+    /// Specifies which content to store in the `dataCache`. By default, the
+    /// pipeline only stores the original image data downloaded using `dataLoader`.
+    /// It can be configured to encode and store processed images instead.
+    ///
+    /// - note: If you are creating multiple versions of the same image using
+    /// different processors, it might be worse enabling both `.originalData`
+    /// and `.encodedImages` cache to reuse the same downloaded data.
+    ///
+    /// - note: It might be worth enabling `.encodedImages` if you want to
+    /// transcode downloaded images into a more efficient format, like HEIF.
+    public var storedItems: Set<DataCacheItem> = [.originalImageData]
+}
+
+public enum DataCacheItem {
+    /// Original image data.
+    case originalImageData
+    /// Final image with all processors applied.
+    case finalImage
+}
+```
+
+Now we no longer rely on documentation to make sure that you disable data cache for original image data when you decide to cache processed images instead.
+
+#### 2. Rework `DataCacheItem.finalImage` behavior.
+
+The primary reason for deprecation is a significantly changed behavior of data cache for processed images.
+
+The initial version introduced back in Nuke 8.0 never really made sense. For example, only images for requests with processors were stored, but not the ones without. You can see how this could be a problem, especially if you disable data cache for original image data which was a recommended option.
+
+The new behavior is much simpler. You set `configuration.dataCacheOptions.storedItems` to `[. finalImage]`, and Nuke encodes and stores all of the downloaded images, regardless of whether they were processed or not.
+
+#### `DataCache` Improvements - [#350](https://github.com/kean/Nuke/pull/350)
+
+Nuke 9 realized the original vision for `DataCache`. The updated staging/flushing mechanism now performs flushes on certain intervals instead of on every write. This makes some of the new `DataCache` features possible.
+
+- `flush` not performs synchronously
+- Add `flush(for:)` methods which allows to flush changes on disk only for the given key
+- Add public property `let queue: DispatchQueue`
+- Add public method `func url(for key: Key) -> URL?`
+
+#### `ImageContainer`
+
+This release introduces `ImageContainer` type. It is integrated throughout the framework instead of `PlatformImage`.
+
+**Reasoning**
+
+- Separate responsibility. `ImageResponse` - result of the current request with information about the current request, e.g. `URLResponse` that was received. `ImageContainer` - the actual downloaded and processed image regardless of the request
+- Stop relying on Objective-C runtime which `animatedImageData` was using
+- Stop relying on extending Objective-C classes like `UIImage`
+- Add type-safe way to attach additional information to downloaded images
+
+**Changes**
+
+- Update `ImageCaching` protocol to store `ImageContainer` instead of `ImageResponse`. `ImageResponse` is a result of the individual request, it should not be saved in caches.
+
+```swift
+public protocol ImageCaching: AnyObject {
+    subscript(request: ImageRequest) -> ImageContainer?
+}
+```
+
+- Update `ImagePipeline.cachedImage(for:)` method to return `ImageContainer`
+- Deprecate `PlatformImage.animatedImageData`, please use `ImageContainer.data` instead
+- Deprecated `ImagePipelineConfiguration.isAnimatedImageDataEnabled`, the default `ImageDecoder` now set `ImageContainer.data` automatically when it recognizes GIF format
+
+#### Other
+
+- `ImagePreheater` now automatically cancels all of the outstanding tasks on deinit - [#349](https://github.com/kean/Nuke/pull/349)
+- `ImagePipeline` now has `func cacheKey(for request: ImageRequest, item: DataCacheItem) -> String` method which return a key for disk cache
+- Change the type of `ImageRequest.userInfo` from `Any?` to `[AnyHashable: Any]`
+- Remove `DFCache` from demo - [#347](https://github.com/kean/Nuke/pull/347)
+- Remove `FLAnimatedImage` and Carthage usage from demo - [#348](https://github.com/kean/Nuke/pull/348)
+- Migrate to Swift 5.1 - [#351](https://github.com/kean/Nuke/pull/351)
+- Add `ImageType.init(data:)`
+- Add `ImageLoadingOptions.isProgressiveRenderingEnabled`
+- Add public `ImageContainer.map`
+- Add "Rendering Engines" section in image-formats.md
+- `ImageDecoder` now attaches `ImageType` to the image
+- `ImageProcessingOptions.Border` now accepts unit as a parameter
+
+### Fixes
+
+- Fix how `ImageProcesors.Resize` compares size when different units are used
+- Fix an issue with `ImageProcessors.Resize` String identifier being equal with different content modes provided
+- Fix TSan warnings - [#365](https://github.com/kean/Nuke/pull/365), by [Luciano Almeida](https://github.com/LucianoPAlmeida)
+
+
 # Nuke 8
 
 ## Nuke 8.4.1
@@ -82,7 +311,7 @@ Nuke 8 is the most powerful, performant, and refined release yet. It contains ma
 
 > **Cache processed images on disk** · **New built-in image processors** · **ImagePipeline v2** · **Up to 30% faster main thread performance** · **`Result` type** · **Improved deduplication** · **`os_signpost` integration** · **Refined ImageRequest API** · **Smart decompression** · **Entirely new documentation**
 
-Most of the Nuke APIs are source compatible with Nuke 7. There is also a [Nuke 8 Migration Guide](https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%208%20Migration%20Guide.md) to help with migration.
+Most of the Nuke APIs are source compatible with Nuke 7. There is also a [Nuke 8 Migration Guide](https://github.com/kean/Nuke/blob/8.0/Documentation/Migrations/Nuke%208%20Migration%20Guide.md) to help with migration.
 
 ### Image Processing
 
@@ -248,7 +477,7 @@ The screenshots come the the **reworked demo** project. It gained new demos incl
 *Apr 13, 2019*
 
 - Fix SwiftPM 5.0 support by adding explicit platform version requirements  – [Vadim Shpakovski](https://github.com/shpakovski) in [#220](https://github.com/kean/Nuke/pull/220)
-- Update [Nuke 7 Migration Guide](https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%207%20Migration%20Guide.md)
+- Update [Nuke 7 Migration Guide](https://github.com/kean/Nuke/blob/7.6.1/Documentation/Migrations/Nuke%207%20Migration%20Guide.md)
 
 
 ## Nuke 7.6
@@ -327,7 +556,7 @@ Nuke 7 had a lot of API changes, to make the migration easier it shipped with De
 
 - #187 Fix an issue with progress handler reporting incorrect progress for resumed (206 Partial Content) downloads
 - Remove `enableExperimentalAggressiveDiskCaching` function from `ImagePipeline.Configuration`, please use `DataCache` directly instead
-- Update [Performance Guide](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Performance%20Guide.md)
+- Update [Performance Guide](https://github.com/kean/Nuke/blob/7.4/Documentation/Guides/Performance%20Guide.md)
 
 
 ## Nuke 7.3.2
@@ -543,7 +772,7 @@ $0.enableExperimentalAggressiveDiskCaching(keyEncoder: {
 
 The public API for disk cache and the API for using custom disk caches is going to be available in the future versions.
 
-> Existing API already allows you to use custom disk cache [by implementing `DataLoading` protocol](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Third%20Party%20Libraries.md#using-other-caching-libraries), but this is not the most straightforward option.
+> Existing API already allows you to use custom disk cache by implementing `DataLoading` protocol, but this is not the most straightforward option.
 
 ### Performance Metrics
 
@@ -748,7 +977,7 @@ The reason behind this change is to reduce confusion about `Cache` usage. In pre
 
 #### Removed `DataCaching` and `CachingDataLoader`
 
-Those two types were included in Nuke to make integrating third party caching libraries a bit easier. However, they were actually not that useful. Instead of using those types you could've just wrapped `DataLoader` yourself with a comparable amount of code and get much more control. For more info see [Third Party Libraries: Using Other Caching Libraries](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Third%20Party%20Libraries.md#using-other-caching-libraries). 
+Those two types were included in Nuke to make integrating third party caching libraries a bit easier. However, they were actually not that useful. Instead of using those types you could've just wrapped `DataLoader` yourself with a comparable amount of code and get much more control. For more info see [Third Party Libraries: Using Other Caching Libraries](https://github.com/kean/Nuke/blob/5.0/Documentation/Guides/Third%20Party%20Libraries.md). 
 
 #### Other Changes
 
@@ -758,7 +987,7 @@ Those two types were included in Nuke to make integrating third party caching li
 - Reduce default `maxConcurrentOperationCount` of `DataLoader` from 8 to 6
 - Shared objects (like `Manager.shared`) are now constants.
 - `Preheater` is now initialized with `Manager` instead of `Loading` object
-- Add new [Third Party Libraries](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Third%20Party%20Libraries.md) guide.
+- Add new [Third Party Libraries](https://github.com/kean/Nuke/blob/5.0/Documentation/Guides/Third%20Party%20Libraries.md) guide.
 - Improved documentation
 
 
@@ -798,7 +1027,7 @@ Nuke 4.0 focused on stability first, naturally there were some performance regre
 
 If you're interested in the types of optimizations that were made check out recent commits. There is a lot of awesome stuff there!
 
-Nuke 4.1 also includes a new [Performance Guide](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Performance%20Guide.md) and a collection of [Tips and Tricks](https://github.com/kean/Nuke/blob/master/Documentation/Guides/Tips%20and%20Tricks.md).
+Nuke 4.1 also includes a new [Performance Guide](https://github.com/kean/Nuke/blob/4.1/Documentation/Guides/Performance%20Guide.md) and a collection of [Tips and Tricks](https://github.com/kean/Nuke/blob/4.1/Documentation/Guides/Tips%20and%20Tricks.md).
 
 ### Other Changes
 
@@ -831,13 +1060,13 @@ The adoption of those design principles resulted in a simpler, more testable, an
  
 I hope that Nuke 4 is going to be a pleasure to use. Thanks for your interest 😄
  
-You can learn more about Nuke 4 in an in-depth [**Nuke 4 Migration Guide**](https://github.com/kean/Nuke/blob/master/Documentation/Migrations/Nuke%204%20Migration%20Guide.md).
+You can learn more about Nuke 4 in an in-depth [**Nuke 4 Migration Guide**](https://github.com/kean/Nuke/blob/4.1/Documentation/Migrations/Nuke%204%20Migration%20Guide.md).
 
 ### Highlighted New Features
  
 #### LRU Memory Cache
  
-Nuke 4 features a new custom LRU memory cache which replaced `NSCache`. The primary reason behind this change was the fact that `NSCache` [is not LRU](https://github.com/apple/swift-corelibs-foundation/blob/master/Foundation/NSCache.swift). The new `Nuke.Cache` has some other benefits like better performance, and more control which would enable some new advanced features in future versions.
+Nuke 4 features a new custom LRU memory cache which replaced `NSCache`. The primary reason behind this change was the fact that `NSCache` is not LRU]. The new `Nuke.Cache` has some other benefits like better performance, and more control which would enable some new advanced features in future versions.
 
 #### Rate Limiter
  

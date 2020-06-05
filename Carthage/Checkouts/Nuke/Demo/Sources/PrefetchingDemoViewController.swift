@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -9,7 +9,6 @@ private let cellReuseID = "reuseID"
 private var loggingEnabled = false
 
 final class PrefetchingDemoViewController: BasicDemoViewController, UICollectionViewDataSourcePrefetching {
-
     let preheater = ImagePreheater()
 
     override func viewDidLoad() {

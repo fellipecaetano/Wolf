@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -29,7 +29,7 @@ final class RateLimiterDemoViewController: BasicDemoViewController {
     }
 
     override func makeRequest(with url: URL, imageView: UIImageView) -> ImageRequest {
-        return ImageRequest(url: url, processors: [ImageProcessor.Resize(size: imageView.bounds.size)])
+        return ImageRequest(url: url, processors: [ImageProcessors.Resize(size: imageView.bounds.size)])
     }
 
     override func makeImageLoadingOptions() -> ImageLoadingOptions {

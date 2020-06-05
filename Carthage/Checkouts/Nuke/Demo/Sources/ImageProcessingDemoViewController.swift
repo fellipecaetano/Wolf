@@ -1,12 +1,12 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
 
-class ImageProcessingDemoViewController: UIViewController, ImagePipelineSettingsViewControllerDelegate {
-    var pipeline = ImagePipeline.shared
+final class ImageProcessingDemoViewController: UIViewController, ImagePipelineSettingsViewControllerDelegate {
+    private var pipeline = ImagePipeline.shared
 
     private let views: [[ImageProcessingView]] = [
         [ImageProcessingView(), ImageProcessingView()],
@@ -73,36 +73,36 @@ class ImageProcessingDemoViewController: UIViewController, ImagePipelineSettings
         let screenWidth = UIScreen.main.bounds.size.width / 3
         let targetSize = CGSize(width: screenWidth, height: (screenWidth * 2 / 3))
         loadImage(view: views[0][1], title: "Resize", processors: [
-            ImageProcessor.Resize(size: targetSize)
+            ImageProcessors.Resize(size: targetSize)
         ])
 
         loadImage(view: views[1][0], title: "Rounded Corners", processors: [
-            ImageProcessor.Resize(size: targetSize),
-            ImageProcessor.RoundedCorners(radius: 8)
+            ImageProcessors.Resize(size: targetSize),
+            ImageProcessors.RoundedCorners(radius: 8)
         ])
 
         loadImage(view: views[1][1], title: "Monochrome", processors: [
-            ImageProcessor.Resize(size: targetSize),
-            ImageProcessor.RoundedCorners(radius: 8),
-            ImageProcessor.CoreImageFilter(name: "CIColorMonochrome",
+            ImageProcessors.Resize(size: targetSize),
+            ImageProcessors.RoundedCorners(radius: 8),
+            ImageProcessors.CoreImageFilter(name: "CIColorMonochrome",
                                            parameters: ["inputIntensity": 1,
                                                         "inputColor": CIColor(color: .white)],
                                            identifier: "nuke.demo.monochrome")
         ])
 
         loadImage(view: views[2][0], title: "Circle", processors: [
-            ImageProcessor.Resize(size: targetSize),
-            ImageProcessor.Circle()
+            ImageProcessors.Resize(size: targetSize),
+            ImageProcessors.Circle()
         ])
 
         loadImage(view: views[2][1], title: "Blur", processors: [
-            ImageProcessor.Resize(size: targetSize),
-            ImageProcessor.Circle(),
-            ImageProcessor.GaussianBlur(radius: 3)
+            ImageProcessors.Resize(size: targetSize),
+            ImageProcessors.Circle(),
+            ImageProcessors.GaussianBlur(radius: 3)
         ])
     }
 
-    func loadImage(view: ImageProcessingView, title: String, processors: [ImageProcessing]) {
+    private func loadImage(view: ImageProcessingView, title: String, processors: [ImageProcessing]) {
         let request = ImageRequest(
             url: URL(string: "https://user-images.githubusercontent.com/1567433/59150453-178bbb80-8a24-11e9-94ca-fd8dff6e2a9a.jpeg")!,
             processors: processors
@@ -118,14 +118,14 @@ class ImageProcessingDemoViewController: UIViewController, ImagePipelineSettings
 
     // MARK: - Actions
 
-    @objc func refreshControlValueChanged() {
+    @objc private func refreshControlValueChanged() {
         loadImages()
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
             self.refreshControl.endRefreshing()
         }
     }
 
-    @objc func buttonShowSettingsTapped() {
+    @objc private func buttonShowSettingsTapped() {
        ImagePipelineSettingsViewController.show(from: self, pipeline: pipeline)
     }
 
@@ -137,7 +137,9 @@ class ImageProcessingDemoViewController: UIViewController, ImagePipelineSettings
     }
 }
 
-class ImageProcessingView: UIView {
+// MARK: - ImageProcessingView
+
+private class ImageProcessingView: UIView {
     let titleLabel = UILabel()
     let imageView = UIImageView()
 

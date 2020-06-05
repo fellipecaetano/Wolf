@@ -65,11 +65,7 @@ class CacheNetworkingTests: XCTestCase {
 
     func testThatFailedObjectRequestsAreNotCached() {
         _ = stub(condition: isPath("/get/song")) { _ in
-            #if SWIFT_PACKAGE
             return HTTPStubsResponse(data: Data() as Data, statusCode: 500, headers: nil)
-            #else
-            return OHHTTPStubsResponse(data: Data() as Data, statusCode: 500, headers: nil)
-            #endif
         }
 
         let cache = TestURLCache()

@@ -149,8 +149,8 @@ extension XCTestCase {
 
 extension XCTestCase {
     class ValuesExpectation<Value> {
-        fileprivate let expectation: XCTestExpectation
-        fileprivate let expected: [Value]
+        private let expectation: XCTestExpectation
+        private let expected: [Value]
         private let isEqual: (Value, Value) -> Bool
         private var _expected: [Value]
         private var _recorded = [Value]()
@@ -257,11 +257,4 @@ extension Array {
         let index = Int(arc4random_uniform(UInt32(self.count)))
         return self[index]
     }
-}
-
-func XCTUnwrap<T>(_ value: T?) throws -> T {
-    guard let value = value else {
-        throw NSError(domain: "XCTest", code: -32, userInfo: [NSLocalizedDescriptionKey: "Failed to unwrap value"])
-    }
-    return value
 }

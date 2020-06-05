@@ -1,10 +1,9 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2019 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
-import DFCache
 
 protocol ImagePipelineSettingsViewControllerDelegate: class {
     func imagePipelineSettingsViewController(_ vc: ImagePipelineSettingsViewController, didFinishWithConfiguration configuration: ImagePipeline.Configuration)
@@ -99,7 +98,7 @@ final class ImagePipelineSettingsViewController: UITableViewController {
             urlCacheEnabledSwitch.isOn = urlCache != nil
             urlCacheButtonClear.isEnabled = urlCache != nil
         } else if let dataLoader = configuration.dataLoader as? AlamofireDataLoader {
-            let urlCache = dataLoader.manager.session.configuration.urlCache
+            let urlCache = dataLoader.session.session.configuration.urlCache
             urlCacheEnabledSwitch.isOn = urlCache != nil
             urlCacheEnabledSwitch.isEnabled = false // Not supported
             urlCacheButtonClear.isEnabled = urlCache != nil
@@ -116,15 +115,12 @@ final class ImagePipelineSettingsViewController: UITableViewController {
         dataCacheEnabledSwitch.isOn = configuration.dataCache != nil
         dataCacheButtonClear.isEnabled = configuration.dataCache != nil
         dataCacheForOriginalImagesEnabledSwitch.isEnabled = configuration.dataCache != nil
-        dataCacheForOriginalImagesEnabledSwitch.isOn = configuration.isDataCachingForOriginalImageDataEnabled
+        dataCacheForOriginalImagesEnabledSwitch.isOn = configuration.dataCacheOptions.storedItems.contains(.originalImageData)
         dataCacheForProcessedImagesEnabledSwitch.isEnabled = configuration.dataCache != nil
-        dataCacheForProcessedImagesEnabledSwitch.isOn = configuration.isDataCachingForProcessedImagesEnabled
+        dataCacheForProcessedImagesEnabledSwitch.isOn = configuration.dataCacheOptions.storedItems.contains(.finalImage)
 
         if let _ = configuration.dataCache as? DataCache {
             // Do nothing
-        } else if let _ = configuration.dataCache as? DFCache {
-            dataCacheTitle.text = "Data Cache (DFCache)"
-            dataCacheEnabledSwitch.isEnabled = false
         } else if configuration.dataCache != nil {
             dataCacheTitle.text = "Data Cache (Custom)"
             dataCacheEnabledSwitch.isEnabled = false
@@ -162,7 +158,7 @@ final class ImagePipelineSettingsViewController: UITableViewController {
         if let dataLoader = configuration.dataLoader as? DataLoader {
             display(urlCache: dataLoader.session.configuration.urlCache)
         } else if let dataLoader = configuration.dataLoader as? AlamofireDataLoader {
-            display(urlCache: dataLoader.manager.session.configuration.urlCache)
+            display(urlCache: dataLoader.session.session.configuration.urlCache)
         } else {
             urlCacheDataUsageLabel.text = "Unknown"
             urlCacheMemoryUsageLabel.text = "Unknown"
@@ -175,17 +171,6 @@ final class ImagePipelineSettingsViewController: UITableViewController {
             formatter.countStyle = .binary
             dataCacheDataUsageCell.detailTextLabel?.text = "\(formatter.string(fromByteCount: Int64(dataCache.totalSize))) / \(formatter.string(fromByteCount: Int64(dataCache.sizeLimit)))"
             dataCacheTotalCountCell.detailTextLabel?.text = "\(dataCache.totalCount) / \(dataCache.countLimit == Int.max ? "Unlimited" : "\(dataCache.countLimit)")"
-        } else if let dataCache = configuration.dataCache as? DFCache {
-            let formatter = ByteCountFormatter()
-            formatter.countStyle = .binary
-
-            if let diskCache = dataCache.diskCache {
-                dataCacheDataUsageCell.detailTextLabel?.text = "\(formatter.string(fromByteCount: Int64(diskCache.contentsSize()))) / \(formatter.string(fromByteCount: Int64(diskCache.capacity)))"
-                dataCacheTotalCountCell.detailTextLabel?.text = "Unlimited"
-            } else {
-                dataCacheDataUsageCell.detailTextLabel?.text = "Disabled"
-                dataCacheTotalCountCell.detailTextLabel?.text = "Disabled"
-            }
         } else if configuration.dataCache != nil {
             dataCacheDataUsageCell.detailTextLabel?.text = "Unknown"
             dataCacheTotalCountCell.detailTextLabel?.text = "Unknown"
@@ -250,7 +235,7 @@ final class ImagePipelineSettingsViewController: UITableViewController {
         if let dataLoader = configuration.dataLoader as? DataLoader {
             dataLoader.session.configuration.urlCache?.removeAllCachedResponses()
         } else if let dataLoader = configuration.dataLoader as? AlamofireDataLoader {
-            dataLoader.manager.session.configuration.urlCache?.removeAllCachedResponses()
+            dataLoader.session.session.configuration.urlCache?.removeAllCachedResponses()
         } else {
             assertionFailure("Unsupported cache type")
         }
@@ -270,19 +255,25 @@ final class ImagePipelineSettingsViewController: UITableViewController {
     }
 
     @IBAction func optionDataCacheForOriginalImageDataEnabledValueChanged(_ sender: UISwitch) {
-        configuration.isDataCachingForOriginalImageDataEnabled = sender.isOn
+        if sender.isOn {
+            configuration.dataCacheOptions.storedItems.insert(.originalImageData)
+        } else {
+            configuration.dataCacheOptions.storedItems.remove(.originalImageData)
+        }
     }
 
     @IBAction func optionDataCacheForProcessedImageDataEnabledValueChanged(_ sender: UISwitch) {
-        configuration.isDataCachingForProcessedImagesEnabled = sender.isOn
+        if sender.isOn {
+            configuration.dataCacheOptions.storedItems.insert(.finalImage)
+        } else {
+            configuration.dataCacheOptions.storedItems.remove(.finalImage)
+        }
     }
 
     @IBAction func dataCacheButtonClearTapped(_ sender: Any) {
         if let dataCache = configuration.dataCache as? DataCache {
             dataCache.removeAll()
             dataCache.flush()
-        } else if let dataCache = configuration.dataCache as? DFCache {
-            dataCache.removeAllObjects()
         }
         reloadDataCache()
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {

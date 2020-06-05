@@ -12,11 +12,7 @@ class UnboxNetworkingTests: XCTestCase {
     private var cache: [String: URL] = [:]
 
     override func tearDown() {
-        #if SWIFT_PACKAGE
-            HTTPStubs.removeAllStubs()
-        #else
-            OHHTTPStubs.removeAllStubs()
-        #endif
+        HTTPStubs.removeAllStubs()
     }
 
     func testSuccessfulRequestForObject() {
@@ -62,11 +58,7 @@ class UnboxNetworkingTests: XCTestCase {
 
     func testResponseWithInvalidStatusCode() {
         _ = stub(condition: isPath("/song")) { _ in
-            #if SWIFT_PACKAGE
             return HTTPStubsResponse(jsonObject: [:], statusCode: 403, headers: nil)
-            #else
-            return OHHTTPStubsResponse(jsonObject: [:], statusCode: 403, headers: nil)
-            #endif
         }
 
         waitUntil { done in
