@@ -13,8 +13,8 @@ Wolf approaches networking by bringing together the battle experience of Alamofi
   s.requires_arc = true
   s.subspec 'Basic' do |ss|
     ss.source_files = ['Source/**/*.swift']
-    ss.dependency 'Alamofire', '~> 4.1'
-    ss.dependency 'PromiseKit', '~> 4.0'
+    ss.dependency 'Alamofire', '~> 4.9.1'
+    ss.dependency 'PromiseKit', '~> 6.13.1'
   end
   s.default_subspec = 'Basic'
 end
