@@ -1,5 +1,5 @@
 import Accounts
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -16,19 +16,19 @@ import PromiseKit
 extension ACAccountStore {
     /// Renews account credentials when the credentials are no longer valid.
     public func renewCredentials(for account: ACAccount) -> Promise<ACAccountCredentialRenewResult> {
-        return PromiseKit.wrap { renewCredentials(for: account, completion: $0) }
+        return Promise { renewCredentials(for: account, completion: $0.resolve) }
     }
 
     /// Obtains permission to access protected user properties.
     public func requestAccessToAccounts(with type: ACAccountType, options: [AnyHashable: Any]? = nil) -> Promise<Void> {
-        return Promise<Void> { fulfill, reject in
+        return Promise { seal in
             requestAccessToAccounts(with: type, options: options, completion: { granted, error in
                 if granted {
-                    fulfill(())
+                    seal.fulfill(())
                 } else if let error = error {
-                    reject(error)
+                    seal.reject(error)
                 } else {
-                    reject(PMKError.accessDenied)
+                    seal.reject(PMKError.accessDenied)
                 }
             })
         }
@@ -36,12 +36,12 @@ extension ACAccountStore {
 
     /// Saves an account to the Accounts database.
     public func saveAccount(_ account: ACAccount) -> Promise<Void> {
-        return PromiseKit.wrap { saveAccount(account, withCompletionHandler: $0) }.asVoid()
+        return Promise { saveAccount(account, withCompletionHandler: $0.resolve) }.asVoid()
     }
 
     /// Removes an account from the account store.
     public func removeAccount(_ account: ACAccount) -> Promise<Void> {
-        return PromiseKit.wrap { removeAccount(account, withCompletionHandler: $0) }.asVoid()
+        return Promise { removeAccount(account, withCompletionHandler: $0.resolve) }.asVoid()
     }
 
     /// PromiseKit ACAccountStore errors

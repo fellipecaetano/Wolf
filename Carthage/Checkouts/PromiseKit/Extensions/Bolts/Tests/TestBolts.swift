@@ -9,11 +9,11 @@ class TestBolts: XCTestCase {
 
         let value = { NSString(string: "1") }
 
-        firstly { _ -> Promise<Void> in
-            return Promise(value: ())
+        firstly { () -> Promise<Void> in
+            return Promise()
         }.then { _ -> BFTask<NSString> in
             return BFTask(result: value())
-        }.then { obj -> Void in
+        }.done { obj in
             XCTAssertEqual(obj, value())
             ex.fulfill()
         }

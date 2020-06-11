@@ -1,5 +1,3 @@
 github "Quick/Nimble"
 github "AliSoftware/OHHTTPStubs"
-github "fellipecaetano/IBentifiers"
 github "kean/Nuke"
-

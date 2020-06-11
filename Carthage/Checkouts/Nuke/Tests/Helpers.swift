@@ -1,47 +1,97 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import Nuke
 import XCTest
 
 private final class BundleToken {}
 
-let defaultURL = Test.url
-let defaultImage = Test.image
-
 // Test data.
 enum Test {
-    static func data(name: String, extension ext: String) -> Data {
+    static func url(forResource name: String, extension ext: String) -> URL {
         let bundle = Bundle(for: BundleToken.self)
-        let URL = bundle.url(forResource: name, withExtension: ext)
-        return try! Data(contentsOf: URL!)
+        return bundle.url(forResource: name, withExtension: ext)!
+    }
+
+    static func data(name: String, extension ext: String) -> Data {
+        let url = self.url(forResource: name, extension: ext)
+        return try! Data(contentsOf: url)
+    }
+
+    static func image(named name: String) -> PlatformImage {
+        let components = name.split(separator: ".")
+        return self.image(named: String(components[0]), extension: String(components[1]))
+    }
+
+    static func image(named name: String, extension ext: String) -> PlatformImage {
+        Test.container(named: name, extension: ext).image
+    }
+
+    static func container(named name: String, extension ext: String) -> ImageContainer {
+        let data = Test.data(name: name, extension: ext)
+        return ImageDecoders.Default().decode(data)!
     }
 
     static let url = URL(string: "http://test.com")!
 
-    static let image: Image = {
-        let bundle = Bundle(for: BundleToken.self)
-        let URL = bundle.url(forResource: "fixture", withExtension: "jpeg")
-        let data = try! Data(contentsOf: URL!)
-        return Nuke.ImageDecoder().decode(data: data, isFinal: true)!
-    }()
+    static let data: Data = Test.data(name: "fixture", extension: "jpeg")
+
+    // Test.image size is 640 x 480 pixels
+    static var image: PlatformImage {
+        Test.image(named: "fixture", extension: "jpeg")
+    }
+
+    // Test.image size is 640 x 480 pixels
+    static var container: ImageContainer {
+        ImageContainer(image: image)
+    }
 
     static let request = ImageRequest(
-        url: defaultURL
+        url: Test.url
     )
 
     static let urlResponse = HTTPURLResponse(
-        url: defaultURL,
+        url: Test.url,
         mimeType: "jpeg",
         expectedContentLength: 22_789,
         textEncodingName: nil
     )
 
     static let response = ImageResponse(
-        image: defaultImage,
+        container: .init(image: Test.image),
         urlResponse: urlResponse
     )
+
+    static func save(_ image: PlatformImage) {
+        let url = try! FileManager.default
+            .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("png")
+        print(url)
+        let data = ImageEncoders.ImageIO(type: .png, compressionRatio: 1).encode(image)!
+        try! data.write(to: url)
+    }
+}
+
+#if os(macOS)
+extension NSImage {
+    var cgImage: CGImage? {
+        cgImage(forProposedRect: nil, context: nil, hints: nil)
+    }
+}
+#endif
+
+extension CGImage {
+    var size: CGSize {
+        CGSize(width: width, height: height)
+    }
+}
+
+extension PlatformImage {
+    var sizeInPixels: CGSize {
+        cgImage!.size
+    }
 }
 
 extension String: Error {}
@@ -71,4 +121,34 @@ func _createChunks(for data: Data, size: Int) -> [Data] {
         chunks.append(chunk)
     }
     return chunks
+}
+
+// MARK: - Result extension
+
+extension Result {
+    var isSuccess: Bool {
+        return value != nil
+    }
+
+    var isFailure: Bool {
+        return error != nil
+    }
+
+    var value: Success? {
+        switch self {
+        case let .success(value):
+            return value
+        case .failure:
+            return nil
+        }
+    }
+
+    var error: Failure? {
+        switch self {
+        case .success:
+            return nil
+        case let .failure(error):
+            return error
+        }
+    }
 }

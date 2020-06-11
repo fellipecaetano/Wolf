@@ -1,13 +1,13 @@
 # Common Patterns
 
-One feature of promises that makes them so useful is that thet are composable;
-enabling complex, yet safe asynchronous patterns that would otherwise be quite
-intimidating with traditional methods.
+One feature of promises that makes them particularly useful is that they are composable.
+This fact enables complex, yet safe asynchronous patterns that would otherwise be quite
+intimidating when implemented with traditional methods.
 
 
 ## Chaining
 
-The most common pattern with promises is chaining:
+The most common pattern is chaining:
 
 ```swift
 firstly {
@@ -18,44 +18,50 @@ firstly {
     set($0)
     return animate()
 }.ensure {
-    cleanup()
+    // something that should happen whatever the outcome
 }.catch {
     handle(error: $0)
 }
 ```
 
-If you return a promise in a `then` the next `then` *waits* on that promise
+If you return a promise in a `then`, the next `then` *waits* on that promise
 before continuing. This is the essence of promises.
 
-Composing promises is easy, and they thus encourage you to develop great apps
-without fear for the typical spaghetti (and associated refactoring pains) of
+Promises are easy to compose, so they encourage you to develop highly asynchronous
+apps without fear of the spaghetti code (and associated refactoring pains) of
 asynchronous systems that use completion handlers.
 
 
 ## APIs That Use Promises
 
-Promises are composable, return them instead of providing completion blocks:
+Promises are composable, so return them instead of accepting completion blocks:
 
 ```swift
 class MyRestAPI {
     func user() -> Promise<User> {
-        return URLSession.shared.dataTask(url).asDictionary().then { dict in
-            return User(dict: dict)
+        return firstly {
+            URLSession.shared.dataTask(.promise, with: url)
+        }.compactMap {
+            try JSONSerialization.jsonObject(with: $0.data) as? [String: Any]
+        }.map { dict in
+            User(dict: dict)
         }
     }
 
     func avatar() -> Promise<UIImage> {
         return user().then { user in
-            URLSession.shared.dataTask(user.imageUrl)
-        }.then {
-            UIImage(data: $0)
+            URLSession.shared.dataTask(.promise, with: user.imageUrl)
+        }.compactMap {
+            UIImage(data: $0.data)
         }
     }
 }
 ```
 
-This way, your asynchronous systems can easily be engaged in chains all over
-your apps.
+This way, asynchronous chains can cleanly and seamlessly incorporate code from all over
+your app without violating architectural boundaries.
+
+> *Note*: We provide [promises for Alamofire](https://github.com/PromiseKit/Alamofire-) too!
 
 
 ## Background Work
@@ -64,31 +70,39 @@ your apps.
 class MyRestAPI {
     func avatar() -> Promise<UIImage> {
         let bgq = DispatchQueue.global(qos: .userInitiated)
-        
-        return user().then(on: bgq) { user in
-            URLSession.shared.dataTask(user.imageUrl)
-        }.then(on: bgq) {
+
+        return firstly {
+            user()
+        }.then(on: bgq) { user in
+            URLSession.shared.dataTask(.promise, with: user.imageUrl)
+        }.compactMap(on: bgq) {
             UIImage(data: $0)
         }
     }
 }
 ```
 
-All PromiseKit handlers take an `on` parameter allowing you to choose the queue
-the handler executes upon. The default is always the main queue.
+All PromiseKit handlers take an `on` parameter that lets you designate the dispatch queue
+on which to run the handler. The default is always the main queue.
 
 PromiseKit is *entirely* thread safe.
 
+> *Tip*: With caution, you can have all `then`, `map`, `compactMap`, etc., run on
+a background queue. See `PromiseKit.conf`. Note that we suggest only changing
+the queue for the `map` suite of functions, so `done` and `catch` will
+continue to run on the main queue, which is *usually* what you want.
 
 ## Failing Chains
 
-If an error occurs mid chain, simply throw:
+If an error occurs mid-chain, simply throw an error:
 
 ```swift
-foo().then { baz in
-    return bar(baz)
+firstly {
+    foo()
+}.then { baz in
+    bar(baz)
 }.then { result in
-    if result.isBad { throw MyError.myIssue }
+    guard !result.isBad else { throw MyError.myIssue }
     //…
     return doOtherThing()
 }
@@ -96,22 +110,28 @@ foo().then { baz in
 
 The error will surface at the next `catch` handler.
 
-Thus if you call a throwing function, you don't have to wrap it in a `do`:
+Since promises handle thrown errors, you don't have to wrap calls to throwing functions 
+in a `do` block unless you really want to handle the errors locally:
 
 ```swift
 foo().then { baz in
-    return bar(baz)
+    bar(baz)
 }.then { result in
-    return try doOtherThing()
+    try doOtherThing()
 }.catch { error in
     // if doOtherThing() throws, we end up here
 }
 ```
 
+> *Tip*: Swift lets you define an inline `enum Error` inside the function you
+are working on. This isn’t *great* coding practice, but it's better than
+avoiding throwing an error because you couldn't be bothered to define a good global
+`Error` `enum`.
 
-## Abstracting Away Asychronicity
 
-```switch
+## Abstracting Away Asynchronicity
+
+```swift
 var fetch = API.fetch()
 
 override func viewDidAppear() {
@@ -126,9 +146,9 @@ func buttonPressed() {
     }
 }
 
-func refresh() {
+func refresh() -> Promise {
     // ensure only one fetch operation happens at a time
-    
+
     if fetch.isResolved {
         startSpinner()
         fetch = API.fetch().ensure {
@@ -139,11 +159,11 @@ func refresh() {
 }
 ```
 
-With promises you don’t need to worry about *when* your asynchronous operation
-finishes: act like it already has.
+With promises, you don’t need to worry about *when* your asynchronous operation
+finishes. Just act like it already has.
 
-> Above we can see that you can call `then` as many times on a promise as you
-> like, they will all be executed in the order they were added.
+Above, we see that you can call `then` as many times on a promise as you
+like. All the blocks will be executed in the order they were added.
 
 
 ## Chaining Sequences
@@ -153,23 +173,40 @@ When you have a series of tasks to perform on an array of data:
 ```swift
 // fade all visible table cells one by one in a “cascading” effect
 
-let fade = Promise()
+let fade = Guarantee()
 for cell in tableView.visibleCells {
     fade = fade.then {
-        UIView.promise(animateWithDuration:0.1) {
+        UIView.animate(.promise, duration: 0.1) {
             cell.alpha = 0
         }
     }
 }
-fade.then {
-    //finish
+fade.done {
+    // finish
 }
 ```
 
-Note *usually* you want `when()` since `when` executes all the promises in
-parallel and thus is much faster to complete. Use the above pattern in
-situations where tasks *must* be done sequentially; animation is a good example.
+Or if you have an array of closures that return promises:
 
+```swift
+var foo = Promise()
+for nextPromise in arrayOfClosuresThatReturnPromises {
+    foo = foo.then(nextPromise)
+    // ^^ you rarely would want an array of promises instead, since then
+    // they have all already started, you may as well use `when()`
+}
+foo.done {
+    // finish
+}
+```
+
+> *Note*: You *usually* want `when()`, since `when` executes all of its
+component promises in parallel and so completes much faster. Use the pattern 
+shown above in situations where tasks *must* be run sequentially; animation
+is a good example.
+
+> We also provide `when(concurrently:)`, which lets you schedule more than
+one promise at a time if you need to.
 
 ## Timeout
 
@@ -182,96 +219,120 @@ race(when(fulfilled: fetches).asVoid(), timeout).then {
 }
 ```
 
-`race` continues as soon as one of the promises it watches finishes.
+`race` continues as soon as one of the promises it is watching finishes.
 
-> Common pitfalls: ensure the promises you pass to `race` are the same type.
-> The easiest way to ensure this is using `asVoid()`.
+Make sure the promises you pass to `race` are all of the same type. The easiest way
+to ensure this is to use `asVoid()`.
 
-> Please note if any promise you pass rejects, then `race` will be rejected.
+Note that if any component promise rejects, the `race` will reject, too.
+
+
+# Minimum Duration
+
+Sometimes you need a task to take *at least* a certain amount of time. (For example,
+you want to show a progress spinner, but if it shows for less than 0.3 seconds, the UI
+appears broken to the user.)
+
+```swift
+let waitAtLeast = after(seconds: 0.3)
+
+firstly {
+    foo()
+}.then {
+    waitAtLeast
+}.done {
+    //…
+}
+```
+
+The code above works because we create the delay *before* we do work in `foo()`. By the 
+time we get to waiting on that promise, either it will have already timed out or we will wait
+for whatever remains of the 0.3 seconds before continuing the chain.
 
 
 ## Cancellation
 
-Promises don’t have a `cancel` function, but they do support cancellation via a
+Promises don’t have a `cancel` function, but they do support cancellation through a
 special error type that conforms to the `CancellableError` protocol.
 
 ```swift
 func foo() -> (Promise<Void>, cancel: () -> Void) {
+    let task = Task(…)
     var cancelme = false
 
-    let promise = Promise<Void> { fulfill, reject in
-        let task = Task(…)
-        let cancel = {
-            cancelme = true
-            task.cancel()
-            reject(NSError.cancelledError)
-        }
+    let promise = Promise<Void> { seal in
         task.completion = { value in
-            guard !cancelme else { reject(NSError.cancelledError) }
-            fulfill(value)
+            guard !cancelme else { return reject(PMKError.cancelled) }
+            seal.fulfill(value)
+        }
         task.start()
     }
-    
+
+    let cancel = {
+        cancelme = true
+        task.cancel()
+    }
+
     return (promise, cancel)
 }
 ```
 
-> Promises don’t have a cancel function because you don’t want code outside of
-> your control to be able to cancel your operations *unless* you explicitly want
-> that. In cases where you want it, then it varies how it should work depending
-> on how the underlying task supports cancellation. Thus we have provided
-> primitives but not concrete API.
+Promises don’t have a `cancel` function because you don’t want code outside of
+your control to be able to cancel your operations--*unless*, of course, you explicitly
+want to enable that behavior. In cases where you do want cancellation, the exact way 
+that it should work will vary depending on how the underlying task supports cancellation.
+PromiseKit provides cancellation primitives but no concrete API.
 
-Cancelled chains do not call a `catch` handler by default. However you can
+Cancelled chains do not call `catch` handlers by default. However you can
 intercept cancellation if you like:
 
 ```swift
 foo.then {
     //…
-}.catch(policy: .allErrorsIncludingCancellation) {
+}.catch(policy: .allErrors) {
     // cancelled errors are handled *as well*
 }
 ```
 
-**Important**, canceling the chain is *not* the same as canceling the underlying
-asynchronous task. Promises are a wrapper around asynchronicity but they have no
-control over the underlying tasks. If you need to cancel the underlying task you
+**Important**: Canceling a promise chain is *not* the same as canceling the underlying
+asynchronous task. Promises are wrappers around asynchronicity, but they have no
+control over the underlying tasks. If you need to cancel an underlying task, you
 need to cancel the underlying task!
+
+> The library [CancellablePromiseKit](https://github.com/johannesd/CancellablePromiseKit) extends the concept of Promises to fully cover cancellable tasks.
 
 ## Retry / Polling
 
 ```swift
-func attempt<T>(interdelay: DispatchTimeInterval = .seconds(2), maxRepeat: Int = 3, body: @escaping () -> Promise<T>) -> Promise<T> {
+func attempt<T>(maximumRetryCount: Int = 3, delayBeforeRetry: DispatchTimeInterval = .seconds(2), _ body: @escaping () -> Promise<T>) -> Promise<T> {
     var attempts = 0
     func attempt() -> Promise<T> {
         attempts += 1
         return body().recover { error -> Promise<T> in
-            guard attempts < maxRepeat else { throw error }
-
-            return after(interval: interdelay).then {
-                return attempt()
-            }
+            guard attempts < maximumRetryCount else { throw error }
+            return after(delayBeforeRetry).then(on: nil, attempt)
         }
     }
-
     return attempt()
 }
 
-attempt{ flakeyTask() }.then {
+attempt(maximumRetryCount: 3) {
+    flakeyTask(parameters: foo)
+}.then {
     //…
 }.catch { _ in
     // we attempted three times but still failed
 }
 ```
 
-Probably you should supplement the above so that you only re-attempt for
+In most cases, you should probably supplement the code above so that it re-attempts only for
 specific error conditions.
 
 
 ## Wrapping Delegate Systems
 
-Be careful with Promises and delegate systems as they are not always suited.
-Promises complete *once* where most delegate systems call their callbacks many
+Be careful with Promises and delegate systems, as they are not always compatible.
+Promises complete *once*, whereas most delegate systems may notify their delegate many
 times. This is why, for example, there is no PromiseKit extension for a
 `UIButton`.
 
@@ -286,7 +347,7 @@ extension CLLocationManager {
 }
 
 class PMKCLLocationManagerProxy: NSObject, CLLocationManagerDelegate {
-    private let (promise, fulfill, reject) = Promise<[CLLocation]>.pending()
+    private let (promise, seal) = Promise<[CLLocation]>.pending()
     private var retainCycle: PMKCLLocationManagerProxy?
     private let manager = CLLocationManager()
 
@@ -294,19 +355,19 @@ class PMKCLLocationManagerProxy: NSObject, CLLocationManagerDelegate {
         super.init()
         retainCycle = self
         manager.delegate = self // does not retain hence the `retainCycle` property
-        
+
         promise.ensure {
             // ensure we break the retain cycle
             self.retainCycle = nil
         }
     }
-    
+
     @objc fileprivate func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        fulfill(locations)
+        seal.fulfill(locations)
     }
 
     @objc func locationManager(_: CLLocationManager, didFailWithError error: Error) {
-        reject(error)
+        seal.reject(error)
     }
 }
 
@@ -319,49 +380,49 @@ CLLocationManager.promise().then { locations in
 }
 ```
 
-> Please note, we provide this promise with our CoreLocation extensions at
+> Please note: we provide this promise with our CoreLocation extensions at
 > https://github.com/PromiseKit/CoreLocation
 
 
 ## Recovery
 
-Sometimes you don’t want an error to cascade, instead you have a default value:
+Sometimes you don’t want an error to cascade. Instead, you want to supply a default result:
 
-```
-CLLocationManager.promise().recover { error -> CLLocation in
+```swift
+CLLocationManager.requestLocation().recover { error -> Promise<CLLocation> in
     guard error == MyError.airplaneMode else {
         throw error
     }
-    return CLLocation.savannah
-}.then { location in
+    return .value(CLLocation.savannah)
+}.done { location in
     //…
 }
 ```
 
-Be careful not to ignore all errors; recover only those errors that make sense.
+Be careful not to ignore all errors, though! Recover only those errors that make sense to recover.
 
 
-## Promises for modal view-controllers
+## Promises for Modal View Controllers
 
 ```swift
 class ViewController: UIViewController {
 
-    private let (promise, seal) = Promise<…>.pending()
-    
+    private let (promise, seal) = Guarantee<…>.pending()  // use Promise if your flow can fail
+
     func show(in: UIViewController) -> Promise<…> {
         in.show(self, sender: in)
         return promise
     }
-    
+
     func done() {
         dismiss(animated: true)
-        seal(…)
+        seal.fulfill(…)
     }
 }
 
 // use:
 
-ViewController().show(in: self).then {
+ViewController().show(in: self).done {
     //…
 }.catch { error in
     //…
@@ -369,13 +430,13 @@ ViewController().show(in: self).then {
 ```
 
 This is the best approach we have found, which is a pity as it requires the
-presentee to control the presentation and the presentee to be dismiss itself
+presentee to control the presentation and requires the presentee to dismiss itself
 explicitly.
 
-Nothing seemingly can beat Storyboard segues for decoupling an app's router.
+Nothing seems to beat storyboard segues for decoupling an app's controllers.
 
 
-## Saving previous results
+## Saving Previous Results
 
 Let’s say you have:
 
@@ -383,49 +444,51 @@ Let’s say you have:
 ```swift
 login().then { username in
     fetch(avatar: username)
-}.then { image in
+}.done { image in
     //…
 }
 ```
 
-In the second `then` how can you access `username` as well as `image`?
+What if you want access to both `username` and `image` in your `done`?
 
-The most obvious way is with nesting:
+The most obvious way is to use nesting:
 
 ```swift
 login().then { username in
-    fetch(avatar: username).then { image in
-        // we have image and username
+    fetch(avatar: username).done { image in
+        // we have access to both `image` and `username`
     }
-}.then {
+}.done {
     // the chain still continues as you'd expect
 }
 ```
 
-However you could instead use Swift tuples:
+However, such nesting reduces the clarity of the chain. Instead, we could use Swift
+tuples:
 
 ```swift
 login().then { username in
-    fetch(avatar: username).then { ($0, username) }
+    fetch(avatar: username).map { ($0, username) }
 }.then { image, username in
     //…
 }
 ```
 
-The above is a quick transforming `then` that simply maps the `Promise<String>`
-into `Promise<(UIImage, String)>`.
+The code above simply maps `Promise<String>` into `Promise<(UIImage, String)>`.
 
 
-## Waiting on multiple promises whatever their result
+## Waiting on Multiple Promises, Whatever Their Result
 
 Use `when(resolved:)`:
 
 ```swift
-when(resolved: a, b).then { (results: [Result<T>]) in
+when(resolved: a, b).done { (results: [Result<T>]) in
     // `Result` is an enum of `.fulfilled` or `.rejected`
 }
+
+// ^^ cannot call `catch` as `when(resolved:)` returns a `Guarantee`
 ```
 
-Generally you don't want this, people ask for it a lot, but usually they
-actually just want to use `recover` on one of the promises. Usually you don't
-want to ignore errors. Errors happen, they should be handled.
+Generally, you don't want this! People ask for it a lot, but usually because
+they are trying to ignore errors. What they really need is to use `recover` on one of the
+promises. Errors happen, so they should be handled; you usually don't want to ignore them.

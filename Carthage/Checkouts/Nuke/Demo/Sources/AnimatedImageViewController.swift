@@ -1,18 +1,15 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2016-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
-import FLAnimatedImage
+import Gifu
 
-private let textViewCellReuseID = "textViewReuseID"
-private let imageCellReuseID = "imageCellReuseID"
+// MARK: - AnimatedImageViewController
 
 final class AnimatedImageViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    private var imageURLs = [URL]()
-
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    override init(nibName nibNameOrNil: String? = nil, bundle nibBundleOrNil: Bundle? = nil) {
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
 
@@ -23,25 +20,18 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: textViewCellReuseID)
+        collectionView?.register(HeaderCell.self, forCellWithReuseIdentifier: headerCellReuseId)
         collectionView?.register(AnimatedImageCell.self, forCellWithReuseIdentifier: imageCellReuseID)
-        collectionView?.backgroundColor = UIColor.white
+
+        if #available(iOS 13.0, *) {
+            collectionView?.backgroundColor = UIColor.systemBackground
+        } else {
+            collectionView?.backgroundColor = UIColor.white
+        }
 
         let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        layout.sectionInset = UIEdgeInsetsMake(8, 8, 8, 8)
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         layout.minimumInteritemSpacing = 8
-
-        let root = "https://cloud.githubusercontent.com/assets"
-        imageURLs = [
-            URL(string: "\(root)/1567433/6505557/77ff05ac-c2e7-11e4-9a09-ce5b7995cad0.gif")!,
-            URL(string: "\(root)/1567433/6505565/8aa02c90-c2e7-11e4-8127-71df010ca06d.gif")!,
-            URL(string: "\(root)/1567433/6505571/a28a6e2e-c2e7-11e4-8161-9f39cc3bb8df.gif")!,
-            URL(string: "\(root)/1567433/6505576/b785a8ac-c2e7-11e4-831a-666e2b064b95.gif")!,
-            URL(string: "\(root)/1567433/6505579/c88c77ca-c2e7-11e4-88ad-d98c7360602d.gif")!,
-            URL(string: "\(root)/1567433/6505595/def06c06-c2e7-11e4-9cdf-d37d28618af0.gif")!,
-            URL(string: "\(root)/1567433/6505634/26e5dad2-c2e8-11e4-89c3-3c3a63110ac0.gif")!,
-            URL(string: "\(root)/1567433/6505643/42eb3ee8-c2e8-11e4-8666-ac9c8e1dc9b5.gif")!
-        ]
     }
 
     // MARK: Collection View
@@ -51,43 +41,19 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return section == 0 ? 1 : imageURLs.count
+        switch section {
+        case 0: return 1
+        default: return imageURLs.count
+        }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.section == 0 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: textViewCellReuseID, for: indexPath)
-            var textView: UITextView! = cell.viewWithTag(14) as? UITextView
-            if textView == nil {
-                textView = UITextView()
-                textView.textColor = UIColor.black
-                textView.font = UIFont.systemFont(ofSize: 16)
-                textView.isEditable = false
-                textView.textAlignment = .center
-                textView.dataDetectorTypes = .link
-
-                cell.contentView.addSubview(textView)
-                textView.frame = cell.contentView.bounds
-                textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
-
-                textView.text = "Images by Florian de Looij\n http://flrngif.tumblr.com"
-            }
-            return cell
-        } else {
+        switch indexPath.section {
+        case 0:
+            return collectionView.dequeueReusableCell(withReuseIdentifier: headerCellReuseId, for: indexPath)
+        default:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: imageCellReuseID, for: indexPath) as! AnimatedImageCell
-
-            // Do it once somewhere where you configure the app / pipelines.
-            ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
-
-            cell.activityIndicator.startAnimating()
-            Nuke.loadImage(
-                with: imageURLs[indexPath.row],
-                options: ImageLoadingOptions(transition: .fadeIn(duration: 0.33)),
-                into: cell.imageView,
-                completion: { [weak cell] _, _ in
-                    cell?.activityIndicator.stopAnimating()
-            })
-
+            cell.setImage(with: imageURLs[indexPath.row])
             return cell
         }
     }
@@ -95,73 +61,126 @@ final class AnimatedImageViewController: UICollectionViewController, UICollectio
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let layout = collectionViewLayout as! UICollectionViewFlowLayout
         let width = view.bounds.size.width - layout.sectionInset.left - layout.sectionInset.right
-        if indexPath.section == 0 {
+        switch indexPath.section {
+        case 0:
             return CGSize(width: width, height: 50)
-        } else {
+        default:
             return CGSize(width: width, height: width)
         }
     }
 }
 
-final class AnimatedImageCell: UICollectionViewCell {
-    let imageView: FLAnimatedImageView
-    let activityIndicator: UIActivityIndicatorView
+private let headerCellReuseId = "headerCellReuseID"
+private let imageCellReuseID = "imageCellReuseID"
+
+// MARK: - Image URLs
+
+private let root = "https://cloud.githubusercontent.com/assets"
+private let imageURLs = [
+    URL(string: "\(root)/1567433/6505557/77ff05ac-c2e7-11e4-9a09-ce5b7995cad0.gif")!,
+    URL(string: "\(root)/1567433/6505565/8aa02c90-c2e7-11e4-8127-71df010ca06d.gif")!,
+    URL(string: "\(root)/1567433/6505571/a28a6e2e-c2e7-11e4-8161-9f39cc3bb8df.gif")!,
+    URL(string: "\(root)/1567433/6505576/b785a8ac-c2e7-11e4-831a-666e2b064b95.gif")!,
+    URL(string: "\(root)/1567433/6505579/c88c77ca-c2e7-11e4-88ad-d98c7360602d.gif")!,
+    URL(string: "\(root)/1567433/6505595/def06c06-c2e7-11e4-9cdf-d37d28618af0.gif")!,
+    URL(string: "\(root)/1567433/6505634/26e5dad2-c2e8-11e4-89c3-3c3a63110ac0.gif")!,
+    URL(string: "\(root)/1567433/6505643/42eb3ee8-c2e8-11e4-8666-ac9c8e1dc9b5.gif")!
+]
+
+// MARK: - AnimatedImageCell
+
+private final class AnimatedImageCell: UICollectionViewCell {
+    private let imageView: GIFImageView
+    private let spinner: UIActivityIndicatorView
+    private var task: ImageTask?
 
     override init(frame: CGRect) {
-        imageView = FLAnimatedImageView()
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-
-        super.init(frame: frame)
-
-        self.backgroundColor = UIColor(white: 235.0 / 255.0, alpha: 1.0)
-
+        imageView = GIFImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
 
+        spinner = UIActivityIndicatorView(style: .gray)
+
+        super.init(frame: frame)
+
+        backgroundColor = UIColor(white: 235.0 / 255.0, alpha: 1.0)
+
         contentView.addSubview(imageView)
-        imageView.frame = contentView.bounds
-        imageView.autoresizingMask =  [.flexibleWidth, .flexibleHeight]
+        contentView.addSubview(spinner)
 
-        contentView.addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addConstraint(NSLayoutConstraint(item: activityIndicator, attribute: .centerX, relatedBy: .equal, toItem: contentView, attribute: .centerX, multiplier: 1.0, constant: 0.0))
-        contentView.addConstraint(NSLayoutConstraint(item: activityIndicator, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1.0, constant: 0.0))
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        imageView.display(image: nil)
+        imageView.pinToSuperview()
+        spinner.centerInSuperview()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError()
     }
+
+    func setImage(with url: URL) {
+        let pipeline = ImagePipeline.shared
+        let request = ImageRequest(url: url)
+
+        if let image = pipeline.cachedImage(for: request) {
+            return display(image)
+        }
+
+        spinner.startAnimating()
+        task = pipeline.loadImage(with: request) { [weak self] result in
+            self?.spinner.stopAnimating()
+            if case let .success(response) = result {
+                self?.display(response.container)
+                self?.animateFadeIn()
+            }
+        }
+    }
+
+    private func display(_ container: Nuke.ImageContainer) {
+        if let data = container.data {
+            imageView.animate(withGIFData: data)
+        } else {
+            imageView.image = container.image
+        }
+    }
+
+    private func animateFadeIn() {
+        imageView.alpha = 0
+        UIView.animate(withDuration: 0.33) { self.imageView.alpha = 1 }
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        task?.cancel()
+        spinner.stopAnimating()
+        imageView.prepareForReuse()
+    }
 }
 
-extension FLAnimatedImageView {
-    @objc open override func display(image: Image?) {
-        guard image != nil else {
-            self.animatedImage = nil
-            self.image = nil
-            return
-        }
-        if let data = image?.animatedImageData {
-            // Display poster image immediately
-            self.image = image
+// MARK: - HeaderCell
 
-            // Prepare FLAnimatedImage object asynchronously (it takes a
-            // noticeable amount of time), and start playback.
-            DispatchQueue.global().async {
-                let animatedImage = FLAnimatedImage(animatedGIFData: data)
-                DispatchQueue.main.async {
-                    // If view is still displaying the same image
-                    if self.image === image {
-                        self.animatedImage = animatedImage
-                    }
-                }
-            }
+private final class HeaderCell: UICollectionViewCell {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        let textView = UITextView()
+        if #available(iOS 13.0, *) {
+            textView.textColor = UIColor.label
         } else {
-            self.image = image
+            textView.textColor = UIColor.black
         }
+        textView.font = UIFont.systemFont(ofSize: 16)
+        textView.isEditable = false
+        textView.textAlignment = .center
+        textView.dataDetectorTypes = .link
+
+        contentView.addSubview(textView)
+        textView.frame = contentView.bounds
+        textView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+
+        textView.text = "Images by Florian de Looij\n http://flrngif.tumblr.com"
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
     }
 }

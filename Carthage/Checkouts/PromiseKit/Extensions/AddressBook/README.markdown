@@ -5,7 +5,7 @@ This project adds promises to Apple’s AddressBook framework.
 ## CococaPods
 
 ```ruby
-pod "PromiseKit/AddressBook" ~> 4.0
+pod "PromiseKit/AddressBook" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/AddressBook" ~> 1.0
+github "PromiseKit/AddressBook" ~> 3.0
 ```
 
 The extensions are built into their own framework:

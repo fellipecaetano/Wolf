@@ -1,3 +1,5 @@
+import Foundation
+
 public struct CachedResponse {
     fileprivate let cachedResponse: CachedURLResponse
     fileprivate let duration: TimeInterval

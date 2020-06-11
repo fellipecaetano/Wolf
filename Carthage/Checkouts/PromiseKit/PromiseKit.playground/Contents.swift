@@ -7,23 +7,21 @@ import PromiseKit
 
 
 func promise3() -> Promise<Int> {
-    return after(seconds: 1).then {
-        return 3
-    }
+    return after(.seconds(1)).map{ 3 }
 }
 
 firstly {
-    Promise(value: 1)
-}.then { _ in
+    Promise.value(1)
+}.map { _ in
     2
 }.then { _ in
     promise3()
-}.then {
+}.done {
     print($0)  // => 3
-}.always {
-    // always happens
 }.catch { error in
     // only happens for errors
+}.finally {
+    PlaygroundPage.current.finishExecution()
 }
 
 PlaygroundPage.current.needsIndefiniteExecution = true

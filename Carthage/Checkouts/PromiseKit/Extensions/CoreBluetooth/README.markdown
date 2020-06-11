@@ -1,3 +1,7 @@
+# DEPRECATED
+
+THe promises provided here are not-sensible. You should use a full delegate pattern for CoreBluetooth, one shot listening for connectivity is not wise since the accessory may disconnect at any time.
+
 # PromiseKit CoreBluetooth Extensions ![Build Status]
 
 This project adds promises to Apple’s CoreBluetooth framework.
@@ -5,7 +9,7 @@ This project adds promises to Apple’s CoreBluetooth framework.
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/CoreBluetooth" ~> 4.0
+pod "PromiseKit/CoreBluetooth" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +17,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/CoreBluetooth" ~> 1.0
+github "PromiseKit/CoreBluetooth" ~> 3.0
 ```
 
 The extensions are built into their own framework:

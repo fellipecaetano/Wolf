@@ -1,37 +1,13 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
 
-fileprivate struct MenuItem {
-    typealias Action = ((MenuItem) -> Void)
-    
-    var title: String?
-    var subtitle: String?
-    var action: Action?
-    
-    init(title: String?, subtitle: String? = nil, action: Action?) {
-        self.title = title
-        self.subtitle = subtitle
-        self.action = action
-    }
-}
-
-fileprivate struct MenuSection {
-    var title: String
-    var items: [MenuItem]
-    
-    init(title: String, items: [MenuItem]) {
-        self.title = title
-        self.items = items
-    }
-}
-
 final class MenuViewController: UITableViewController {
-    fileprivate var sections = [MenuSection]()
-    
+    private var sections = [MenuSection]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,124 +18,93 @@ final class MenuViewController: UITableViewController {
             navigationItem.largeTitleDisplayMode = .automatic
         }
 
-        sections.append(MenuSection(title: "Basic", items: {
-            var items = [MenuItem]()
-            
-            items.append(MenuItem(
-                title: "Basic",
-                subtitle: "Zero config",
-                action: { [weak self] in
-                    let controller = BasicDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
+        sections = [generalSection, integrationSection, advancedSection]
+    }
 
-            items.append(MenuItem(
-                title: "Progressive Decoding",
-                subtitle: "Progressive and baseline JPEG",
-                action: { [weak self] _ in
-                    let controller = ProgressiveDecodingDemoViewController()
-                    controller.title = "Progressive JPEG"
-                    self?.push(controller)
-            }))
+    private var generalSection: MenuSection {
+        MenuSection(title: "General", items: [
+            MenuItem(
+                title: "Image Pipeline",
+                subtitle: "The default pipeline, configurable at runtime",
+                action: { [weak self] in self?.push(BasicDemoViewController(), $0) }
+            ),
+            MenuItem(
+                title: "Image Processing",
+                subtitle: "Showcases some of the built-in image processors",
+                action: { [weak self] in self?.push(ImageProcessingDemoViewController(), $0) }
+            ),
+            MenuItem(
+                title: "Disk Cache",
+                subtitle: "Aggressive disk caching enabled",
+                action: { [weak self] in self?.push(DataCachingDemoViewController(), $0) }
+            ),
+            MenuItem(
+                title: "Prefetching",
+                subtitle: "UICollectionView Prefetching",
+                action: { [weak self] in self?.push(PrefetchingDemoViewController(), $0) }
+            )
+        ])
+    }
 
-            items.append(MenuItem(
-                title: "Preheating",
-                subtitle: "Uses Preheat library",
-                action: { [weak self] in
-                    let controller = PreheatingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            return items
-        }()))
-
-        sections.append(MenuSection(title: "Integrations", items: {
-            var items = [MenuItem]()
-
-            items.append(MenuItem(
+    private var integrationSection:  MenuSection {
+        MenuSection(title: "Integrations", items: [
+            MenuItem(
                 title: "Alamofire",
                 subtitle: "Custom networking stack",
-                action: { [weak self] in
-                    let controller = AlamofireIntegrationDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            items.append(MenuItem(
-                title: "FLAnimatedImage",
+                action: { [weak self] in self?.push(AlamofireIntegrationDemoViewController(), $0) }
+            ),
+            MenuItem(
+                title: "Gifu",
                 subtitle: "Display animated GIFs",
-                action: { [weak self] in
-                    let controller = AnimatedImageViewController(nibName: nil, bundle: nil)
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
+                action: { [weak self] in self?.push(AnimatedImageViewController(), $0) }
+            ),
+            MenuItem(
+                title: "SwiftSVG",
+                subtitle: "Render vector images",
+                action: { [weak self] in self?.push(SwiftSVGDemoViewController(), $0) }
+            )
+        ])
+    }
 
-            items.append(MenuItem(
-                title: "DFCache",
-                subtitle: "Custom on-disk cache",
-                action: { [weak self] in
-                    let controller = CustomCacheDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            return items
-        }()))
-
-        sections.append(MenuSection(title: "Advanced", items: {
-            var items = [MenuItem]()
-
-            items.append(MenuItem(
-                title: "MP4 (Experimental)",
-                subtitle: "Replaces GIFs with MP4",
-                action: { [weak self] in
-                    let controller = AnimatedImageUsingVideoViewController(nibName: nil, bundle: nil)
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            items.append(MenuItem(
-                title: "Disk Cache (Experimental)",
-                subtitle: "Enables aggressive disk caching",
-                action: { [weak self] in
-                    let controller = DataCachingDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
-
-            items.append(MenuItem(
+    private var advancedSection: MenuSection {
+        MenuSection(title: "Advanced", items: [
+            MenuItem(
+                title: "Progressive JPEG",
+                subtitle: "Progressive vs baseline JPEG",
+                action: { [weak self] in self?.push(ProgressiveDecodingDemoViewController(), $0) }
+            ),
+            MenuItem(
                 title: "Rate Limiter",
                 subtitle: "Infinite scroll, highlights rate limiter performance",
-                action: { [weak self] in
-                    let controller = RateLimiterDemoViewController(collectionViewLayout: UICollectionViewFlowLayout())
-                    controller.title = $0.title
-                    self?.push(controller)
-            }))
+                action: { [weak self] in self?.push(RateLimiterDemoViewController(), $0) }
+            ),
+            MenuItem(
+                title: "MP4 (Experimental)",
+                subtitle: "Replaces GIFs with MP4",
+                action: { [weak self] in self?.push(AnimatedImageUsingVideoViewController(), $0)
+            })
+        ])
+    }
 
-            return items
-        }()))
+    private func push(_ controller: UIViewController, _ item: MenuItem) {
+        controller.title = item.title
+        navigationController?.pushViewController(controller, animated: true)
     }
-    
-    func push(_ controller: UIViewController) {
-        self.navigationController?.pushViewController(controller, animated: true)
-    }
-    
+
     // MARK: Table View
-    
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sections[section].items.count
     }
-    
+
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sections[section].title
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MenuItemCell", for: indexPath)
         let item = sections[indexPath.section].items[indexPath.row]
@@ -167,9 +112,35 @@ final class MenuViewController: UITableViewController {
         cell.detailTextLabel?.text = item.subtitle
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = sections[indexPath.section].items[indexPath.row]
         item.action?(item)
+    }
+}
+
+// MARK - MenuItem
+
+private struct MenuItem {
+    typealias Action = ((MenuItem) -> Void)
+
+    var title: String?
+    var subtitle: String?
+    var action: Action?
+
+    init(title: String?, subtitle: String? = nil, action: Action?) {
+        self.title = title
+        self.subtitle = subtitle
+        self.action = action
+    }
+}
+
+private struct MenuSection {
+    var title: String
+    var items: [MenuItem]
+
+    init(title: String, items: [MenuItem]) {
+        self.title = title
+        self.items = items
     }
 }

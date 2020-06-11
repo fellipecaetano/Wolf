@@ -18,16 +18,13 @@
 		5500EA861DDD3E0C00DC6880 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5500EA851DDD3E0C00DC6880 /* Show.swift */; };
 		5500EA891DDD3E7800DC6880 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA881DDD3E7800DC6880 /* Main.storyboard */; };
 		5500EA8B1DDD3ED400DC6880 /* popular_shows.json in Resources */ = {isa = PBXBuildFile; fileRef = 5500EA8A1DDD3ED400DC6880 /* popular_shows.json */; };
+		55336FC823E3182A008F7E1E /* StoryboardConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55336FC723E3182A008F7E1E /* StoryboardConvertible.swift */; };
 		B3F667D31DE208610058787F /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D21DE208610058787F /* OHHTTPStubs.framework */; };
 		B3F667D41DE208610058787F /* OHHTTPStubs.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D21DE208610058787F /* OHHTTPStubs.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F667D61DE208610058787F /* Unbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D51DE208610058787F /* Unbox.framework */; };
-		B3F667D71DE208610058787F /* Unbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D51DE208610058787F /* Unbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667D91DE208610058787F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D81DE208610058787F /* PromiseKit.framework */; };
 		B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667D81DE208610058787F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667DC1DE208610058787F /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; };
 		B3F667DD1DE208610058787F /* Alamofire.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DB1DE208610058787F /* Alamofire.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; };
-		B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667DE1DE208610058787F /* IBentifiers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667E21DE208610058787F /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; };
 		B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E11DE208610058787F /* Nuke.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F667E51DE208610058787F /* Wolf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F667E41DE208610058787F /* Wolf.framework */; };
@@ -43,10 +40,8 @@
 			files = (
 				B3F667DA1DE208610058787F /* PromiseKit.framework in Embed Frameworks */,
 				B3F667D41DE208610058787F /* OHHTTPStubs.framework in Embed Frameworks */,
-				B3F667E01DE208610058787F /* IBentifiers.framework in Embed Frameworks */,
 				B3F667E61DE208610058787F /* Wolf.framework in Embed Frameworks */,
 				B3F667E31DE208610058787F /* Nuke.framework in Embed Frameworks */,
-				B3F667D71DE208610058787F /* Unbox.framework in Embed Frameworks */,
 				B3F667DD1DE208610058787F /* Alamofire.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -68,6 +63,7 @@
 		5500EA851DDD3E0C00DC6880 /* Show.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
 		5500EA881DDD3E7800DC6880 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		5500EA8A1DDD3ED400DC6880 /* popular_shows.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = popular_shows.json; sourceTree = "<group>"; };
+		55336FC723E3182A008F7E1E /* StoryboardConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryboardConvertible.swift; sourceTree = "<group>"; };
 		B3F667D21DE208610058787F /* OHHTTPStubs.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = OHHTTPStubs.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F667D51DE208610058787F /* Unbox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Unbox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F667D81DE208610058787F /* PromiseKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,10 +80,8 @@
 			files = (
 				B3F667D91DE208610058787F /* PromiseKit.framework in Frameworks */,
 				B3F667D31DE208610058787F /* OHHTTPStubs.framework in Frameworks */,
-				B3F667DF1DE208610058787F /* IBentifiers.framework in Frameworks */,
 				B3F667E51DE208610058787F /* Wolf.framework in Frameworks */,
 				B3F667E21DE208610058787F /* Nuke.framework in Frameworks */,
-				B3F667D61DE208610058787F /* Unbox.framework in Frameworks */,
 				B3F667DC1DE208610058787F /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,6 +110,7 @@
 		5500EA641DDD36C300DC6880 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				55336FC623E31812008F7E1E /* Common */,
 				5500EA841DDD3E0C00DC6880 /* Model */,
 				5500EA771DDD3B1600DC6880 /* UI */,
 				5500EA651DDD36C300DC6880 /* AppDelegate.swift */,
@@ -169,6 +164,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		55336FC623E31812008F7E1E /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				55336FC723E3182A008F7E1E /* StoryboardConvertible.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -212,6 +215,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -251,6 +255,7 @@
 				5500EA661DDD36C300DC6880 /* AppDelegate.swift in Sources */,
 				5500EA761DDD3AE500DC6880 /* Networking.swift in Sources */,
 				5500EA7D1DDD3B1600DC6880 /* ShowCollectionViewCell.swift in Sources */,
+				55336FC823E3182A008F7E1E /* StoryboardConvertible.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,11 +376,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -390,11 +395,11 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.fellipecaetano.WolfExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

@@ -5,7 +5,7 @@ This project adds promises to Apple’s SystemConfiguration framework.
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/SystemConfiguration" ~> 4.0
+pod "PromiseKit/SystemConfiguration" ~> 6.0
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/SystemConfiguration" ~> 1.0
+github "PromiseKit/SystemConfiguration" ~> 3.0
 ```
 
 The extensions are built into their own framework:

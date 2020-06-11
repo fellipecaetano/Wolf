@@ -6,29 +6,34 @@ import XCTest
 #if !os(tvOS)
 
 class Test_CLLocationManager_Swift: XCTestCase {
-    func test_fulfills_with_one_location() {
+    func test_fulfills_with_multiple_locations() {
         swizzle(CLLocationManager.self, #selector(CLLocationManager.startUpdatingLocation)) {
-            let ex = expectation(description: "")
+            swizzle(CLLocationManager.self, #selector(CLLocationManager.authorizationStatus), isClassMethod: true) {
+                let ex = expectation(description: "")
 
-            CLLocationManager.promise().then { x -> Void in
-                XCTAssertEqual(x, dummy.last!)
-                ex.fulfill()
+                CLLocationManager.requestLocation().done { x in
+                    XCTAssertEqual(x, dummy)
+                    ex.fulfill()
+                }
+
+                waitForExpectations(timeout: 1)
             }
-
-            waitForExpectations(timeout: 1, handler: nil)
         }
     }
 
-    func test_fulfills_with_multiple_locations() {
+    func test_fufillsWithSatisfyingBlock() {
         swizzle(CLLocationManager.self, #selector(CLLocationManager.startUpdatingLocation)) {
-            let ex = expectation(description: "")
-
-            CLLocationManager.promise().asArray().then { x -> Void in
-                XCTAssertEqual(x, dummy)
-                ex.fulfill()
+            swizzle(CLLocationManager.self, #selector(CLLocationManager.authorizationStatus), isClassMethod: true) {
+                let ex = expectation(description: "")
+                let block: ((CLLocation) -> Bool) = { location in
+                    return location.coordinate.latitude == dummy.last?.coordinate.latitude
+                }
+                CLLocationManager.requestLocation(satisfying: block).done({ locations in
+                    locations.forEach { XCTAssert(block($0) == true, "Block should be successful for returned values") }
+                    ex.fulfill()
+                })
+                waitForExpectations(timeout: 1)
             }
-
-            waitForExpectations(timeout: 1, handler: nil)
         }
     }
 
@@ -36,8 +41,8 @@ class Test_CLLocationManager_Swift: XCTestCase {
     func test_requestAuthorization() {
         let ex = expectation(description: "")
 
-        CLLocationManager.requestAuthorization().then { x -> Void in
-            XCTAssertEqual(x, CLAuthorizationStatus.restricted)
+        CLLocationManager.requestAuthorization().done {
+            XCTAssertEqual($0, CLAuthorizationStatus.restricted)
             ex.fulfill()
         }
 
@@ -52,9 +57,17 @@ private let dummy = [CLLocation(latitude: 0, longitude: 0), CLLocation(latitude:
 
 extension CLLocationManager {
     @objc func pmk_startUpdatingLocation() {
-        after(interval: 0.1).then {
+        after(.milliseconds(100)).done {
             self.delegate!.locationManager?(self, didUpdateLocations: dummy)
         }
+    }
+
+    @objc static func pmk_authorizationStatus() -> CLAuthorizationStatus {
+    #if os(macOS)
+        return .authorized
+    #else
+        return .authorizedWhenInUse
+    #endif
     }
 }
 
@@ -67,11 +80,11 @@ func swizzle(_ foo: AnyClass, _ from: Selector, isClassMethod: Bool = false, bod
     let swizzledMethod: Method
 
     if isClassMethod {
-        originalMethod = class_getClassMethod(foo, from)
-        swizzledMethod = class_getClassMethod(foo, Selector("pmk_\(from)"))
+        originalMethod = class_getClassMethod(foo, from)!
+        swizzledMethod = class_getClassMethod(foo, Selector("pmk_\(from)"))!
     } else {
-        originalMethod = class_getInstanceMethod(foo, from)
-        swizzledMethod = class_getInstanceMethod(foo, Selector("pmk_\(from)"))
+        originalMethod = class_getInstanceMethod(foo, from)!
+        swizzledMethod = class_getInstanceMethod(foo, Selector("pmk_\(from)"))!
     }
 
     method_exchangeImplementations(originalMethod, swizzledMethod)

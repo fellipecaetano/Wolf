@@ -2,7 +2,7 @@
 
 import Social.SLComposeViewController
 import UIKit.UIViewController
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -20,12 +20,12 @@ extension UIViewController {
     /// Presents the message view controller and resolves with the user action.
     public func promise(_ vc: SLComposeViewController, animated: Bool = true, completion: (() -> Void)? = nil) -> Promise<Void> {
         present(vc, animated: animated, completion: completion)
-        return Promise { fulfill, reject in
+        return Promise { seal in
             vc.completionHandler = { result in
                 if result == .cancelled {
-                    reject(SLComposeViewController.PMKError.cancelled)
+                    seal.reject(SLComposeViewController.PMKError.cancelled)
                 } else {
-                    fulfill(())
+                    seal.fulfill(())
                 }
             }
         }

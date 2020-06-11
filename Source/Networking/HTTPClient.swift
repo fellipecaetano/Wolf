@@ -58,31 +58,27 @@ public protocol HTTPResource {
     associatedtype Value
 
     var path: String { get }
+    var rootKey: String? { get }
     var method: HTTPMethod { get }
     var parameters: Parameters? { get }
     var headers: [String: String]? { get }
     var parameterEncoding: ParameterEncoding { get }
 
     func validate(request: URLRequest?, response: HTTPURLResponse, data: Data?) -> Request.ValidationResult
-    func serialize(response: Result<Data>) -> SerializationResult<Value>
+    func serialize(response result: Result<Data>) -> SerializationResult<Value>
 }
 
 public extension HTTPResource {
-    var method: HTTPMethod {
-        return .get
-    }
 
-    var parameters: Parameters? {
-        return nil
-    }
+    var rootKey: String? { nil }
+    
+    var method: HTTPMethod { .get }
 
-    var headers: [String: String]? {
-        return nil
-    }
+    var parameters: Parameters? { nil }
 
-    var parameterEncoding: ParameterEncoding {
-        return URLEncoding()
-    }
+    var headers: [String: String]? { nil }
+
+    var parameterEncoding: ParameterEncoding { URLEncoding() }
 
     var responseSerializer: DataResponseSerializer<Value> {
         return DataResponseSerializer { _, _, data, error in

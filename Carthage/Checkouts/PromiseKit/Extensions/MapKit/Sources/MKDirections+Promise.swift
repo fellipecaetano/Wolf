@@ -1,5 +1,5 @@
 import MapKit
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -14,13 +14,25 @@ import PromiseKit
     import PromiseKit
 */
 extension MKDirections {
+#if swift(>=4.2)
+    /// Begins calculating the requested route information asynchronously.
+    public func calculate() -> Promise<Response> {
+        return Promise { calculate(completionHandler: $0.resolve) }
+    }
+
+    /// Begins calculating the requested travel-time information asynchronously.
+    public func calculateETA() -> Promise<ETAResponse> {
+        return Promise { calculateETA(completionHandler: $0.resolve) }
+    }
+#else
     /// Begins calculating the requested route information asynchronously.
     public func calculate() -> Promise<MKDirectionsResponse> {
-        return PromiseKit.wrap(calculate)
+        return Promise { calculate(completionHandler: $0.resolve) }
     }
 
     /// Begins calculating the requested travel-time information asynchronously.
     public func calculateETA() -> Promise<MKETAResponse> {
-        return PromiseKit.wrap(calculateETA)
+        return Promise { calculateETA(completionHandler: $0.resolve) }
     }
+#endif
 }

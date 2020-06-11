@@ -1,6 +1,6 @@
 # Contents
 
-* [README](/README.md)
+* [README](../README.md)
 * Handbook
   * [Getting Started](GettingStarted.md)
   * [Promises: Common Patterns](CommonPatterns.md)
@@ -10,3 +10,5 @@
   * [Objective-C Guide](ObjectiveC.md)
   * [Troubleshooting](Troubleshooting.md)
   * [Appendix](Appendix.md)
+* [Examples](Examples)
+* [API Reference](https://mxcl.dev/PromiseKit/reference/v6/Classes/Promise.html)

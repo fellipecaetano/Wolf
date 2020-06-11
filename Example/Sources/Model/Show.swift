@@ -2,16 +2,9 @@ import Foundation
 import Unbox
 import Wolf
 
-struct Show {
+struct Show: Decodable {
     let imageURL: URL
     let title: String
-}
-
-extension Show: Unboxable {
-    init(unboxer: Unboxer) throws {
-        imageURL = try unboxer.unbox(keyPath: "images.poster.thumb")
-        title = try unboxer.unbox(key: "title")
-    }
 }
 
 extension Show {

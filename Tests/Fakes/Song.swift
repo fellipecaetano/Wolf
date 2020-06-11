@@ -1,15 +1,9 @@
-import Unbox
+import Foundation
 import Alamofire
 import Wolf
 
-struct Song {
+struct Song: Codable {
     let title: String
-}
-
-extension Song: Unboxable {
-    init(unboxer: Unboxer) throws {
-        title = try unboxer.unbox(key: "title")
-    }
 }
 
 extension Song {
@@ -58,7 +52,7 @@ extension Song {
         }
     }
 
-    enum EnvelopedArrayResource: HTTPResource, JSONEnvelope {
+    enum EnvelopedArrayResource: HTTPResource {
         typealias Value = [Song]
 
         case getEnvelopedSongs

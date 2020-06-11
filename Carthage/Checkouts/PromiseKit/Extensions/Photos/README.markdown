@@ -5,7 +5,7 @@ This project adds promises to Apple’s Photos framework.
 ## CocoaPods
 
 ```ruby
-pod "PromiseKit/Photos" ~> 4.0
+pod "PromiseKit/Photos", "~> 6.0"
 ```
 
 The extensions are built into `PromiseKit.framework` thus nothing else is needed.
@@ -13,7 +13,7 @@ The extensions are built into `PromiseKit.framework` thus nothing else is needed
 ## Carthage
 
 ```ruby
-github "PromiseKit/Photos" ~> 1.0
+github "PromiseKit/Photos" ~> 3.0
 ```
 
 The extensions are built into their own framework:

@@ -1,14 +1,16 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import Foundation
+import os
 
 // MARK: - Lock
 
 extension NSLock {
     func sync<T>(_ closure: () -> T) -> T {
-        lock(); defer { unlock() }
+        lock()
+        defer { unlock() }
         return closure()
     }
 }
@@ -24,13 +26,13 @@ extension NSLock {
 /// The implementation supports quick bursts of requests which can be executed
 /// without any delays when "the bucket is full". This is important to prevent
 /// rate limiter from affecting "normal" requests flow.
-internal final class RateLimiter {
+final class RateLimiter {
     private let bucket: TokenBucket
     private let queue: DispatchQueue
-    private var pending = LinkedList<Task>() // fast append, fast remove first
+    private var pending = LinkedList<Work>() // fast append, fast remove first
     private var isExecutingPendingTasks = false
 
-    private typealias Task = (_CancellationToken, () -> Void)
+    typealias Work = () -> Bool
 
     /// Initializes the `RateLimiter` with the given configuration.
     /// - parameter queue: Queue on which to execute pending tasks.
@@ -42,111 +44,112 @@ internal final class RateLimiter {
         self.bucket = TokenBucket(rate: Double(rate), burst: Double(burst))
     }
 
-    func execute(token: _CancellationToken, _ closure: @escaping () -> Void) {
-        let task = Task(token, closure)
-        if !pending.isEmpty || !_execute(task) {
-            pending.append(task)
-            _setNeedsExecutePendingTasks()
+    /// - parameter closure: Returns `true` if the close was executed, `false`
+    /// if the work was cancelled.
+    func execute( _ work: @escaping Work) {
+        if !pending.isEmpty || !bucket.execute(work) {
+            pending.append(work)
+            setNeedsExecutePendingTasks()
         }
     }
 
-    private func _execute(_ task: Task) -> Bool {
-        guard !task.0.isCancelling else {
-            return true // No need to execute
+    private func setNeedsExecutePendingTasks() {
+        guard !isExecutingPendingTasks else {
+            return
         }
-        return bucket.execute(task.1)
-    }
-
-    private func _setNeedsExecutePendingTasks() {
-        guard !isExecutingPendingTasks else { return }
         isExecutingPendingTasks = true
         // Compute a delay such that by the time the closure is executed the
         // bucket is refilled to a point that is able to execute at least one
         // pending task. With a rate of 100 tasks we expect a refill every 10 ms.
         let delay = Int(1.15 * (1000 / bucket.rate)) // 14 ms for rate 80 (default)
         let bounds = max(100, min(5, delay)) // Make the delay is reasonable
-        queue.asyncAfter(deadline: .now() + .milliseconds(bounds), execute: _executePendingTasks)
+        queue.asyncAfter(deadline: .now() + .milliseconds(bounds), execute: executePendingTasks)
     }
 
-    private func _executePendingTasks() {
-        while let node = pending.first, _execute(node.value) {
+    private func executePendingTasks() {
+        while let node = pending.first, bucket.execute(node.value) {
             pending.remove(node)
         }
         isExecutingPendingTasks = false
         if !pending.isEmpty { // Not all pending items were executed
-            _setNeedsExecutePendingTasks()
+            setNeedsExecutePendingTasks()
         }
     }
+}
 
-    private final class TokenBucket {
-        let rate: Double
-        private let burst: Double // maximum bucket size
-        private var bucket: Double
-        private var timestamp: TimeInterval // last refill timestamp
+private final class TokenBucket {
+    let rate: Double
+    private let burst: Double // maximum bucket size
+    private var bucket: Double
+    private var timestamp: TimeInterval // last refill timestamp
 
-        /// - parameter rate: Rate (tokens/second) at which bucket is refilled.
-        /// - parameter burst: Bucket size (maximum number of tokens).
-        init(rate: Double, burst: Double) {
-            self.rate = rate
-            self.burst = burst
-            self.bucket = burst
-            self.timestamp = CFAbsoluteTimeGetCurrent()
+    /// - parameter rate: Rate (tokens/second) at which bucket is refilled.
+    /// - parameter burst: Bucket size (maximum number of tokens).
+    init(rate: Double, burst: Double) {
+        self.rate = rate
+        self.burst = burst
+        self.bucket = burst
+        self.timestamp = CFAbsoluteTimeGetCurrent()
+    }
+
+    /// Returns `true` if the closure was executed, `false` if dropped.
+    func execute(_ work: () -> Bool) -> Bool {
+        refill()
+        guard bucket >= 1.0 else {
+            return false // bucket is empty
         }
-
-        /// Returns `true` if the closure was executed, `false` if dropped.
-        func execute(_ closure: () -> Void) -> Bool {
-            refill()
-            guard bucket >= 1.0 else {
-                return false // bucket is empty
-            }
-            bucket -= 1.0
-            closure()
-            return true
+        if work() {
+            bucket -= 1.0 // work was cancelled, no need to reduce the bucket
         }
+        return true
+    }
 
-        private func refill() {
-            let now = CFAbsoluteTimeGetCurrent()
-            bucket += rate * max(0, now - timestamp) // rate * (time delta)
-            timestamp = now
-            if bucket > burst { // prevent bucket overflow
-                bucket = burst
-            }
+    private func refill() {
+        let now = CFAbsoluteTimeGetCurrent()
+        bucket += rate * max(0, now - timestamp) // rate * (time delta)
+        timestamp = now
+        if bucket > burst { // prevent bucket overflow
+            bucket = burst
         }
     }
 }
 
 // MARK: - Operation
 
-internal final class Operation: Foundation.Operation {
-    enum State { case executing, finished }
-
-    // `queue` here is basically to make TSan happy. In reality the calls to
-    // `_setState` are guaranteed to never run concurrently in different ways.
-    private var _state: State?
-    private func _setState(_ newState: State) {
-        willChangeValue(forKey: "isExecuting")
-        if newState == .finished {
-            willChangeValue(forKey: "isFinished")
-        }
-        queue.sync(flags: .barrier) {
-            _state = newState
-        }
-        didChangeValue(forKey: "isExecuting")
-        if newState == .finished {
-            didChangeValue(forKey: "isFinished")
-        }
-    }
+final class Operation: Foundation.Operation {
+    private var _isExecuting = Atomic(false)
+    private var _isFinished = Atomic(false)
+    private var isFinishCalled = Atomic(false)
 
     override var isExecuting: Bool {
-        return queue.sync { _state == .executing }
+        set {
+            guard _isExecuting.value != newValue else {
+                fatalError("Invalid state, operation is already (not) executing")
+            }
+            willChangeValue(forKey: "isExecuting")
+            _isExecuting.value = newValue
+            didChangeValue(forKey: "isExecuting")
+        }
+        get {
+            _isExecuting.value
+        }
     }
     override var isFinished: Bool {
-        return queue.sync { _state == .finished }
+        set {
+            guard !_isFinished.value else {
+                fatalError("Invalid state, operation is already finished")
+            }
+            willChangeValue(forKey: "isFinished")
+            _isFinished.value = newValue
+            didChangeValue(forKey: "isFinished")
+        }
+        get {
+            _isFinished.value
+        }
     }
 
-    typealias Starter = (_ fulfill: @escaping () -> Void) -> Void
+    typealias Starter = (_ finish: @escaping () -> Void) -> Void
     private let starter: Starter
-    private let queue = DispatchQueue(label: "com.github.kean.Nuke.Operation", attributes: .concurrent)
 
     init(starter: @escaping Starter) {
         self.starter = starter
@@ -154,28 +157,28 @@ internal final class Operation: Foundation.Operation {
 
     override func start() {
         guard !isCancelled else {
-            _setState(.finished)
+            isFinished = true
             return
         }
-        _setState(.executing)
+        isExecuting = true
         starter { [weak self] in
-            DispatchQueue.main.async { self?._finish() }
+            self?._finish()
         }
     }
 
-    // Calls to _finish() are syncrhonized on the main thread. This way we
-    // guarantee that `starter` doesn't finish operation more than once.
-    // Other paths are also guaranteed to be safe.
     private func _finish() {
-        guard _state != .finished else { return }
-        _setState(.finished)
+        // Make sure that we ignore if `finish` is called more than once.
+        if isFinishCalled.swap(to: true, ifEqual: false) {
+            isExecuting = false
+            isFinished = true
+        }
     }
 }
 
 // MARK: - LinkedList
 
 /// A doubly linked list.
-internal final class LinkedList<Element> {
+final class LinkedList<Element> {
     // first <-> node <-> ... <-> last
     private(set) var first: Node?
     private(set) var last: Node?
@@ -185,11 +188,12 @@ internal final class LinkedList<Element> {
     }
 
     var isEmpty: Bool {
-        return last == nil
+        last == nil
     }
 
     /// Adds an element to the end of the list.
-    @discardableResult func append(_ element: Element) -> Node {
+    @discardableResult
+    func append(_ element: Element) -> Node {
         let node = Node(value: element)
         append(node)
         return node
@@ -243,141 +247,15 @@ internal final class LinkedList<Element> {
     }
 }
 
-// MARK: - CancellationTokenSource
-
-/// Manages cancellation tokens and signals them when cancellation is requested.
-///
-/// All `CancellationTokenSource` methods are thread safe.
-internal final class _CancellationTokenSource {
-    /// Returns `true` if cancellation has been requested.
-    var isCancelling: Bool {
-        return _lock.sync { _observers == nil }
-    }
-
-    /// Creates a new token associated with the source.
-    var token: _CancellationToken {
-        return _CancellationToken(source: self)
-    }
-
-    private var _observers: ContiguousArray<() -> Void>? = []
-
-    /// Initializes the `CancellationTokenSource` instance.
-    init() {}
-
-    fileprivate func register(_ closure: @escaping () -> Void) {
-        if !_register(closure) {
-            closure()
-        }
-    }
-
-    private func _register(_ closure: @escaping () -> Void) -> Bool {
-        _lock.lock(); defer { _lock.unlock() }
-        _observers?.append(closure)
-        return _observers != nil
-    }
-
-    /// Communicates a request for cancellation to the managed tokens.
-    func cancel() {
-        if let observers = _cancel() {
-            observers.forEach { $0() }
-        }
-    }
-
-    private func _cancel() -> ContiguousArray<() -> Void>? {
-        _lock.lock(); defer { _lock.unlock() }
-        let observers = _observers
-        _observers = nil // transition to `isCancelling` state
-        return observers
-    }
-}
-
-// We use the same lock across different tokens because the design of CTS
-// prevents potential issues. For example, closures registered with a token
-// are never executed inside a lock.
-private let _lock = NSLock()
-
-/// Enables cooperative cancellation of operations.
-///
-/// You create a cancellation token by instantiating a `CancellationTokenSource`
-/// object and calling its `token` property. You then pass the token to any
-/// number of threads, tasks, or operations that should receive notice of
-/// cancellation. When the owning object calls `cancel()`, the `isCancelling`
-/// property on every copy of the cancellation token is set to `true`.
-/// The registered objects can respond in whatever manner is appropriate.
-///
-/// All `CancellationToken` methods are thread safe.
-internal struct _CancellationToken {
-    fileprivate let source: _CancellationTokenSource? // no-op when `nil`
-
-    /// Returns `true` if cancellation has been requested for this token.
-    var isCancelling: Bool {
-        return source?.isCancelling ?? false
-    }
-
-    /// Registers the closure that will be called when the token is canceled.
-    /// If this token is already cancelled, the closure will be run immediately
-    /// and synchronously.
-    func register(_ closure: @escaping () -> Void) {
-        source?.register(closure)
-    }
-
-    /// Special no-op token which does nothing.
-    static var noOp: _CancellationToken {
-        return _CancellationToken(source: nil)
-    }
-}
-
-// MARK: - CancellationSource
-
-/// Lightweight variant of _CancellationTokenSource with a single handler
-/// and struct instead of a class.
-internal struct _CancellationSource {
-    /// Returns `true` if cancellation has been requested.
-    var isCancelling: Bool {
-        return _lock.sync { _isCancelling }
-    }
-
-    private var _isCancelling: Bool = false
-    private var _observer: (() -> Void)?
-
-    mutating func register(_ closure: @escaping () -> Void) {
-        if !_register(closure) {
-            closure()
-        }
-    }
-
-    private mutating func _register(_ closure: @escaping () -> Void) -> Bool {
-        _lock.lock(); defer { _lock.unlock() }
-        guard !_isCancelling else { return false }
-        _observer = closure
-        return true
-    }
-
-    /// Communicates a request for cancellation to the managed tokens.
-    mutating func cancel() {
-        if let observer = _cancel() {
-            observer()
-        }
-    }
-
-    private mutating func _cancel() -> (() -> Void)? {
-        _lock.lock(); defer { _lock.unlock() }
-        guard !_isCancelling else { return nil }
-        _isCancelling = true
-        defer { _observer = nil }
-        return _observer
-    }
-}
-
 // MARK: - ResumableData
 
 /// Resumable data support. For more info see:
 /// - https://developer.apple.com/library/content/qa/qa1761/_index.html
-internal struct ResumableData {
+struct ResumableData {
     let data: Data
     let validator: String // Either Last-Modified or ETag
 
-    init?(response: URLResponse?, data: Data) {
+    init?(response: URLResponse, data: Data) {
         // Check if "Accept-Ranges" is present and the response is valid.
         guard !data.isEmpty,
             let response = response as? HTTPURLResponse,
@@ -424,130 +302,174 @@ internal struct ResumableData {
     // Check if the server decided to resume the response.
     static func isResumedResponse(_ response: URLResponse) -> Bool {
         // "206 Partial Content" (server accepted "If-Range")
-        return (response as? HTTPURLResponse)?.statusCode == 206
+        (response as? HTTPURLResponse)?.statusCode == 206
     }
 
     // MARK: Storing Resumable Data
 
     /// Shared between multiple pipelines. Thread safe. In the future version we
     /// might feature more customization options.
-    static var _cache = _Cache<String, ResumableData>(costLimit: 32 * 1024 * 1024, countLimit: 100) // internal only for testing purposes
+    static var cache = Cache<String, ResumableData>(costLimit: 32 * 1024 * 1024, countLimit: 100)
+    // internal only for testing purposes
 
     static func removeResumableData(for request: URLRequest) -> ResumableData? {
-        guard let url = request.url?.absoluteString else { return nil }
-        return _cache.removeValue(forKey: url)
+        guard let url = request.url?.absoluteString else {
+            return nil
+        }
+        return cache.removeValue(forKey: url)
     }
 
     static func storeResumableData(_ data: ResumableData, for request: URLRequest) {
-        guard let url = request.url?.absoluteString else { return }
-        _cache.set(data, forKey: url, cost: data.data.count)
+        guard let url = request.url?.absoluteString else {
+            return
+        }
+        cache.set(data, forKey: url, cost: data.data.count)
     }
 }
 
-// MARK: - Printer
+// MARK: - Atomic
 
-/// Helper type for printing nice debug descriptions.
-internal struct Printer {
-    private(set) internal var _out = String()
+/// A thread-safe value wrapper.
+final class Atomic<T> {
+    private var _value: T
+    private let lock = NSLock()
 
-    private let timelineFormatter: DateFormatter
-
-    init(_ string: String = "") {
-        self._out = string
-
-        timelineFormatter = DateFormatter()
-        timelineFormatter.dateFormat = "HH:mm:ss.SSS"
+    init(_ value: T) {
+        self._value = value
     }
 
-    func output(indent: Int = 0) -> String {
-        return _out.components(separatedBy: .newlines)
-            .map { $0.isEmpty ? "" : String(repeating: " ", count: indent) + $0 }
-            .joined(separator: "\n")
+    var value: T {
+        get {
+            lock.lock()
+            let value = _value
+            lock.unlock()
+            return value
+        }
+        set {
+            lock.lock()
+            _value = newValue
+            lock.unlock()
+        }
     }
+}
 
-    mutating func string(_ str: String) {
-        _out.append(str)
+extension Atomic where T: Equatable {
+    /// "Compare and Swap"
+    func swap(to newValue: T, ifEqual oldValue: T) -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard _value == oldValue else {
+            return false
+        }
+        _value = newValue
+        return true
     }
+}
 
-    mutating func line(_ str: String) {
-        _out.append(str)
-        _out.append("\n")
+extension Atomic where T == Int {
+    /// Atomically increments the value and retruns a new incremented value.
+    func increment() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+
+        _value += 1
+        return _value
     }
+}
 
-    mutating func value(_ key: String, _ value: CustomStringConvertible?) {
-        let val = value.map { String(describing: $0) }
-        line(key + " - " + (val ?? "nil"))
-    }
+// MARK: - Misc
 
-    /// For producting nicely formatted timelines like this:
+import CommonCrypto
+
+extension String {
+    /// Calculates SHA1 from the given string and returns its hex representation.
     ///
-    /// 11:45:52.737 - Data Loading Start Date
-    /// 11:45:52.739 - Data Loading End Date
-    /// nil          - Decoding Start Date
-    mutating func timeline(_ key: String, _ date: Date?) {
-        let value = date.map { timelineFormatter.string(from: $0) }
-        self.value((value ?? "nil         "), key) // Swtich key with value
+    /// ```swift
+    /// print("http://test.com".sha1)
+    /// // prints "50334ee0b51600df6397ce93ceed4728c37fee4e"
+    /// ```
+    var sha1: String? {
+        guard let input = self.data(using: .utf8) else {
+            return nil
+        }
+
+        let hash = input.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> [UInt8] in
+            var hash = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
+            CC_SHA1(bytes.baseAddress, CC_LONG(input.count), &hash)
+            return hash
+        }
+
+        return hash.map({ String(format: "%02x", $0) }).joined()
+    }
+}
+
+// MARK: - Log
+
+final class Log {
+    private let log: OSLog
+    private let name: StaticString
+    private let signpostsEnabled: Bool
+
+    init(_ log: OSLog, _ name: StaticString, _ signpostsEnabled: Bool = ImagePipeline.Configuration.isSignpostLoggingEnabled) {
+        self.log = log
+        self.name = name
+        self.signpostsEnabled = signpostsEnabled
     }
 
-    mutating func timeline(_ key: String, _ start: Date?, _ end: Date?, isReversed: Bool = true) {
-        let duration = _duration(from: start, to: end)
-        let value = "\(_string(from: start)) – \(_string(from: end)) (\(duration))"
-        if isReversed {
-            self.value(value.padding(toLength: 36, withPad: " ", startingAt: 0), key)
-        } else {
-            self.value(key, value)
+    // MARK: Signposts
+
+    func signpost(_ type: SignpostType, _ message: @autoclosure () -> String) {
+        guard signpostsEnabled else { return }
+        signpost(type, "%{public}s", message())
+    }
+
+    func signpost(_ type: SignpostType) {
+        guard signpostsEnabled else { return }
+        if #available(OSX 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            os_signpost(type.os, log: log, name: name, signpostID: signpostID)
         }
     }
 
-    mutating func section(title: String, _ closure: (inout Printer) -> Void) {
-        _out.append(contentsOf: title)
-        _out.append(" {\n")
-        var printer = Printer()
-        closure(&printer)
-        _out.append(printer.output(indent: 4))
-        _out.append("}\n")
+    // Unfortunately, there is no way to wrap os_signpost which takes variadic
+    // arguments, because Swift implicitly wraps `arguments CVarArg...` from `log`
+    // into an array and passes the array to `os_signpost` which is not what
+    // we expect. So in this scenario we have to limit the number of arguments
+    // to one, there is no way to pass more. For more info see https://stackoverflow.com/questions/50937765/why-does-wrapping-os-log-cause-doubles-to-not-be-logged-correctly
+    func signpost(_ type: SignpostType, _ format: StaticString, _ argument: CVarArg) {
+        guard signpostsEnabled else { return }
+        if #available(OSX 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *) {
+            os_signpost(type.os, log: log, name: name, signpostID: signpostID, format, argument)
+        }
     }
 
-    // MARK: Formatters
-
-    private func _string(from date: Date?) -> String {
-        return date.map { timelineFormatter.string(from: $0) } ?? "nil"
-    }
-
-    private func _duration(from: Date?, to: Date?) -> String {
-        guard let from = from else { return "nil" }
-        guard let to = to else { return "unknown" }
-        return Printer.duration(to.timeIntervalSince(from)) ?? "nil"
-    }
-
-    static func duration(_ duration: TimeInterval?) -> String? {
-        guard let duration = duration else { return nil }
-
-        let m: Int = Int(duration) / 60
-        let s: Int = Int(duration) % 60
-        let ms: Int = Int(duration * 1000) % 1000
-
-        var output = String()
-        if m > 0 { output.append("\(m):") }
-        output.append(output.isEmpty ? "\(s)." : String(format: "%02d.", s))
-        output.append(String(format: "%03ds", ms))
-        return output
+    @available(OSX 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
+    var signpostID: OSSignpostID {
+        OSSignpostID(log: log, object: self)
     }
 }
 
-// MARK: - Result
+private let byteFormatter = ByteCountFormatter()
 
-// we're still using Result internally, but don't pollute user's space
-internal enum _Result<T, Error: Swift.Error> {
-    case success(T), failure(Error)
-
-    /// Returns a `value` if the result is success.
-    var value: T? {
-        if case let .success(val) = self { return val } else { return nil }
+extension Log {
+    static func bytes(_ count: Int) -> String {
+        bytes(Int64(count))
     }
 
-    /// Returns an `error` if the result is failure.
-    var error: Error? {
-        if case let .failure(err) = self { return err } else { return nil }
+    static func bytes(_ count: Int64) -> String {
+        byteFormatter.string(fromByteCount: count)
+    }
+}
+
+enum SignpostType {
+    case begin, event, end
+
+    @available(OSX 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
+    var os: OSSignpostType {
+        switch self {
+        case .begin: return .begin
+        case .event: return .event
+        case .end: return .end
+        }
     }
 }

@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -8,7 +8,7 @@ import Nuke
 final class ProgressiveDecodingDemoViewController: UIViewController {
     private let urls = [
         URL(string: "_mock_loader://progressive")!,
-        URL(string: "_mock_loader://baseline")!,
+        URL(string: "_mock_loader://baseline")!
     ]
 
     private let pipeline = ImagePipeline {
@@ -23,7 +23,11 @@ final class ProgressiveDecodingDemoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.white
+        if #available(iOS 13.0, *) {
+             view.backgroundColor = UIColor.systemBackground
+         } else {
+             view.backgroundColor = UIColor.white
+         }
 
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.addTarget(self, action: #selector(_segmentedControlValueChanged(_:)), for: .valueChanged)
@@ -31,7 +35,6 @@ final class ProgressiveDecodingDemoViewController: UIViewController {
         self.navigationItem.titleView = segmentedControl
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(_refresh))
-
 
         _start(with: urls[0])
     }
@@ -55,20 +58,20 @@ final class ProgressiveDecodingDemoViewController: UIViewController {
 
         let imageView = container.imageView
 
-        
         var options = ImageLoadingOptions()
         // Use our custom pipeline with progressive decoding enabled and
         // _MockDataLoader which returns data on predifined intervals.
         options.pipeline = pipeline
         options.transition = .fadeIn(duration: 0.25)
 
-        Nuke.loadImage(
-            with: ImageRequest(url: url).processed(with: _ProgressiveBlurImageProcessor()),
+        loadImage(
+            with: ImageRequest(url: url, processors: [_ProgressiveBlurImageProcessor()]),
             options: options,
             into: imageView,
             progress: { _, completed, total in
                 container.updateProgress(completed: completed, total: total)
-        })
+            }
+        )
     }
 
     @objc func _segmentedControlValueChanged(_ segmentedControl: UISegmentedControl) {
@@ -76,7 +79,9 @@ final class ProgressiveDecodingDemoViewController: UIViewController {
     }
 
     @objc func _refresh() {
-        _start(with: urls[segmentedControl.selectedSegmentIndex])
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) {
+            self._start(with: self.urls[self.segmentedControl.selectedSegmentIndex])
+        }
     }
 }
 

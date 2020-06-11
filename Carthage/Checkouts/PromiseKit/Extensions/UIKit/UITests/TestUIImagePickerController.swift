@@ -19,6 +19,8 @@ class UIImagePickerControllerTests: XCTestCase {
     }
 
 #if !os(tvOS)
+    // this test works locally but not on travis
+    // attempting to detect Travis and early-return did not work
     func test_rejects_when_cancelled() {
         let app = XCUIApplication()
         let table = app.tables
@@ -28,6 +30,10 @@ class UIImagePickerControllerTests: XCTestCase {
 
         XCTAssertTrue(value)
     }
+
+    // following two don't seem to work since Xcode 8.1
+    // The UI-Testing infrastructure cannot “see” the image picking UI
+    // And… trying to re-record by hand fails.
 
     func test_fulfills_with_edited_image() {
         let app = XCUIApplication()
@@ -46,6 +52,7 @@ class UIImagePickerControllerTests: XCTestCase {
         let tablesQuery = app.tables
         tablesQuery.staticTexts["3"].tap()
         tablesQuery.children(matching: .cell).element(boundBy: 1).tap()
+
         app.collectionViews.children(matching: .cell).element(boundBy: 0).tap()
 
         XCTAssertTrue(value)

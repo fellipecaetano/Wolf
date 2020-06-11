@@ -1,6 +1,6 @@
 import WatchConnectivity
 import Foundation
-#if !COCOAPODS
+#if !PMKCocoaPods
 import PromiseKit
 #endif
 
@@ -11,11 +11,11 @@ extension WCSession {
 
     /// Sends a message immediately to the paired and active device and optionally handles a response.
     public func sendMessage(_ message: [String: Any]) -> Promise<[String: Any]> {
-        return Promise { sendMessage(message, replyHandler: $0, errorHandler: $1) }
+        return Promise { sendMessage(message, replyHandler: $0.fulfill, errorHandler: $0.reject) }
     }
 
     /// Sends a data object immediately to the paired and active device and optionally handles a response.
     public func sendMessageData(_ data: Data) -> Promise<Data> {
-        return Promise { sendMessageData(data, replyHandler: $0, errorHandler: $1) }
+        return Promise { sendMessageData(data, replyHandler: $0.fulfill, errorHandler: $0.reject) }
     }
 }

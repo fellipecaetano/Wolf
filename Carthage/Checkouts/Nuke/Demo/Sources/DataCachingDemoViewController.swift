@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import UIKit
 import Nuke
@@ -18,12 +18,7 @@ final class DataCachingDemoViewController: BasicDemoViewController {
             }())
 
             $0.imageCache = ImageCache()
-
-            $0.enableExperimentalAggressiveDiskCaching(
-                keyEncoder: {
-                    guard let data = $0.cString(using: .utf8) else { return nil }
-                    return _nuke_sha1(data, UInt32(data.count))
-            })
+            $0.dataCache = try! DataCache(name: "com.github.kean.Nuke.DataCache")
         }
     }
 }

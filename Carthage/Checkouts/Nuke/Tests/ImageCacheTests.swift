@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
 @testable import Nuke
@@ -21,72 +21,95 @@ class ImageCacheTests: XCTestCase {
         cache = ImageCache()
     }
 
-    // MARK: Basics
+    // MARK: - Basics
 
-    func testThatStoreResponseMethodWorks() {
-        let request = ImageRequest(url: defaultURL)
-
+    func testCacheCreation() {
         XCTAssertEqual(cache.totalCount, 0)
-        XCTAssertNil(cache.cachedResponse(for: request))
-
-        cache.storeResponse(Test.response, for: request)
-
-        XCTAssertEqual(cache.totalCount, 1)
-        let image = cache.cachedResponse(for: request)
-        XCTAssertNotNil(image)
+        XCTAssertNil(cache[Test.request])
     }
 
-    // MARK: Count
+    func testThatImageIsStored() {
+        // When
+        cache[Test.request] = Test.container
+
+        // Then
+        XCTAssertEqual(cache.totalCount, 1)
+        XCTAssertNotNil(cache[Test.request])
+    }
+
+    // MARK: - Subscript
+
+    func testThatImageIsStoredUsingSubscript() {
+        // When
+        cache[Test.request] = Test.container
+
+        // Then
+        XCTAssertNotNil(cache[Test.request])
+    }
+
+    // MARK: - Count
 
     func testThatTotalCountChanges() {
         XCTAssertEqual(cache.totalCount, 0)
-        cache[request1] = defaultImage
+
+        cache[request1] = Test.container
         XCTAssertEqual(cache.totalCount, 1)
-        cache[request2] = defaultImage
+
+        cache[request2] = Test.container
         XCTAssertEqual(cache.totalCount, 2)
+
         cache[request2] = nil
         XCTAssertEqual(cache.totalCount, 1)
+
         cache[request1] = nil
         XCTAssertEqual(cache.totalCount, 0)
     }
 
-    func testThatItemsAreRemoveImmediatelyWhenCountLimitIsReached() {
+    func testThatCountLimitChanges() {
+        // When
         cache.countLimit = 1
+
+        // Then
         XCTAssertEqual(cache.countLimit, 1)
+    }
 
-        cache[request1] = defaultImage
-        XCTAssertNotNil(cache[request1])
+    func testThatItemsAreRemoveImmediatelyWhenCountLimitIsReached() {
+        // Given
+        cache.countLimit = 1
 
-        cache[request2] = defaultImage
+        // When
+        cache[request1] = Test.container
+        cache[request2] = Test.container
+
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
 
     func testTrimToCount() {
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
+        // Given
+        cache[request1] = Test.container
+        cache[request2] = Test.container
 
-        XCTAssertNotNil(cache[request1])
-        XCTAssertNotNil(cache[request2])
-
+        // When
         cache.trim(toCount: 1)
 
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
 
     func testThatImagesAreRemovedOnCountLimitChange() {
+        // Givne
         cache.countLimit = 2
-        XCTAssertEqual(cache.countLimit, 2)
 
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
+        cache[request1] = Test.container
+        cache[request2] = Test.container
 
-        XCTAssertNotNil(cache[request1])
-        XCTAssertNotNil(cache[request2])
-
+        // When
         cache.countLimit = 1
 
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
@@ -96,80 +119,116 @@ class ImageCacheTests: XCTestCase {
     #if !os(macOS)
 
     func testDefaultImageCost() {
-        XCTAssertEqual(cache.cost(for: defaultImage), 1228800)
+        XCTAssertEqual(cache.cost(for: ImageContainer(image: Test.image)), 1228800)
     }
 
     func testThatTotalCostChanges() {
-        let imageCost = cache.cost(for: defaultImage)
-
+        let imageCost = cache.cost(for: ImageContainer(image: Test.image))
         XCTAssertEqual(cache.totalCost, 0)
-        cache[request1] = defaultImage
+
+        cache[request1] = Test.container
         XCTAssertEqual(cache.totalCost, imageCost)
-        cache[request2] = defaultImage
+
+        cache[request2] = Test.container
         XCTAssertEqual(cache.totalCost, 2 * imageCost)
+
         cache[request2] = nil
         XCTAssertEqual(cache.totalCost, imageCost)
+
         cache[request1] = nil
         XCTAssertEqual(cache.totalCost, 0)
     }
 
-    func testThatItemsAreRemoveImmediatelyWhenCostLimitIsReached() {
-        let cost = cache.cost(for: defaultImage)
-        cache.costLimit = Int(Double(cost) * 1.5)
-        XCTAssertEqual(cache.costLimit, Int(Double(cost) * 1.5))
+    func testThatCostLimitChanged() {
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
 
-        cache[request1] = defaultImage
-        XCTAssertNotNil(cache[request1])
+        // When
+        cache.costLimit = Int(Double(cost) * 1.5)
+
+        // Then
+        XCTAssertEqual(cache.costLimit, Int(Double(cost) * 1.5))
+    }
+
+    func testThatItemsAreRemoveImmediatelyWhenCostLimitIsReached() {
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
+        cache.costLimit = Int(Double(cost) * 1.5)
+
+        // When/Then
+        cache[request1] = Test.container
 
         // LRU item is released
-        cache[request2] = defaultImage
+        cache[request2] = Test.container
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
 
     func testTrimToCost() {
+        // Given
         cache.costLimit = Int.max
 
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
+        cache[request1] = Test.container
+        cache[request2] = Test.container
 
-        XCTAssertNotNil(cache[request1])
-        XCTAssertNotNil(cache[request2])
-
-        let cost = cache.cost(for: defaultImage)
+        // When
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
         cache.trim(toCost: Int(Double(cost) * 1.5))
 
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
 
     func testThatImagesAreRemovedOnCostLimitChange() {
-        let cost = cache.cost(for: defaultImage)
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
         cache.costLimit = Int(Double(cost) * 2.5)
 
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
+        cache[request1] = Test.container
+        cache[request2] = Test.container
 
-        XCTAssertNotNil(cache[request1])
-        XCTAssertNotNil(cache[request2])
-
+        // When
         cache.costLimit = cost
 
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
     }
 
     func testGIFCost() {
+        // Given
         let data = Test.data(name: "cat", extension: "gif")
-        let image = Image(data: data)!
-        image.animatedImageData = data
+        let image = PlatformImage(data: data)!
+        image._animatedImageData = data
 
-        XCTAssertFalse(ImagePipeline.Configuration.isAnimatedImageDataEnabled)
-        XCTAssertEqual(cache.cost(for: image), 558000)
+        // Then
+        XCTAssertFalse(ImagePipeline.Configuration._isAnimatedImageDataEnabled)
+        XCTAssertEqual(cache.cost(for: ImageContainer(image: image)), 558000)
 
-        ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
-        XCTAssertEqual(cache.cost(for: image), 558000 + 427672)
-        ImagePipeline.Configuration.isAnimatedImageDataEnabled = false
+        ImagePipeline.Configuration._isAnimatedImageDataEnabled = true
+        XCTAssertEqual(cache.cost(for: ImageContainer(image: image)), 558000 + 427672)
+        ImagePipeline.Configuration._isAnimatedImageDataEnabled = false
+    }
+
+    func testImageContainerWithoutAssociatedDataCost() {
+        // Given
+        let data = Test.data(name: "cat", extension: "gif")
+        let image = PlatformImage(data: data)!
+        let container = ImageContainer(image: image, data: nil)
+
+        // Then
+        XCTAssertEqual(cache.cost(for: container), 558000)
+    }
+
+    func testImageContainerWithAssociatedDataCost() {
+        // Given
+        let data = Test.data(name: "cat", extension: "gif")
+        let image = PlatformImage(data: data)!
+        let container = ImageContainer(image: image, data: data)
+
+        // Then
+        XCTAssertEqual(cache.cost(for: container), 558000 + 427672)
     }
 
     #endif
@@ -177,31 +236,33 @@ class ImageCacheTests: XCTestCase {
     // MARK: LRU
 
     func testThatLeastRecentItemsAreRemoved() {
-        let cost = cache.cost(for: defaultImage)
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
         cache.costLimit = Int(Double(cost) * 2.5)
 
-        // case 1
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
-        cache[request3] = defaultImage
+        cache[request1] = Test.container
+        cache[request2] = Test.container
+        cache[request3] = Test.container
+
+        // Then
         XCTAssertNil(cache[request1])
         XCTAssertNotNil(cache[request2])
         XCTAssertNotNil(cache[request3])
     }
 
     func testThatItemsAreTouched() {
-        let cost = cache.cost(for: defaultImage)
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
         cache.costLimit = Int(Double(cost) * 2.5)
 
-        // case 2
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
+        cache[request1] = Test.container
+        cache[request2] = Test.container
+        _ = cache[request1] // Touched image
 
-        // touched image
-        let _ = cache[request1]
+        // When
+        cache[request3] = Test.container
 
-        cache[request3] = defaultImage
-
+        // Then
         XCTAssertNotNil(cache[request1])
         XCTAssertNil(cache[request2])
         XCTAssertNotNil(cache[request3])
@@ -210,87 +271,96 @@ class ImageCacheTests: XCTestCase {
     // MARK: Misc
 
     func testRemoveAll() {
-        cache[request1] = defaultImage
-        cache[request2] = defaultImage
-        XCTAssertEqual(cache.totalCount, 2)
+        // Given
+        cache[request1] = Test.container
+        cache[request2] = Test.container
+
+        // When
         cache.removeAll()
+
+        // Then
         XCTAssertEqual(cache.totalCount, 0)
         XCTAssertEqual(cache.totalCost, 0)
     }
 
     #if os(iOS) || os(tvOS)
-    func testThatImagesAreRemovedOnMemoryWarnings() {
-        let request = ImageRequest(url: defaultURL)
-        cache[request] = Image()
-        XCTAssertNotNil(cache[request])
-
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidReceiveMemoryWarning, object: nil)
-
-        XCTAssertNil(cache[request])
-    }
-
     func testThatSomeImagesAreRemovedOnDidEnterBackground() {
+        // Given
         cache.costLimit = Int.max
         cache.countLimit = 10 // 1 out of 10 images should remain
 
         for i in 0..<10 {
-            cache[_request(index: i)] = defaultImage
+            cache[_request(index: i)] = Test.container
         }
-
         XCTAssertEqual(cache.totalCount, 10)
 
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        // When
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
 
+        // Then
         XCTAssertEqual(cache.totalCount, 1)
     }
 
     func testThatSomeImagesAreRemovedBasedOnCostOnDidEnterBackground() {
-
-        let cost = cache.cost(for: defaultImage)
+        // Given
+        let cost = cache.cost(for: ImageContainer(image: Test.image))
         cache.costLimit = cost * 10
         cache.countLimit = Int.max
 
-        for i in 0..<10 {
-            let request = ImageRequest(url: URL(string: "http://example.com/img\(i)")!)
-            cache[request] = defaultImage
+        for index in 0..<10 {
+            let request = ImageRequest(url: URL(string: "http://example.com/img\(index)")!)
+            cache[request] = Test.container
         }
-
         XCTAssertEqual(cache.totalCount, 10)
 
-        NotificationCenter.default.post(name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        // When
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
 
+        // Then
         XCTAssertEqual(cache.totalCount, 1)
     }
     #endif
 }
 
 class InternalCacheTTLTests: XCTestCase {
-    let cache = _Cache<Int, Int>(costLimit: 1000, countLimit: 1000)
+    let cache = Cache<Int, Int>(costLimit: 1000, countLimit: 1000)
 
     // MARK: TTL
 
     func testTTL() {
+        // Given
         cache.set(1, forKey: 1, cost: 1, ttl: 0.05)  // 50 ms
         XCTAssertNotNil(cache.value(forKey: 1))
 
+        // When
         usleep(55 * 1000)
+
+        // Then
         XCTAssertNil(cache.value(forKey: 1))
     }
 
     func testDefaultTTLIsUsed() {
+        // Given
         cache.ttl = 0.05// 50 ms
         cache.set(1, forKey: 1, cost: 1)
         XCTAssertNotNil(cache.value(forKey: 1))
 
+        // When
         usleep(55 * 1000)
+
+        // Then
         XCTAssertNil(cache.value(forKey: 1))
     }
 
     func testDefaultToNonExpiringEntries() {
+        // Given
         cache.set(1, forKey: 1, cost: 1)
         XCTAssertNotNil(cache.value(forKey: 1))
 
+        // When
         usleep(55 * 1000)
+
+        // Then
         XCTAssertNotNil(cache.value(forKey: 1))
     }
 }

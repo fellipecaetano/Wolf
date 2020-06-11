@@ -1,5 +1,50 @@
 # OHHTTPStubs — CHANGELOG
 
+
+## [9.0.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/9.0.0)
+
+* Added support for Swift Package Manager and dropped OH from all class names.    
+  [@jeffctown](https://github.com/jeffctown)
+
+
+## [8.0.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/8.0.0)
+
+* Update default Swift Version to 5.0
+[@croig](https://github.com/CRoig)
+
+>Notes:
+> * No code changes were required (except from a little missing comma which caused a compilation error). Only xcshemes and xcodeproj were changed.
+
+## [7.0.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/7.0.0)
+
+* Updating default Swift Version to 4.2.  
+  [@jeffctown](https://github.com/jeffctown)
+* Updating example projects to Swift 4.2 and Xcode 10.1.  
+  [@jeffctown](https://github.com/jeffctown)
+* Updating iOS Lib Tests to have a minimum iOS version of 8.0.  
+  [@jeffctown](https://github.com/jeffctown)
+
+> Notes:  
+> * Bumping this version to 7.0.0 because it's now using the Swift 4 APIs.  
+> * This version is still compatible with Swift 3.x when integrating with CocoaPods, as CocoaPods uses the same `SWIFT_VERSION` as your app project does so it adapts automatically and it's transparent for users.
+> * If you're using Carthage and need Swift 3.x compatibility, you can follow the tips in the installation instructions of the `README.md`.
+> * CI is now only testing Swift 4.x on Xcode 9.1 and 10.1.  
+> * Thank you to [@hellensoloviy](https://github.com/hellensoloviy), [@robertoferraz](https://github.com/robertoferraz), [@rckoenes](https://github.com/rckoenes), [@NikSativa](https://github.com/NikSativa) for their pull requests updating Swift!   
+
+## [6.2.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/6.2.0)
+
+* Enabled application extension API only.  
+  [@lightsprint09](https://github.com/lightsprint09)
+* Disabled a flaky redirect test and adding the known issue with redirects to the README.  
+  [@jeffctown](https://github.com/jeffctown)
+  [#301](https://github.com/AliSoftware/OHHTTPStubs/pull/301)
+* Added `isMethodHEAD()` to the `Swift` helpers.  
+  [@Simon-Kaz](https://github.com/Simon-Kaz)
+  [#294](https://github.com/AliSoftware/OHHTTPStubs/pull/294)
+* Fixed issue with not preserving correct headers when following 3xx
+  redirects.  
+  [@sberrevoets](https://github.com/sberrevoets)
+
 ## [6.1.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/6.1.0)
 
 * Updated deployment target for the pod to 7.0 to remove warning for old APIs.  
@@ -176,7 +221,7 @@ _Note that this last change also changed the signature of the `onStubActivation:
 * Fixed issue with Umbrella Headers.  
   [#127](https://github.com/AliSoftware/OHHTTPStubs/issues/127)
   [#131](https://github.com/AliSoftware/OHHTTPStubs/pull/131)
-* Added methods for creating `OHHTTPStubsResponse`s from `NSURL`s that represent file system resources.  
+* Added methods for creating `HTTPStubsResponse`s from `NSURL`s that represent file system resources.  
   [@MaxGabriel](https://github.com/MaxGabriel)
   [#129](https://github.com/AliSoftware/OHHTTPStubs/pull/129)
 * Bumped Swift subspec compatibility to OSX 10.9 instead of 10.7.
@@ -305,7 +350,7 @@ _(I also moved [Travis-CI build system](https://travis-ci.org/AliSoftware/OHHTTP
 
 ## [3.1.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/3.1.0)
 
-* The `OHHTTPStubsDescriptor` protocol now inherits from the `NSObject` protocol
+* The `HTTPStubsDescriptor` protocol now inherits from the `NSObject` protocol
 
 ## [3.0.4](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/3.0.4)
 
@@ -345,11 +390,11 @@ Note: **If you have already removed the calls to all `OHHTTPStubs` deprecated AP
 
 ## [2.3.1](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/2.3.1)
 
-* Fixed bug with OHHTTPStubsResponse+JSON when `nil` headers dictionary
+* Fixed bug with HTTPStubsResponse+JSON when `nil` headers dictionary
 
 ## [2.3.0](https://github.com/AliSoftware/OHHTTPStubs/releases/tag/2.3.0)
 
-* Added the ability to give a name to a stub, for debugging purposes (property `name` of `id<OHHTTPStubsDescriptor>`)
+* Added the ability to give a name to a stub, for debugging purposes (property `name` of `id<HTTPStubsDescriptor>`)
 * Added `allStubs` method to list all installed stubs (with their name if they have one, see previous point)
 * Added `+[OHHTTPStubs onStubActivation:]` method to execute arbitrary code each time a stub is activated. Useful to log which stub is used for each request for example.
 
@@ -360,7 +405,7 @@ Note: **If you have already removed the calls to all `OHHTTPStubs` deprecated AP
 * Some API changes to make `OHHTTPStubs` to fit the new possibility of setting both `requestTime` and `responseTime`.
   * Old API is still there but deprecated, and will be removed in next major version
   * To convert to the new API, you will mainly simply:
-     * extract the `responseTime:` parameter to a method call of its own (`return [OHHTTPStubsResponse responseWithData:data statusCode:code responseTime:time headers:header];` will become `return [[OHHTTPStubsResponse responseWithData:data statusCode:code headers:headers] responseTime:time];` etc.)
+     * extract the `responseTime:` parameter to a method call of its own (`return [HTTPStubsResponse responseWithData:data statusCode:code responseTime:time headers:header];` will become `return [[HTTPStubsResponse responseWithData:data statusCode:code headers:headers] responseTime:time];` etc.)
      * convert `responseWithFile:filename` to `responseWithFileAtPath:OHPathForFileInBundle(filename,nil)`
 
 > Note: version `2.1.0-RC`, `2.1.0-rc.1`, `2.2.0-RC` and `2.2.1-RC` were intermediate Release Candidate versions during the big refactoring and migration to `2.2.1`, with the same new features as listed above basicaly, but without the last-minute bugfixes before official release.

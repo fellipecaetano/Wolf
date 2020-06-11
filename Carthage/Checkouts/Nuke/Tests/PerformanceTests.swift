@@ -1,21 +1,58 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015-2018 Alexander Grebenyuk (github.com/kean).
+// Copyright (c) 2015-2020 Alexander Grebenyuk (github.com/kean).
 
 import XCTest
-@testable import Nuke
+import Nuke
 
 class ImageViewPerformanceTests: XCTestCase {
+    private let dummyCacheRequest = ImageRequest(url: URL(string: "http://test.com/9999999)")!, processors: [ImageProcessors.Resize(size: CGSize(width: 2, height: 2))])
+
+    override func setUp() {
+        // Store something in memory cache to avoid going through an optimized empty Dictionary path
+        ImagePipeline.shared.configuration.imageCache?[dummyCacheRequest] = ImageContainer(image: PlatformImage())
+    }
+
+    override func tearDown() {
+        ImagePipeline.shared.configuration.imageCache?[dummyCacheRequest] = nil
+    }
+
     // This is the primary use case that we are optimizing for - loading images
     // into target, the API that majoriy of the apps are going to use.
     func testImageViewMainThreadPerformance() {
-        let view = ImageView()
+        let view = _ImageView()
 
-        let urls = (0..<25_000).map { _ in return URL(string: "http://test.com/\(rnd(5000))")! }
-        
+        let urls = (0..<20_000).map { _ in return URL(string: "http://test.com/1)")! }
+
         measure {
             for url in urls {
-                Nuke.loadImage(with: url, into: view)
+                loadImage(with: url, into: view)
+            }
+        }
+    }
+
+    func testImageViewMainThreadPerformanceWithProcessor() {
+        let view = _ImageView()
+
+        let urls = (0..<20_000).map { _ in return URL(string: "http://test.com/1)")! }
+
+        measure {
+            for url in urls {
+                let request = ImageRequest(url: url, processors: [ImageProcessors.Resize(size: CGSize(width: 1, height: 1))])
+                loadImage(with: request, into: view)
+            }
+        }
+    }
+
+    func testImageViewMainThreadPerformanceWithProcessorAndSimilarImageInCache() {
+        let view = _ImageView()
+
+        let urls = (0..<20_000).map { _ in return URL(string: "http://test.com/9999999)")! }
+
+        measure {
+            for url in urls {
+                let request = ImageRequest(url: url, processors: [ImageProcessors.Resize(size: CGSize(width: 1, height: 1))])
+                loadImage(with: request, into: view)
             }
         }
     }
@@ -26,31 +63,30 @@ class ImagePipelinePerfomanceTests: XCTestCase {
     /// data, decode, and decomperss 50+ images. It's very useful to get a
     /// broad picture about how loader options affect perofmance.
     func testLoaderOverallPerformance() {
-        let dataLoader = MockDataLoader()
+        let pipeline = ImagePipeline {
+            $0.imageCache = nil
 
-        let loader = ImagePipeline {
-            $0.dataLoader = dataLoader
+            $0.dataLoader = MockDataLoader()
+
+            $0.isDecompressionEnabled = false
 
             // This must be off for this test, because rate limiter is optimized for
             // the actual loading in the apps and not the syntetic tests like this.
             $0.isRateLimiterEnabled = false
-
-            $0.isDeduplicationEnabled = false
-
-            // Disables processing which takes a bulk of time.
-            $0.imageProcessor = { _ in nil }
         }
 
-        let urls = (0...3_000).map { _ in return URL(string: "http://test.com/\(rnd(500))")! }
+        let urls = (0...700).map { URL(string: "http://test.com/\($0)")! }
         measure {
-            expect { fulfil in
-                var finished: Int = 0
-                for url in urls {
-                    loader.loadImage(with: url) { _,_ in
-                        finished += 1
-                        if finished == urls.count {
-                            fulfil()
-                        }
+            let expectation = self.expectation(description: "Image loaded")
+            var finished: Int = 0
+            for url in urls {
+                var request = ImageRequest(url: url)
+                request.processors = [] // Remove processing time from equation
+
+                pipeline.loadImage(with: url) { _ in
+                    finished += 1
+                    if finished == urls.count {
+                        expectation.fulfill()
                     }
                 }
             }
@@ -62,39 +98,39 @@ class ImagePipelinePerfomanceTests: XCTestCase {
 class ImageCachePerformanceTests: XCTestCase {
     func testCacheWrite() {
         let cache = ImageCache()
-        let response = ImageResponse(image: Image(), urlResponse: nil)
-        
+        let image = ImageContainer(image: PlatformImage())
+
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(500))")! }
         let requests = urls.map { ImageRequest(url: $0) }
         
         measure {
             for request in requests {
-                cache.storeResponse(response, for: request)
+                cache[request] = image
             }
         }
     }
-    
+
     func testCacheHit() {
         let cache = ImageCache()
-        let response = ImageResponse(image: Image(), urlResponse: nil)
+        let image = ImageContainer(image: PlatformImage())
         
-        for i in 0..<200 {
-            cache.storeResponse(response, for: ImageRequest(url: URL(string: "http://test.com/\(i)")!))
+        for index in 0..<200 {
+            cache[ImageRequest(url: URL(string: "http://test.com/\(index)")!)] = image
         }
-        
+
         var hits = 0
-        
+
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(200))")! }
         let requests = urls.map { ImageRequest(url: $0) }
-        
+
         measure {
             for request in requests {
-                if cache.cachedResponse(for: request) != nil {
+                if cache[request] != nil {
                     hits += 1
                 }
             }
         }
-        
+
         print("hits: \(hits)")
     }
     
@@ -102,18 +138,18 @@ class ImageCachePerformanceTests: XCTestCase {
         let cache = ImageCache()
         
         var misses = 0
-        
+
         let urls = (0..<10_000).map { _ in return URL(string: "http://test.com/\(rnd(200))")! }
         let requests = urls.map { ImageRequest(url: $0) }
-        
+
         measure {
             for request in requests {
-                if cache.cachedResponse(for: request) == nil {
+                if cache[request] != nil {
                     misses += 1
                 }
             }
         }
-        
+
         print("misses: \(misses)")
     }
 }
@@ -132,15 +168,37 @@ class RequestPerformanceTests: XCTestCase {
     }
 }
 
+class ImageProcessingPerformanceTests: XCTestCase {
+    func testCreatingProcessorIdentifiers() {
+        let decompressor = ImageProcessors.Resize(size: CGSize(width: 1, height: 1), contentMode: .aspectFill, upscale: false)
+
+        measure {
+            for _ in 0..<25_000 {
+                _ = decompressor.identifier
+            }
+        }
+    }
+
+    func testComparingTwoProcessorCompositions() {
+
+        let lhs = ImageProcessors.Composition([MockImageProcessor(id: "123"), ImageProcessors.Resize(size: CGSize(width: 1, height: 1), contentMode: .aspectFill, upscale: false)])
+        let rhs = ImageProcessors.Composition([MockImageProcessor(id: "124"), ImageProcessors.Resize(size: CGSize(width: 1, height: 1), contentMode: .aspectFill, upscale: false)])
+
+        measure {
+            for _ in 0..<25_000 {
+                if lhs.hashableIdentifier == rhs.hashableIdentifier {
+                    // do nothing
+                }
+            }
+        }
+    }
+}
+
 class DataCachePeformanceTests: XCTestCase {
     var cache: DataCache!
 
     override func setUp() {
         cache = try! DataCache(name: UUID().uuidString)
-        cache._keyEncoder = {
-            guard let data = $0.cString(using: .utf8) else { return "" }
-            return _nuke_sha1(data, UInt32(data.count))
-        }
         _ = cache["key"] // Wait till index is loaded.
     }
 
@@ -148,87 +206,21 @@ class DataCachePeformanceTests: XCTestCase {
         try? FileManager.default.removeItem(at: cache.path)
     }
 
-    func testMissPerformance() {
-        measure {
-            for idx in 0..<10_000 {
-                let _ = self.cache["\(idx)"]
-            }
-        }
-    }
-
-    func testWritePeformance() {
-        cache._test_withSuspendedIO {
-            let dummy = "123".data(using: .utf8)
-
-            // FIXME: This test no just "empty" writes, but also overwrites
-            measure {
-                for idx in 0..<10_000 {
-                    self.cache["\(idx)"] = dummy
-                }
-            }
-        }
-    }
-
-    func testReadPerformance() {
-        cache._test_withSuspendedIO {
-            for idx in 0..<10_000 {
-                cache["\(idx)"] = "123".data(using: .utf8)
-            }
-
-            measure {
-                for idx in 0..<10_000 {
-                    let _ = self.cache["\(idx)"]
-                }
-            }
-        }
-    }
-
     func testReadFlushedPerformance() {
-        for idx in 0..<200 {
+        for idx in 0..<1000 {
             cache["\(idx)"] = Data(repeating: 1, count: 256 * 1024)
         }
         cache.flush()
 
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 2
         measure {
-            for idx in 0..<200 {
-                let _ = self.cache["\(idx)"]
+            for idx in 0..<1000 {
+                queue.addOperation {
+                    _ = self.cache["\(idx)"]
+                }
             }
-        }
-    }
-
-    func testIndexLoadingPerformance() {
-        for _ in 0..<1_000 {
-            // Create a realistic-looking key
-            let key = "http://example.com/images/" + UUID().uuidString + ".jpeg" + "?width=150&height=300"
-            cache[key] = Data(repeating: 1, count: 64 * 1024)
-        }
-        cache.flush()
-
-        // FIXME: I'm not entirely sure this the measurement is accurate,
-        // filesystem caching might affect performance.
-        measure {
-            let cache = try! DataCache(path: self.cache.path)
-            let _ = cache["1"] // Wait till index is loaded.
-        }
-    }
-
-    func testLRUPerformance() {
-        let items: [DataCache.Entry] = (0..<10_000).map {
-            let filename = cache.filename(for: "\($0)")!
-            let item = DataCache.Entry(filename: filename, payload: .saved(URL(string: "file://\(filename.raw)")!))
-            item.accessDate = Date().addingTimeInterval(TimeInterval(arc4random_uniform(1000)))
-            item.totalFileAllocatedSize = 1
-            return item
-        }
-
-        var lru = CacheAlgorithmLRU()
-        lru.countLimit = 1000 // we test count limit here
-        lru.trimRatio = 0.5 // 1 item should remain after trim
-        lru.sizeLimit = Int.max
-
-        measure {
-            let _ = lru.discarded(items: items)
+            queue.waitUntilAllOperationsAreFinished()
         }
     }
 }
-
